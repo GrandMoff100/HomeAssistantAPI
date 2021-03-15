@@ -10,6 +10,7 @@ __pycache__/
 .replit
 *.toml
 *.lock
+*.expl
 
 # Distribution / packaging
 .Python
