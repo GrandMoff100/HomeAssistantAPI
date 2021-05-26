@@ -10,4 +10,4 @@ client = Client(url, token)
 
 servicedomains = client.get_services()
 
-servicedomains.light.turn_off.trigger(entity_id='light.living_room')
+servicedomains.light.services.turn_off.trigger(entity_id='light.living_room')
