@@ -57,6 +57,6 @@ servicedomains = client.get_services()
 print(servicedomains)
 
 # This assumes you have an actual light in your living room hooked up to homeassistant
-servicedomains.light.turn_off.trigger(entity_id='light.living_room') # Sends a request to turn off the living room light
+servicedomains.light.services.turn_off.trigger(entity_id='light.living_room') # Sends a request to turn off the living room light
 
 ```
