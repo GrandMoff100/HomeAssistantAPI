@@ -13,7 +13,6 @@ setup(
         'homeassistant_api.servicedomains',
         'homeassistant_api.states',
         'homeassistant_api.models'
-    
     ],
     install_requires=['requests'],
     long_description=read,

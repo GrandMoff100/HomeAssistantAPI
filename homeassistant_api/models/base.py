@@ -6,7 +6,7 @@ class JsonModel(dict):
         else:
             for k, v in kwargs.items():
                 self[k] = v
-    
+
     def __getattribute__(self, name):
         if '__' not in str(name):
             if name in self:
@@ -28,10 +28,9 @@ class DictAttrs:
 
     def __iter__(self):
         return iter(self.__attrs__)
-    
+
     def __getitem__(self, item):
         return self.__attrs__.get(item, None)
-    
+
     def __setitem__(self, item, value):
         self.__attrs__[item] = value
-    
