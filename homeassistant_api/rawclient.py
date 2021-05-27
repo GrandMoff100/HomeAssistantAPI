@@ -1,5 +1,6 @@
 import os
 import json
+import simplejson
 import requests
 
 from .states import Entity
@@ -40,7 +41,7 @@ class RawWrapper:
 
         try:
             res = resp.json()
-        except json.decoder.JSONDecodeError:
+        except json.decoder.JSONDecodeError | simplejson.decoder.JSONDecodeError:
             try:
                 code, msg = resp.text.split(': ')
             except ValueError:
