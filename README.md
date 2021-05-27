@@ -4,7 +4,7 @@ Python Wrapper for Homeassistant's [REST API](https://developers.home-assistant.
 ## Installation
 There are a variety of ways to install this wrapper.
 
-### Using `pip` from [PYPI](https://pypi.org/project_homeassistant_api/)
+### Using `pip` from [PYPI](https://pypi.org/project/homeassistant_api/)
 ```
 $ pip install homeassistant_api
 ```
