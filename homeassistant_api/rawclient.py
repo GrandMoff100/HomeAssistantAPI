@@ -102,7 +102,7 @@ class RawClient(RawWrapper):
     def get_entity(self, entity_id, **kwargs):
         if self.malformed_id(entity_id):
             raise MalformedDataError('"{}" is not a valid entity_id, check your spelling and try again.'.format(entity_id))
-        res = self.request(f'states/{entity_id}', kwargs)
+        res = self.request(f'states/{entity_id}', **kwargs)
         return self._process_entity_json(res)
 
     def get_discovery_info(self):
