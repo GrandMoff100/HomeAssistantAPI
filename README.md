@@ -4,6 +4,8 @@ Python Wrapper for Homeassistant's [REST API](https://developers.home-assistant.
 
 Please ⭐️ the repo if you find this project useful or cool!
 
+For contributing guidelines see towards the bottom.
+
 ## Installation
 There are a variety of ways to install this wrapper.
 
@@ -63,3 +65,9 @@ print(servicedomains)
 servicedomains.light.services.turn_off.trigger(entity_id='light.living_room') # Sends a request to turn off the living room light
 
 ```
+
+## Contributing
+
+We welcome contributions very warmly.
+If you have an idea or some code you want to add to the project please fork this repository, make you changes, and open a pull request. Most likely your changes wil get merged if your code passes flake8 without any errors, and adds some functionality to the project. 
+We'd love to see your ideas and perspective!
