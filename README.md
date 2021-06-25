@@ -1,6 +1,9 @@
 # HomeassistantAPI
 Python Wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
 
+
+Please ⭐️ the repo if you find this project useful or cool!
+
 ## Installation
 There are a variety of ways to install this wrapper.
 
