@@ -144,5 +144,7 @@ class RawClient(RawWrapper):
             method='POST',
             data=data
         )
+        return self._process_entity_json(res)
+
              
         
