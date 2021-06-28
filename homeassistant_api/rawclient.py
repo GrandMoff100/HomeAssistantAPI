@@ -138,8 +138,6 @@ class RawClient(RawWrapper):
 
     def set_entity(self, entity_id:str, state: str, **attributes):
         data = {'state': state}
-        if attributes:
-            data.update({'attributes': attributes})
         res = self.request(
             f'states/{entity_id}',
             method='POST',
