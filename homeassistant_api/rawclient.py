@@ -60,6 +60,7 @@ class RawClient(RawWrapper):
         self.check_api_config()
 
     def _process_entity_json(self, json):
+        print(json)
         group = json['entity_id'].split('.')[0]
         entity = self._entity_types.get(group, Entity)
         return entity(json)
