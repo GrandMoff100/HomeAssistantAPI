@@ -8,9 +8,10 @@ __pycache__/
 
 # Repl.it
 .replit
-*.toml
-*.lock
+pyproject.toml
+poetry.lock
 *.expl
+dev.py
 
 # Distribution / packaging
 .Python
