@@ -12,3 +12,7 @@ class MalformedDataError(Error):
 
 class APIConfigurationError(Error):
     pass
+
+
+class ParameterMissingError(Error):
+    pass
