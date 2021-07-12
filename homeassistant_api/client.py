@@ -87,6 +87,7 @@ class RawClient(RawWrapper):
     def get_services(self):
         services = self.request('services')
         services = [self.process_services_json(data) for data in services]
+        services = {service.domain_id: service for service in services}
         return services
     
     def get_state(self, entity_id: str = None, group: str = None, slug: str = None):
