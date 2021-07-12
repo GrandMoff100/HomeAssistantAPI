@@ -1,6 +1,7 @@
 from .base import JsonModel
 from ..errors import ParameterMissingError
 
+
 class State(JsonModel):
     def __init__(self, json: dict = None, **data):
         super().__init__(json, **data)
@@ -14,4 +15,4 @@ class State(JsonModel):
             last_changed=self.get('last_changed', None),
             last_updated=self.get('last_updated', None)
         )
-        
+

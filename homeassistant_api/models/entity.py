@@ -8,7 +8,7 @@ class Group:
         self.group_id = group_id
         self.entities = {}
     
-    def _add_entity(self, entity_slug: str, state: State):
+    def add_entity(self, entity_slug: str, state: State):
         self.entities.update(
             entity_slug=Entity(entity_slug, state, self)
         )
@@ -31,7 +31,7 @@ class Entity:
             'states',
             self.group.group_id + '.' + self.id
         ))
-        self.state = self.group.client._process_state_json(state_data)
+        self.state = self.group.client.process_state_json(state_data)
         return self.get_state()
     
     def set_state(self, state: State):
@@ -43,7 +43,5 @@ class Entity:
             method='POST',
             json=state
         )
-        self.state = self.group.client._process_state_json(state_data)
+        self.state = self.group.client.process_state_json(state_data)
         return self.get_state()
-    
-        

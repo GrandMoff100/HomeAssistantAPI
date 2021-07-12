@@ -11,13 +11,17 @@ class RawClient(RawWrapper):
         self.check_api_running()
         self.check_api_config()
 
-    def _process_entity_json(self, json: dict):
+    def process_entity_json(self, json: dict):
         pass
 
-    def _process_service_json(self, json: dict):
-        pass
+    def process_services_json(self, json: dict):
+        domain = Domain(json.get('domain'), self)
+        for service_id, data in json.get('services').items():
+            domain.add_service(service_id, **data)
+        return domain
 
-    def _process_state_json(self, json: dict):
+
+    def process_state_json(self, json: dict):
         pass
 
     def api_error_log(self):
@@ -81,7 +85,9 @@ class RawClient(RawWrapper):
         pass
 
     def get_services(self):
-        pass
+        services = self.request('services')
+        services = [self.process_services_json(data) for data in services]
+        return services
     
     def get_state(self):
         pass
