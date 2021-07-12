@@ -1,11 +1,12 @@
 from os.path import join as path
 
+from .base import JsonModel
 
 class Domain:
     def __init__(self, domain: str, client):
         self.domain_id = domain
         self.client = client
-        self.services = {}
+        self.services = JsonModel()
 
     def __repr__(self):
         return f'<Domain {self.domain_id}>'

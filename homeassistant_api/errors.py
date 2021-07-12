@@ -2,11 +2,11 @@ class Error(BaseException):
     pass
 
 
-class HTTPError(Error):
+class MalformedDataError(Error):
     pass
 
 
-class MalformedDataError(Error):
+class HTTPError(Error):
     pass
 
 

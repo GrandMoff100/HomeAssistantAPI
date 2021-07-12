@@ -3,7 +3,7 @@ import json
 import simplejson
 import requests
 
-from .errors import HTTPError
+from .errors import MalformedDataError
 
 
 class RawWrapper:
@@ -24,33 +24,31 @@ class RawWrapper:
             "content-type": "application/json",
         }
 
-    def request(self, path, method='GET', headers={}, **kwargs):
-        req = getattr(requests, method.lower())
-
-        url = self.endpoint(path)
-        headers.update(self._headers)
-
-        resp = req(
-            url,
+    def request(self, path, method='GET', headers: dict = None, return_text_if_fail=False, **kwargs):
+        if headers is None:
+            headers = {}
+        if isinstance(headers, dict):
+            headers.update(self._headers)
+        else:
+            raise ValueError(f'headers must be dict or dict subclass, not type "{type(headers).__name__}"')
+        
+        resp = requests.request(
+            method,
+            self.endpoint(path),
             headers=headers,
             **kwargs
         )
 
+        return self.response_logic(resp, return_text_if_fail)
+    
+    def response_logic(self, response, return_text_if_fail=False):
         try:
-            res = resp.json()
+            res = response.json()
         except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
-            try:
-                code, msg = resp.text.split(': ')
-            except ValueError:
-                return resp.text
+            if return_text_if_fail:
+                return response.text
             else:
-                try:
-                    int(code)
-                except ValueError:
-                    return resp.text
-                else:
-                    err_msg = ': '.join([code, url, msg, f'with method "{method.upper()}"'])
-                    raise HTTPError(err_msg)
+                raise MalformedDataError(f'Homeassistant responded with non-json response: {repr(response.text)}')
         else:
             return res
     

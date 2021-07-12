@@ -1,7 +1,7 @@
 from datetime import datetime
 from os.path import join as path
 
-from .models import Group, Entity, State, Domain
+from .models import Group, Entity, State, Domain, JsonModel
 from .errors import APIConfigurationError, HTTPError
 from .rawapi import RawWrapper
 
@@ -50,11 +50,15 @@ class RawClient(RawWrapper):
         return valid
 
     def check_api_running(self):
-        res = self.request('')
-        if res.get('message', None) == 'API running.':
-            return True
+        res = self.request('', return_text_if_fail=True)
+        if isinstance(res, dict):
+            if res.get('message', None) == 'API running.':
+                return True
+            else:
+                print(res)
+                # TODO: Replace with raise error
         else:
-            raise HTTPError(res.get('message', 'No response'))
+            raise HTTPError(res)
 
     def get_discovery_info(self):
         res = self.request('discovery_info')
@@ -85,7 +89,7 @@ class RawClient(RawWrapper):
         services = self.request('services')
         services = [self.process_services_json(data) for data in services]
         services = {service.domain_id: service for service in services}
-        return services
+        return JsonModel(services)
     
     def get_state(self, entity_id: str = None, group: str = None, slug: str = None):
         if group is not None and slug is not None:
