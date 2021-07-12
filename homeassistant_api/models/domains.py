@@ -45,9 +45,7 @@ class Service:
     def __repr__(self):
         return f'<Service {self.domain.domain_id}:{self.id}>'
 
-    def trigger(self, entity_id: str = None, **service_fields):
-        if entity_id:
-            service_fields.update(entity_id=entity_id)
+    def trigger(self, **service_fields):
         data = self.domain.client.request(
             path(
                 'services',

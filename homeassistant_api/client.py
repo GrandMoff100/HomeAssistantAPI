@@ -78,13 +78,10 @@ class RawClient(RawWrapper):
     def get_entities(self):
         pass
     
-    def get_service(self, domain: str, service: str):
-        pass
-    
     def trigger_service(self, domain: str, service: str):
         pass
 
-    def get_services(self):
+    def get_domains(self):
         services = self.request('services')
         services = [self.process_services_json(data) for data in services]
         services = {service.domain_id: service for service in services}
