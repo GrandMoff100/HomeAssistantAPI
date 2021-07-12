@@ -1,4 +1,5 @@
 from datetime import datetime
+from os.path import join as path
 
 from .models import Group, Entity, State, Domain
 from .errors import APIConfigurationError, HTTPError
@@ -89,15 +90,36 @@ class RawClient(RawWrapper):
         services = [self.process_services_json(data) for data in services]
         return services
     
-    def get_state(self):
-        pass
-    
-    def set_state(self):
-        pass
+    def get_state(self, entity_id: str = None, group: str = None, slug: str = None):
+        if group is not None and slug is not None:
+            entity_id = group + '.' + slug
+        elif entity_id is None:
+            raise ValueError('Neither group and slug or entity_id provided.')
+        data = self.request(path('states', entity_id))
+        return State(**data)
+
+    def set_state(self, entity_id: str = None, state: str = None, group: str = None, slug: str = None, **payload):
+        if group is None or slug is None:
+            raise ValueError('To use group or slug you need to pass both not just one.'
+                             'Make sure you are using keyword arguments.')
+        if group is not None and slug is not None:
+            entity_id = group + '.' + slug
+        elif entity_id is None:
+            raise ValueError('Neither group and slug or entity_id provided.')
+        if state is None:
+            raise ValueError('required parameter "state" is missing')
+        payload.update(state=state)
+        data = self.request(
+            path('states', entity_id),
+            method='POST',
+            json=payload
+        )
+        return State(**data)
     
     def get_states(self):
-        pass
-    
+        data = self.request('states')
+        return [State(**state_data) for state_data in data]
+
     def get_history(
         self, 
         entities: tuple = None,

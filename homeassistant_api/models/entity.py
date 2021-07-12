@@ -29,7 +29,7 @@ class Entity:
     def fetch_state(self):
         state_data = self.group.client.request(path(
             'states',
-            self.group.group_id + '.' + self.id
+            self.entity_id
         ))
         self.state = self.group.client.process_state_json(state_data)
         return self.get_state()
@@ -45,3 +45,8 @@ class Entity:
         )
         self.state = self.group.client.process_state_json(state_data)
         return self.get_state()
+
+    @property
+    def entity_id(self):
+        return self.group.group_id + '.' + self.id
+
