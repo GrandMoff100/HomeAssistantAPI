@@ -21,9 +21,8 @@ class RawClient(RawWrapper):
             domain.add_service(service_id, **data)
         return domain
 
-
     def process_state_json(self, json: dict):
-        pass
+        return State(**json)
 
     def api_error_log(self):
         return self.request('error_log')
@@ -96,7 +95,7 @@ class RawClient(RawWrapper):
         elif entity_id is None:
             raise ValueError('Neither group and slug or entity_id provided.')
         data = self.request(path('states', entity_id))
-        return State(**data)
+        return self.process_state_json(data)
 
     def set_state(self, entity_id: str = None, state: str = None, group: str = None, slug: str = None, **payload):
         if group is None or slug is None:
@@ -114,11 +113,11 @@ class RawClient(RawWrapper):
             method='POST',
             json=payload
         )
-        return State(**data)
+        return self.process_state_json(data)
     
     def get_states(self):
         data = self.request('states')
-        return [State(**state_data) for state_data in data]
+        return [self.process_state_json(state_data) for state_data in data]
 
     def get_history(
         self, 
