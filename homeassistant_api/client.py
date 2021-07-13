@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 from os.path import join as path
 
@@ -39,7 +40,7 @@ class RawClient(RawWrapper):
         start_date: datetime = None,  # Defaults to 1 day before
         end_date: datetime = None
     ):
-        pass
+        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
 
     def get_history(
         self, 
@@ -50,15 +51,14 @@ class RawClient(RawWrapper):
         minimal_state_data=False,
         big_changes_only=False
     ):
-        pass
-    
+        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
+
     def get_rendered_template(self, template: str):
-        pass
-    
+        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
+
     def get_discovery_info(self):
         res = self.request('discovery_info')
         return res
-
     
     # API check methods
     def check_api_config(self):
@@ -88,15 +88,30 @@ class RawClient(RawWrapper):
 
     # Entity methods
     def get_entities(self):
-        data = self.request('entities')
+        class GroupDict(dict):
+            def __missing__(cls, group_id: str):
+                cls[group_id] = Group(group_id, self)
+                return cls[group_id]
+        entities = GroupDict()
+
+        for state in self.get_states():
+            group_id, entity_slug = state.entity_id.split('.')
+            entities[group_id].add_entity(entity_slug, state)
+        return JsonModel(entities)
     
     def get_entity(self, group_id: str = None, entity_slug: str = None, entity_id: str = None):
         if group_id is not None and entity_slug is not None:
-            pass
+            state = self.get_state(group=group_id, slug=entity_slug)
         elif entity_id is not None:
-            pass
+            state = self.get_state(entity_id=entity_id)
         else:
-            raise ValueError('Neither group and slug or entity_id provided.')
+            raise ValueError('Neither group and slug or entity_id provided. {help_msg}'.format(
+                help_msg='Use keyword arguments to pass entity_id. Or you can pass the entity_group and entity_slug instead'
+            ))
+        group_id, entity_slug = state.entity_id.split('.')
+        group = Group(group_id, self)
+        group.add_entity(entity_slug, state)
+        return group.get_entity(entity_slug)
 
     # Services and domain methods
     def get_domains(self):
@@ -116,7 +131,7 @@ class RawClient(RawWrapper):
             json=service_data
         )
         return [
-            self.domain.client.process_state_json(state_data)
+            self.process_state_json(state_data)
             for state_data in data
         ]
 
@@ -153,10 +168,11 @@ class RawClient(RawWrapper):
 
     # Event methods
     def get_events(self):
-        pass
+        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
+
     
     def fire_event(self):
-        pass
+        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
 
 class Client(RawClient):
     pass
