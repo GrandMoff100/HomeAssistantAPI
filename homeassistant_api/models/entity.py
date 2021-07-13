@@ -8,13 +8,13 @@ class Group:
         self.client = client
         self.group_id = group_id
         self.entities = JsonModel()
-    
+
     def __repr__(self):
         return f'<EntityGroup {self.group_id}>'
-    
+
     def add_entity(self, entity_slug: str, state: State):
         self.entities.update({
-            entity_slug:Entity(entity_slug, state, self)
+            entity_slug: Entity(entity_slug, state, self)
         })
 
     def get_entity(self, entity_slug: str):
@@ -26,14 +26,14 @@ class Entity:
         self.id = slug
         self.state = state
         self.group = group
-    
+
     def __repr__(self):
         return f'<Entity entity_id="{self.entity_id}" state="{self.state}">'
-    
+
     def get_state(self):
         # TODO: add caching
         return self.state
-    
+
     def fetch_state(self):
         state_data = self.group.client.request(path(
             'states',
@@ -41,7 +41,7 @@ class Entity:
         ))
         self.state = self.group.client.process_state_json(state_data)
         return self.get_state()
-    
+
     def set_state(self, state: State):
         state_data = self.group.client.request(
             path(

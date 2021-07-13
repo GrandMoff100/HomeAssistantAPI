@@ -31,16 +31,15 @@ class RawWrapper:
             headers.update(self._headers)
         else:
             raise ValueError(f'headers must be dict or dict subclass, not type "{type(headers).__name__}"')
-        
+
         resp = requests.request(
             method,
             self.endpoint(path),
             headers=headers,
             **kwargs
         )
-
         return self.response_logic(resp, return_text_if_fail)
-    
+
     def response_logic(self, response, return_text_if_fail=False):
         try:
             res = response.json()
@@ -51,10 +50,10 @@ class RawWrapper:
                 raise MalformedDataError(f'Homeassistant responded with non-json response: {repr(response.text)}')
         else:
             return res
-    
+
     def construct_params(self, params: dict):
         return '&'.join([
-            k if v is None 
-            else f"{k}={v}" 
+            k if v is None
+            else f"{k}={v}"
             for k, v in params.items()
         ])

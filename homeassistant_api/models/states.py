@@ -19,4 +19,3 @@ class State(JsonModel):
 
     def __repr__(self):
         return f'<EntityState "{self.state}">'
-

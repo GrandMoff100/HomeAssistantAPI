@@ -1,6 +1,6 @@
 from os.path import join as path
-
 from .base import JsonModel
+
 
 class Domain:
     def __init__(self, domain: str, client):
@@ -12,9 +12,11 @@ class Domain:
         return f'<Domain {self.domain_id}>'
 
     def add_service(self, service_id: str, **data):
-        self.services.update({service_id:Service(service_id, self, **data)})
+        self.services.update({
+            service_id: Service(service_id, self, **data)
+        })
         return self.services[service_id]
-    
+
     def get_service(self, service_id: str):
         return self.services.get(service_id, None)
 
@@ -60,6 +62,3 @@ class Service:
             self.domain.client.process_state_json(state_data)
             for state_data in data
         ]
-            
-
-

@@ -7,7 +7,7 @@ with open('README.md', 'r') as f:
 setup(
     name="HomeAssistant API",
     description="Python Wrapper for Homeassistant's REST API",
-    version='0.1.0',
+    version='2.0.0a1',
     packages=[
         'homeassistant_api',
         'homeassistant_api.servicedomains',

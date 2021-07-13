@@ -19,4 +19,3 @@ class JsonModel(dict):
                 self[name] = JsonModel(value)
             self[name] = value
         super().__setattr__(name, value)
-        

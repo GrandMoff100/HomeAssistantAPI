@@ -1,4 +1,3 @@
-from collections import defaultdict
 from datetime import datetime
 from os.path import join as path
 
@@ -43,7 +42,7 @@ class RawClient(RawWrapper):
         raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
 
     def get_history(
-        self, 
+        self,
         entities: tuple = None,
         entity: Entity = None,
         start_date: datetime = None,  # Defaults to 1 day before
@@ -59,7 +58,7 @@ class RawClient(RawWrapper):
     def get_discovery_info(self):
         res = self.request('discovery_info')
         return res
-    
+
     # API check methods
     def check_api_config(self):
         res = self.request('config/core/check_config', method='POST')
@@ -98,7 +97,7 @@ class RawClient(RawWrapper):
             group_id, entity_slug = state.entity_id.split('.')
             entities[group_id].add_entity(entity_slug, state)
         return JsonModel(entities)
-    
+
     def get_entity(self, group_id: str = None, entity_slug: str = None, entity_id: str = None):
         if group_id is not None and entity_slug is not None:
             state = self.get_state(group=group_id, slug=entity_slug)
@@ -119,7 +118,7 @@ class RawClient(RawWrapper):
         services = [self.process_services_json(data) for data in services]
         services = {service.domain_id: service for service in services}
         return JsonModel(services)
-    
+
     def trigger_service(self, domain: str, service: str, **service_data):
         data = self.request(
             path(
@@ -161,7 +160,7 @@ class RawClient(RawWrapper):
             json=payload
         )
         return self.process_state_json(data)
-    
+
     def get_states(self):
         data = self.request('states')
         return [self.process_state_json(state_data) for state_data in data]
@@ -170,9 +169,9 @@ class RawClient(RawWrapper):
     def get_events(self):
         raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
 
-    
     def fire_event(self):
         raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
+
 
 class Client(RawClient):
     pass
