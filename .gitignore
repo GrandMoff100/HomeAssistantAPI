@@ -6,11 +6,17 @@ __pycache__/
 # C extensions
 *.so
 
+# Pycharm
+.idea/
+venv/
+core/
+
 # Repl.it
 .replit
-*.toml
-*.lock
+pyproject.toml
+poetry.lock
 *.expl
+dev.py
 
 # Distribution / packaging
 .Python
