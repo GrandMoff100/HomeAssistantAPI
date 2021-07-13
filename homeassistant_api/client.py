@@ -12,6 +12,7 @@ class RawClient(RawWrapper):
         self.check_api_running()
         self.check_api_config()
 
+    # Response processing methods
     def process_entity_json(self, json: dict):
         pass
 
@@ -24,6 +25,7 @@ class RawClient(RawWrapper):
     def process_state_json(self, json: dict):
         return State(**json)
 
+    # API information methods
     def api_error_log(self):
         return self.request('error_log')
 
@@ -38,10 +40,27 @@ class RawClient(RawWrapper):
         end_date: datetime = None
     ):
         pass
-    
-    def rendered_template(self, template: str):
+
+    def get_history(
+        self, 
+        entities: tuple = None,
+        entity: Entity = None,
+        start_date: datetime = None,  # Defaults to 1 day before
+        end_date: datetime = None,
+        minimal_state_data=False,
+        big_changes_only=False
+    ):
         pass
     
+    def get_rendered_template(self, template: str):
+        pass
+    
+    def get_discovery_info(self):
+        res = self.request('discovery_info')
+        return res
+
+    
+    # API check methods
     def check_api_config(self):
         res = self.request('config/core/check_config', method='POST')
         valid = {'valid': True, 'invalid': False}.get(res['result'], None)
@@ -60,10 +79,6 @@ class RawClient(RawWrapper):
         else:
             raise HTTPError(res)
 
-    def get_discovery_info(self):
-        res = self.request('discovery_info')
-        return res
-
     def malformed_id(self, entity_id):
         checks = [
             ' ' in entity_id,
@@ -71,6 +86,10 @@ class RawClient(RawWrapper):
         ]
         return True in checks
 
+    # Entity methods
+    def get_entities(self):
+        data = self.request('entities')
+    
     def get_entity(self, group_id: str = None, entity_slug: str = None, entity_id: str = None):
         if group_id is not None and entity_slug is not None:
             pass
@@ -78,19 +97,30 @@ class RawClient(RawWrapper):
             pass
         else:
             raise ValueError('Neither group and slug or entity_id provided.')
-    
-    def get_entities(self):
-        pass
-    
-    def trigger_service(self, domain: str, service: str):
-        pass
 
+    # Services and domain methods
     def get_domains(self):
         services = self.request('services')
         services = [self.process_services_json(data) for data in services]
         services = {service.domain_id: service for service in services}
         return JsonModel(services)
     
+    def trigger_service(self, domain: str, service: str, **service_data):
+        data = self.request(
+            path(
+                'services',
+                domain,
+                service
+            ),
+            method='POST',
+            json=service_data
+        )
+        return [
+            self.domain.client.process_state_json(state_data)
+            for state_data in data
+        ]
+
+    # EntityState methods
     def get_state(self, entity_id: str = None, group: str = None, slug: str = None):
         if group is not None and slug is not None:
             entity_id = group + '.' + slug
@@ -121,17 +151,12 @@ class RawClient(RawWrapper):
         data = self.request('states')
         return [self.process_state_json(state_data) for state_data in data]
 
-    def get_history(
-        self, 
-        entities: tuple = None,
-        entity: Entity = None,
-        start_date: datetime = None,  # Defaults to 1 day before
-        end_date: datetime = None,
-        minimal_state_data=False,
-        big_changes_only=False
-    ):
+    # Event methods
+    def get_events(self):
         pass
-
+    
+    def fire_event(self):
+        pass
 
 class Client(RawClient):
     pass

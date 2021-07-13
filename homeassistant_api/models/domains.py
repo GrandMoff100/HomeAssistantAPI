@@ -44,9 +44,9 @@ class Service:
         self.target = target
 
     def __repr__(self):
-        return f'<Service {self.domain.domain_id}:{self.id}>'
+        return f'<Service {self.id} domain="{self.domain.domain_id}">'
 
-    def trigger(self, **service_fields):
+    def trigger(self, **service_data):
         data = self.domain.client.request(
             path(
                 'services',
@@ -54,7 +54,7 @@ class Service:
                 self.id
             ),
             method='POST',
-            json=service_fields
+            json=service_data
         )
         return [
             self.domain.client.process_state_json(state_data)
