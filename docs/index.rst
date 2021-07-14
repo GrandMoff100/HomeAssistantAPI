@@ -3,6 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. toctree::
+   :maxdepth: 2
+
+   installation
+   quickstart
+   usage
+   api
+
 .. image:: ./images/homeassistant-logo.png
 
 Welcome to Homeassistant API!
@@ -27,7 +35,7 @@ Is this your first time using the library? This is the place to get started!
 
 **Examples:**
 
-Many examples are available in the :resource:`repository <examples>`.
+Many examples are available in the ::`repository <examples>`.
 
 
 Code Reference
@@ -37,6 +45,7 @@ View the documentation for each class and function :doc:`here <api>`.
 
 Contributing
 -------------
+
 
 FAQs
 ------
