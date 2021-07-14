@@ -3,6 +3,8 @@ from ..errors import ParameterMissingError
 
 
 class State(JsonModel):
+    """A class representing a state of an entity."""
+
     def __init__(self, json: dict = None, **data):
         super().__init__(json, **data)
         if 'entity_id' not in self:

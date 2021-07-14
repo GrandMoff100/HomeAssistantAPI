@@ -1,4 +1,8 @@
 # HomeassistantAPI
+[![Documentation Status](https://readthedocs.org/projects/homeassistantapi/badge/?version=latest)](https://homeassistantapi.readthedocs.io/en/latest/?badge=latest)
+
+
+
 Python Wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
 
 
@@ -69,5 +73,6 @@ servicedomains.light.services.turn_off.trigger(entity_id='light.living_room') # 
 ## Contributing
 
 We welcome contributions very warmly.
-If you have an idea or some code you want to add to the project please fork this repository, make you changes, and open a pull request. Most likely your changes wil get merged if your code passes flake8 without any errors, and adds some functionality to the project. 
-We'd love to see your ideas and perspective!
+If you have an idea or some code you want to add to the project please fork this repository, make your changes, and open a pull request. 
+Most likely your changes will get merged if your code passes flake8 without any errors, and adds some functionality to the project. 
+We'd love to incorporate your unique ideas and perspective!

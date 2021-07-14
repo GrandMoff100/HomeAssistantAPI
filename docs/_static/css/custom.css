@@ -1,2 +1,18 @@
-@import 'theme.css';
+@import '../basic.css';
 
+img {
+    margin-bottom: 10px;
+    width: 80%;
+    height: auto;
+    border-radius: 10px;
+}
+
+div.sphinxsidebarwrapper {
+    margin-right: 30px;
+}
+
+div.sphinxsidebar {
+    width: 260px;
+    font-size: 14px;
+    line-height: 1.5;
+}

@@ -10,8 +10,8 @@ from .rawapi import RawWrapper
 
 
 class RawClient(RawWrapper):
-    """Uses RawWrapper to integrate data model classes in api interactions"""
-    
+    """The class used to interact with all of the api"""
+
     def __init__(self, *args, **kwargs) -> None:
         """Passes API authentication data to RawWrapper and validates API status"""
         super().__init__(*args, **kwargs)
