@@ -4,6 +4,7 @@ on:
   pull_request_target:
     paths:
       - '*.py'
+  workflow_dispatch:
 
 jobs:
   flake8_py3:
