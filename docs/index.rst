@@ -3,18 +3,39 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Homeassistant API's documentation!
-=============================================
+.. image:: ./images/homeassistant-logo.png
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+Welcome to Homeassistant API!
+=============================
+
+Homeassistant API is pythonic way to interact with `Homeassistant's REST API integration <https://developers.home-assistant.io/docs/api/rest>`_
+
+**Features:**
+- Foo
+- bar
+- Lazy
+- Dog
+
+Getting Started
+----------------
+Is this your first time using the library? This is the place to get started!
+
+- :doc:`installation`
+- :doc:`quickstart`
+- :doc:`usage`
+
+**Examples:**
+
+Many examples are available in the :resource:`repository <examples>`.
 
 
+Code Reference
+---------------
+View the documentation for each class and function :doc:`here <api>`.
 
-Indices and tables
-==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Contributing
+-------------
+
+FAQs
+------
