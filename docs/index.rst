@@ -11,6 +11,7 @@ Welcome to Homeassistant API!
 Homeassistant API is pythonic way to interact with `Homeassistant's REST API integration <https://developers.home-assistant.io/docs/api/rest>`_
 
 **Features:**
+
 - Foo
 - bar
 - Lazy
