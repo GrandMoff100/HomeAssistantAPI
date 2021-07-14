@@ -22,7 +22,7 @@ copyright = '2021, Nate Larsen'
 author = 'Nate Larsen'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.0rc'
+release = '2.0.1'
 
 
 # -- General configuration ---------------------------------------------------
