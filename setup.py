@@ -12,7 +12,7 @@ setup(
         'homeassistant_api',
         'homeassistant_api.models'
     ],
-    install_requires=['requests'],
+    install_requires=['requests', 'simplejson'],
     long_description=read,
     long_description_content_type='text/markdown'
 )

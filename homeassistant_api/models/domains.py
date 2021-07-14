@@ -1,26 +1,36 @@
-from os.path import join as path
-from .base import JsonModel
+"""File for Service and Domain data models"""
 
+from os.path import join as path
+from typing import Tuple
+
+from .base import JsonModel
+from .states import State
 
 class Domain:
-    def __init__(self, domain: str, client):
+    """A class representing the domain that services belong to."""
+    
+    def __init__(self, domain: str, client) -> None:
+        """Initializes needed attributes"""
         self.domain_id = domain
         self.client = client
         self.services = JsonModel()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Returns readable string indentifying each Domain class"""
         return f'<Domain {self.domain_id}>'
 
-    def add_service(self, service_id: str, **data):
+    def add_service(self, service_id: str, **data) -> None:
+        """Registers services into a domain to be used or accessed"""
         self.services.update({
             service_id: Service(service_id, self, **data)
         })
-        return self.services[service_id]
 
     def get_service(self, service_id: str):
+        """Return a Service with the given service_id, returns None if no such service exists"""
         return self.services.get(service_id, None)
 
     def __getattr__(self, attr: str):
+        """Allows services accessible as attributes"""
         if hasattr(self, attr):
             return super().__getattribute__(attr)
         if attr in self.services:
@@ -37,7 +47,7 @@ class Service:
         description: str = None,
         fields: dict = None,
         target: dict = None
-    ):
+    ) -> None:
         self.id = service_id
         self.domain = domain
         self.name = name
@@ -46,9 +56,12 @@ class Service:
         self.target = target
 
     def __repr__(self):
+        """Returns a readable string indentifying each Service"""
         return f'<Service {self.id} domain="{self.domain.domain_id}">'
 
-    def trigger(self, **service_data):
+    def trigger(self, **service_data) -> Tuple[State]:
+        """Triggers the service associated with this object."""
+
         data = self.domain.client.request(
             path(
                 'services',

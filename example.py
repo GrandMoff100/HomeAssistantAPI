@@ -6,10 +6,7 @@ url = os.getenv('HOMEASSISTANT_API_ENDPOINT')  # http://localhost:8123/api/
 token = os.getenv('HOMEASSISTANT_API_TOKEN')  # ey816najgfjassf...
 
 
-client = Client(url, token)  # Creates the object uses to interact with the api
-# In init it checks to see if the api is running by sending a check request
-# If successful it also validates that the configuration.yml on your homeasistant is formatted correctly
-
+client = Client(url, token)  # Authenticates yourself with your api
 
 # Service Examples
 # domains = client.get_domains()
@@ -40,3 +37,5 @@ client = Client(url, token)  # Creates the object uses to interact with the api
 
 # new_state = client.set_state(state='my ToaTallY Whatever vAlUe 12t87932', group_id='my_favorite_colors', entity_slug='number_one')
 # <EntityState "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
+
+print(client.get_discovery_info())
