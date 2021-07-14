@@ -27,7 +27,6 @@ Is this your first time using the library? This is the place to get started!
 
 .. toctree::
    :maxdepth: 1
-   :name: Table of Contents
 
    Home <index>
    quickstart

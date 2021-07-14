@@ -4,8 +4,34 @@ Quickstart
 Prerequisites
 ==============
 
+Homeassistant
+-----------
+Before using this library, you need to have Homeassistant OS running on a device. Something like a Rasberry Pi or spare laptop.
+If you don't want to do that you can Homeassistant container on your laptop or desktop with docker.
+See `here <https://www.home-assistant.io/installation/>`_ for how to install the installation right for you.
+
+
+
 Configuring the API in Homeassistant
 ======================================
+
+Enable the :code:`api` integration on Homeassistant
+------------------------------------------------------
+This library requires that you enable the :code:`api` integration on your Homeassistant if you are familiar with setting up integrations.
+The :code:`api` integration is also enabled when you enabled the :code:`default_config` integration.
+
+
+Access Token
+--------------
+Then once you have done that you need to head over to your profile and set up a "Long Lived Access Token" for you feed to the script. 
+A good guide on how to do that is `here <https://www.home-assistant.io/docs/authentication/#your-account-profile>`_
+
+Exposing Homeassistant to the Web
+--------------------------------------
+You may want to setup remote access through a Dynamic DNS server like DuckDNS (a good youtube tutorial on how to do that `here <https://www.youtube.com/watch?v=AK5E2T5tWyM>`_, keep in mind you will need to portforward to set that up.
+If you do pursue this your api url will be something like :code:`https://yourhomeassistant.duckdns.org:8123/api`.
+Which is different than what it might have looked like before.
+Which might have been something like :code:`http://homeassistant.local:8123/api` or :code:`http://localhost:8123/api`
 
 Installation
 ==============
@@ -49,3 +75,7 @@ Then you should be all set to start using the project! If run into any problems 
 
 Example Usages
 ==============
+Some examples applications of this project include integrating it into a console executable, flask application or just a regular python script.
+You can start a project that allows you to use this from the command line.
+Or add it a discord bot to manage your homeassistant from inside discord (you might want to use AsyncClient if you do)
+In any event, the possibilities are endless, so go make some cool stuff and share it with us!
