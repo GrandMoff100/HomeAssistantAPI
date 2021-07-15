@@ -19,6 +19,18 @@ Please ⭐️ the repo if you find this project useful or cool!
 
 For contributing guidelines see towards the bottom.
 
+```py
+from homeassistant_api import Client
+
+client = Client(
+    '<API URL>',
+    '<Long Lived Access Token>'
+)
+
+client.get_domains().cover.open_garage(entity_id='cover.my_garage_door')
+```
+
+
 ## Installation
 There are a variety of ways to install this wrapper.
 
