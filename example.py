@@ -37,5 +37,8 @@ client = Client(url, token)  # Authenticates yourself with your api
 
 # new_state = client.set_state(state='my ToaTallY Whatever vAlUe 12t87932', group_id='my_favorite_colors', entity_slug='number_one')
 # <EntityState "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
+# Alternatively you can set state from the entity class itself
 
-print(client.get_discovery_info())
+# from homeassistant_api import State
+# door.state.state = 'My new state'
+# door.set_state(door.state)
