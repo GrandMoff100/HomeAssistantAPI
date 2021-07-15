@@ -7,7 +7,7 @@ from .base import JsonModel
 
 class Group:
     """Represents the groups that entities belong to"""
-    
+
     def __init__(self, group_id: str, client) -> None:
         """Initializes object with needed attributes"""
         self.client = client
@@ -31,7 +31,7 @@ class Group:
 
 class Entity:
     """Represents entities inside of homeassistant"""
-    
+
     def __init__(self, slug: str, state: State, group: Group) -> None:
         """Initializes object with needed attributes"""
         self.id = slug

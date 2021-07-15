@@ -6,9 +6,10 @@ from typing import Tuple
 from .base import JsonModel
 from .states import State
 
+
 class Domain:
     """A class representing the domain that services belong to."""
-    
+
     def __init__(self, domain: str, client) -> None:
         """Initializes needed attributes"""
         self.domain_id = domain
@@ -39,6 +40,8 @@ class Domain:
 
 
 class Service:
+    """Class representing services from homeassistant"""
+
     def __init__(
         self,
         service_id: str,
