@@ -1,6 +1,5 @@
 # HomeassistantAPI
 
-![GitHub branch checks state](https://img.shields.io/github/checks-status/GrandMoff100/HomeassistantAPI/master?style=for-the-badge)
 ![Lines of code](https://img.shields.io/tokei/lines/github/GrandMoff100/HomeassistantAPI?style=for-the-badge)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/homeassistant_api?style=for-the-badge)
 ![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/GrandMoff100/HomeassistantAPI/latest/master?include_prereleases&style=for-the-badge)
