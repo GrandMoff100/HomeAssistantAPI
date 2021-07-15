@@ -1,10 +1,35 @@
 # HomeassistantAPI
+[![Documentation Status](https://readthedocs.org/projects/homeassistantapi/badge/?version=latest)](https://homeassistantapi.readthedocs.io/en/latest/?badge=latest)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+![Lines of code](https://img.shields.io/tokei/lines/github/GrandMoff100/HomeassistantAPI)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/homeassistant_api)
+![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/GrandMoff100/HomeassistantAPI/latest)
+
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/GrandMoff100/HomeassistantAPI?style=for-the-badge)
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/GrandMoff100/HomeassistantAPI/latest/total?style=for-the-badge)
+
+![GitHub Contributors Image](https://contrib.rocks/image?repo=GrandMoff100/HomeassistantAPI)
+
+![Homeassistant Logo](/docs/images/homeassistant-logo.png)
+
 Python Wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
 
 
 Please ⭐️ the repo if you find this project useful or cool!
 
 For contributing guidelines see towards the bottom.
+
+```py
+from homeassistant_api import Client
+
+client = Client(
+    '<API URL>',
+    '<Long Lived Access Token>'
+)
+
+client.get_domains().cover.open_garage(entity_id='cover.my_garage_door')
+```
+
 
 ## Installation
 There are a variety of ways to install this wrapper.
@@ -69,5 +94,6 @@ servicedomains.light.services.turn_off.trigger(entity_id='light.living_room') # 
 ## Contributing
 
 We welcome contributions very warmly.
-If you have an idea or some code you want to add to the project please fork this repository, make you changes, and open a pull request. Most likely your changes wil get merged if your code passes flake8 without any errors, and adds some functionality to the project. 
-We'd love to see your ideas and perspective!
+If you have an idea or some code you want to add to the project please fork this repository, make your changes, and open a pull request. 
+Most likely your changes will get merged if your code passes flake8 without any errors, and adds some functionality to the project. 
+We'd love to incorporate your unique ideas and perspective!

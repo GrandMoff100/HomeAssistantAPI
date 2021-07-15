@@ -1,30 +1,46 @@
+"""Module for parent RawWrapper class"""
+
 import os
 import json
 import simplejson
 import requests
+from typing import Union
 
 from .errors import MalformedDataError
 
 
 class RawWrapper:
-    def __init__(self, api_url, token):
+    """Builds, and makes requests to the API"""
+
+    def __init__(self, api_url: str, token: str) -> None:
+        """Prepares and stores API URL and Love Lived Access Token token"""
         self.api_url = api_url
         if not self.api_url.endswith('/'):
             self.api_url += '/'
         self._token = token
 
-    def endpoint(self, path):
+    def endpoint(self, path: str) -> str:
+        """Joins the api base url with a local path to an absolute url"""
         url = os.path.join(self.api_url, path)
         return url
 
     @property
-    def _headers(self):
+    def _headers(self) -> dict:
+        """Constructs the headers to send to the api for every request"""
         return {
             "Authorization": f"Bearer {self._token}",
             "content-type": "application/json",
         }
 
-    def request(self, path, method='GET', headers: dict = None, return_text_if_fail=False, **kwargs):
+    def request(
+        self,
+        path,
+        method='GET',
+        headers: dict = None,
+        return_text_if_fail=False,
+        **kwargs
+    ) -> Union[dict, list, str]:
+        """Base method for making requests to the api"""
         if headers is None:
             headers = {}
         if isinstance(headers, dict):
@@ -40,7 +56,8 @@ class RawWrapper:
         )
         return self.response_logic(resp, return_text_if_fail)
 
-    def response_logic(self, response, return_text_if_fail=False):
+    def response_logic(self, response: requests.Response, return_text_if_fail=False) -> Union[dict, list, str]:
+        """Processes reponses from the api and formats them"""
         try:
             res = response.json()
         except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
@@ -51,7 +68,8 @@ class RawWrapper:
         else:
             return res
 
-    def construct_params(self, params: dict):
+    def construct_params(self, params: dict) -> str:
+        """Custom method for constructing non-standard query strings"""
         return '&'.join([
             k if v is None
             else f"{k}={v}"
