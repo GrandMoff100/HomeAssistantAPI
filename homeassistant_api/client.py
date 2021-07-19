@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from os.path import join as path
-from typing import Tuple
+from typing import List
 
 from .models import Group, Entity, State, Domain, JsonModel
 from .errors import APIConfigurationError, ResponseError
@@ -147,7 +147,7 @@ class RawClient(RawWrapper):
         domain: str,
         service: str,
         **service_data
-    ) -> Tuple[State]:
+    ) -> List[State]:
         """Tells homeassistant to trigger a service, returns stats changed while being called"""
         data = self.request(
             path(
@@ -192,7 +192,7 @@ class RawClient(RawWrapper):
         )
         return self.process_state_json(data)
 
-    def get_states(self) -> Tuple[State]:
+    def get_states(self) -> List[State]:
         """Gets the states of all entitites within homeassistant"""
         data = self.request('states')
         return [self.process_state_json(state_data) for state_data in data]
