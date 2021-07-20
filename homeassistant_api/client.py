@@ -4,7 +4,7 @@ from datetime import datetime
 from os.path import join as path
 from typing import List
 
-from .models import Group, Entity, State, Domain, JsonModel
+from .models import Group, Entity, State, Domain, JsonModel, Event
 from .errors import APIConfigurationError, ResponseError
 from .rawapi import RawWrapper
 
@@ -32,8 +32,12 @@ class RawClient(RawWrapper):
         return domain
 
     def process_state_json(self, json: dict) -> State:
-        """Constructs State models from json data"""
+        """Constructs State model from json data"""
         return State(**json)
+    
+    def process_event_json(self, json: dict) -> Event:
+        """Constructs Event model from json data"""
+        return Event(**json)
 
     # API information methods
     def api_error_log(self) -> str:
@@ -198,12 +202,25 @@ class RawClient(RawWrapper):
         return [self.process_state_json(state_data) for state_data in data]
 
     # Event methods
-    def get_events(self):
-        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
+    def get_events(self) -> List[Event]:
+        """Gets the Events that happen within homeassistant"""
+        data = self.request('events')
+        return [self.process_event_json(event_info) for event_info in data]
 
-    def fire_event(self):
-        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
+    def fire_event(self, event_type: str, **event_data) -> str:
+        """Fires a given event_type within homeassistant. Must be an existing event_type."""
+        data = self.request(
+            path(
+                'events',
+                event_type
+            ),
+            method='POST',
+            json=event_data
+        )
+        return data.get('message', 'No message provided')
 
 
 class Client(RawClient):
     """Uses RawClient to integrate data models as parameters"""
+
+    
