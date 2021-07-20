@@ -1,7 +1,7 @@
 """File for Service and Domain data models"""
 
 from os.path import join as path
-from typing import Tuple
+from typing import List
 
 from .base import JsonModel
 from .states import State
@@ -62,7 +62,7 @@ class Service:
         """Returns a readable string indentifying each Service"""
         return f'<Service {self.id} domain="{self.domain.domain_id}">'
 
-    def trigger(self, **service_data) -> Tuple[State]:
+    def trigger(self, **service_data) -> List[State]:
         """Triggers the service associated with this object."""
 
         data = self.domain.client.request(

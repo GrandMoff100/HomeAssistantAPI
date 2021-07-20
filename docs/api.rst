@@ -28,3 +28,5 @@ Data Models
 
 .. autoclass:: State
    :members:
+
+.. autoclass:: Event
