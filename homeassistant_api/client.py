@@ -34,7 +34,7 @@ class RawClient(RawWrapper):
     def process_state_json(self, json: dict) -> State:
         """Constructs State model from json data"""
         return State(**json)
-    
+
     def process_event_json(self, json: dict) -> Event:
         """Constructs Event model from json data"""
         return Event(**json)
@@ -222,5 +222,3 @@ class RawClient(RawWrapper):
 
 class Client(RawClient):
     """Uses RawClient to integrate data models as parameters"""
-
-    

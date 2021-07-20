@@ -14,7 +14,7 @@ class Event:
         self.event_type = event
         self.listener_count = listener_count
         self.client = client
-    
+
     def __repr__(self):
         return f'<Event {self.event_type}>'
 
