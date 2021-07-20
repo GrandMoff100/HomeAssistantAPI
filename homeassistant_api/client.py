@@ -202,10 +202,12 @@ class RawClient(RawWrapper):
         return [self.process_state_json(state_data) for state_data in data]
 
     # Event methods
-    def get_events(self) -> List[Event]:
+    def get_events(self) -> JsonModel:
         """Gets the Events that happen within homeassistant"""
         data = self.request('events')
-        return [self.process_event_json(event_info) for event_info in data]
+        events = [self.process_event_json(event_info) for event_info in data]
+        events = {evt.event_type: evt for evt in events}
+        return JsonModel(events)
 
     def fire_event(self, event_type: str, **event_data) -> str:
         """Fires a given event_type within homeassistant. Must be an existing event_type."""
