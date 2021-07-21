@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from os.path import join as path
-from typing import List, Union
+from typing import List, Union, Tuple
 
 from .models import Group, Entity, State, Domain, JsonModel, Event
 from .errors import APIConfigurationError, ResponseError
@@ -45,7 +45,7 @@ class RawClient(RawWrapper):
     # API information methods
     def api_error_log(self) -> str:
         """Returns the server error log as a string"""
-        return self.request('error_log', return_text_if_fail=True)
+        return self.request('error_log', return_text=True)
 
     def api_config(self) -> dict:
         """Returns the yaml configuration of homeassistant"""
@@ -56,40 +56,51 @@ class RawClient(RawWrapper):
         self,
         filter_entity: Entity = None,
         timestamp: Union[str, datetime] = None,  # Defaults to 1 day before
-        end_date: Union[str, datetime] = None
+        end_timestamp: Union[str, datetime] = None
     ) -> List[dict]:
         params = {}
         if filter_entity is not None:
             params.update(entity=filter_entity.entity_id)
-        if end_date is not None:
-            if isinstance(end_date, datetime):
-                end_date = end_date.strftime(FMT)
-            params.update(end_time=end_date)
+        if end_timestamp is not None:
+            if isinstance(end_timestamp, datetime):
+                end_timestamp = end_timestamp.strftime(FMT)
+            params.update(end_time=end_timestamp)
         if timestamp is not None:
             if isinstance(timestamp, datetime):
                 timestamp = timestamp.strftime(FMT)
             url = path('logbook', timestamp)
         else:
             url = 'logbook'
-
-        return self.request(
-            url,
-            params=params
-        )
+        return self.request(url, params=params)
 
     def get_history(
         self,
-        entities: tuple = None,
-        entity: Entity = None,
-        start_date: datetime = None,  # Defaults to 1 day before
-        end_date: datetime = None,
+        entities: Tuple[Entity] = None,
+        timestamp: datetime = None,  # Defaults to 1 day before
+        end_timestamp: datetime = None,
         minimal_state_data=False,
-        big_changes_only=False
+        significant_changes_only=False
     ):
-        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
+        params = {}
+        if entities is not None:
+            params.update(filter_entity_id=','.join([ent.entity_id for ent in entities]))
+        if end_timestamp:
+            end_timestamp = end_timestamp.strftime(FMT)
+            params.update(end_time=end_timestamp)
+        if minimal_state_data:
+            params.update(minimal_response=None)
+        if significant_changes_only:
+            params.update(significant_changes_only=None)
+        if timestamp is not None:
+            if isinstance(timestamp, datetime):
+                timestamp = timestamp.strftime(FMT)
+            url = path('history/period', timestamp)
+        else:
+            url = 'history/period'
+        return self.request(url, params=self.construct_params(params)) 
 
     def get_rendered_template(self, template: str):
-        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
+        return self.request('template', json=dict(template=template), return_text=True, method='POST')
 
     def get_discovery_info(self) -> dict:
         """Returns a dictionary of discovery info such as internal_url and version"""
