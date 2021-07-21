@@ -15,8 +15,8 @@ setup(
     packages=[
         "homeassistant_api",
         "homeassistant_api.models",
-        # "homeassistant_api._async",
-        # "homeassistant_api._async.models"
+        "homeassistant_api._async",
+        "homeassistant_api._async.models"
     ],
     long_description=read,
     long_description_content_type="text/markdown",
