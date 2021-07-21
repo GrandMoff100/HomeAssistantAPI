@@ -8,7 +8,6 @@ from datetime import datetime
 
 from .models import (
     AsyncDomain,
-    AsyncService,
     AsyncGroup,
     AsyncEntity,
     AsyncState,
@@ -35,7 +34,7 @@ class AsyncClient(Client):
         await self.check_api_running()
         await self.check_api_config()
         return self
-    
+
     async def __aexit__(self, cls, obj, tb):
         pass
 
@@ -143,7 +142,7 @@ class AsyncClient(Client):
             url = path('history/period', timestamp)
         else:
             url = 'history/period'
-        return await self.request(url, params=self.construct_params(params)) 
+        return await self.request(url, params=self.construct_params(params))
 
     async def get_rendered_template(self, template: str):
         return await self.request('template', json=dict(template=template), return_text=True, method='POST')

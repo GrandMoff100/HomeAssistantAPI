@@ -95,7 +95,7 @@ class RawClient(RawWrapper):
             url = path('history/period', timestamp)
         else:
             url = 'history/period'
-        return self.request(url, params=self.construct_params(params)) 
+        return self.request(url, params=self.construct_params(params))
 
     def get_rendered_template(self, template: str) -> str:
         return self.request('template', json=dict(template=template), return_text=True, method='POST')

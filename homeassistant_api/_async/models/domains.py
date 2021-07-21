@@ -12,7 +12,7 @@ class AsyncDomain(Domain):
 
     async def __new__(cls):
         return cls
-    
+
     async def __init__(*args, **kwargs):
         super().__init__(*args, **kwargs)
 
