@@ -2,11 +2,14 @@
 
 from datetime import datetime
 from os.path import join as path
-from typing import List
+from typing import List, Union
 
 from .models import Group, Entity, State, Domain, JsonModel, Event
 from .errors import APIConfigurationError, ResponseError
 from .rawapi import RawWrapper
+
+
+FMT = '%Y-%m-%dT%H:%M:%S%z'
 
 
 class RawClient(RawWrapper):
@@ -51,11 +54,33 @@ class RawClient(RawWrapper):
 
     def logbook_entries(
         self,
-        entity: Entity = None,
-        start_date: datetime = None,  # Defaults to 1 day before
-        end_date: datetime = None
-    ):
-        raise NotImplementedError('Not implemented in this pre-release as of 2.0a1')
+        filter_entity: Entity = None,
+        timestamp: Union[str, datetime] = None,  # Defaults to 1 day before
+        end_date: Union[str, datetime] = None
+    ) -> List[dict]:
+        params = {}
+        if filter_entity is not None:
+            params.update(entity=filter_entity.entity_id)
+        if end_date is not None:
+            if isinstance(end_date, datetime):
+                end_date = end_date.strftime(FMT)
+            params.update(end_time=end_date)
+        
+        if timestamp is not None:
+            if isinstance(timestamp, datetime):
+                timestamp = timestamp.strftime(FMT)
+        else:
+            timestamp = ''
+
+        data = self.request(
+            path(
+                'logbook',
+                timestamp
+            ),
+            params=params
+        )
+        return data
+
 
     def get_history(
         self,
