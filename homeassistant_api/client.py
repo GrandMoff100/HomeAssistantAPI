@@ -65,22 +65,17 @@ class RawClient(RawWrapper):
             if isinstance(end_date, datetime):
                 end_date = end_date.strftime(FMT)
             params.update(end_time=end_date)
-        
         if timestamp is not None:
             if isinstance(timestamp, datetime):
                 timestamp = timestamp.strftime(FMT)
+            url = path('logbook', timestamp)
         else:
-            timestamp = ''
+            url = 'logbook'
 
-        data = self.request(
-            path(
-                'logbook',
-                timestamp
-            ),
+        return self.request(
+            url,
             params=params
         )
-        return data
-
 
     def get_history(
         self,
