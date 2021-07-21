@@ -4,7 +4,6 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/HomeAssistant-API?style=for-the-badge)
 ![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/GrandMoff100/HomeassistantAPI/latest/master?include_prereleases&style=for-the-badge)
 ![Read the Docs (version)](https://img.shields.io/readthedocs/homeassistantapi/stable?style=for-the-badge)
-![GitHub branch checks state](https://img.shields.io/github/checks-status/GrandMoff100/HomeassistantAPI/master?style=for-the-badge)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/GrandMoff100/HomeassistantAPI?style=for-the-badge)
 ![GitHub release (latest by date)](https://img.shields.io/github/downloads/GrandMoff100/HomeassistantAPI/latest/total?style=for-the-badge)
 

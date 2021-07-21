@@ -37,7 +37,7 @@ class RawWrapper:
         path,
         method='GET',
         headers: dict = None,
-        return_text_if_fail=False,
+        return_text=False,
         **kwargs
     ) -> Union[dict, list, str]:
         """Base method for making requests to the api"""
@@ -54,19 +54,16 @@ class RawWrapper:
             headers=headers,
             **kwargs
         )
-        return self.response_logic(resp, return_text_if_fail)
+        return self.response_logic(resp, return_text)
 
-    def response_logic(self, response: requests.Response, return_text_if_fail=False) -> Union[dict, list, str]:
+    def response_logic(self, response: requests.Response, return_text=False) -> Union[dict, list, str]:
         """Processes reponses from the api and formats them"""
+        if return_text:
+            return response.text
         try:
-            res = response.json()
+            return response.json()
         except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
-            if return_text_if_fail:
-                return response.text
-            else:
-                raise MalformedDataError(f'Homeassistant responded with non-json response: {repr(response.text)}')
-        else:
-            return res
+            raise MalformedDataError(f'Homeassistant responded with non-json response: {repr(response.text)}')
 
     def construct_params(self, params: dict) -> str:
         """Custom method for constructing non-standard query strings"""
