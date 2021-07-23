@@ -10,6 +10,10 @@ Clients
    :members:
    :inherited-members:
 
+.. autoclass:: AsyncClient
+   :members:
+   :inherited-members:
+
 
 Data Models
 ------------
@@ -30,3 +34,23 @@ Data Models
    :members:
 
 .. autoclass:: Event
+   :members:
+
+
+.. autoclass:: AsyncDomain
+   :members:
+
+.. autoclass:: AsyncService
+   :members:
+
+.. autoclass:: AsyncGroup
+   :members:
+
+.. autoclass:: AsyncEntity
+   :members:
+
+.. autoclass:: AsyncState
+   :members:
+
+.. autoclass:: AsyncEvent
+   :members:
