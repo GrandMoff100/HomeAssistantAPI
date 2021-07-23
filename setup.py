@@ -20,10 +20,7 @@ setup(
     ],
     long_description=read,
     long_description_content_type="text/markdown",
-    install_requires=["requests", "simplejson"],
-    extras_require={
-        "async": ["aiohttp"]
-    },
+    install_requires=["requests", "simplejson", "aiohttp"],
     python_requires=">=2.7",
     provides=["homeassistant_api"],
     classifiers=[
