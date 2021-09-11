@@ -208,7 +208,7 @@ class RawClient(RawWrapper):
 
     def set_state(self, entity_id: str = None, state: str = None, group: str = None, slug: str = None, **payload) -> State:
         """Sets the state of the entity given (does not have to be a real entity) and returns the updated state"""
-        if group is None or slug is None:
+        if (group is None or slug is None) and entity_id is None:
             raise ValueError('To use group or slug you need to pass both not just one.'
                              'Make sure you are using keyword arguments.')
         if group is not None and slug is not None:
