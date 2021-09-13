@@ -86,7 +86,7 @@ class AsyncClient(Client):
 
     def process_event_json(self, json: dict) -> AsyncEvent:
         """Constructs Event model from json data"""
-        return AsyncEvent(**json)
+        return AsyncEvent(**json, client=self)
 
     # API information methods
     async def api_error_log(self) -> str:
