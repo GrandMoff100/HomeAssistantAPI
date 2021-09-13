@@ -38,7 +38,7 @@ class RawClient(RawWrapper):
 
     def process_event_json(self, json: dict) -> Event:
         """Constructs Event model from json data"""
-        return Event(**json)
+        return Event(**json, client=self)
 
     # API information methods
     def api_error_log(self) -> str:
