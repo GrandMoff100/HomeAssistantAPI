@@ -32,7 +32,7 @@ class Domain:
 
     def __getattr__(self, attr: str):
         """Allows services accessible as attributes"""
-        if hasattr(self, attr):
+        if attr in self.__dict__:
             return super().__getattribute__(attr)
         if attr in self.services:
             return self.get_service(attr)
