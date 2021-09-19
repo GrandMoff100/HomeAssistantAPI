@@ -1,6 +1,7 @@
 import json
 import simplejson
 import aiohttp
+import asyncio
 
 from typing import List, Tuple, Union
 from os.path import join as path
@@ -24,8 +25,10 @@ from ..errors import (
 
 
 class AsyncClient(Client):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, global_request_kwargs: dict = None, **kwargs):
         super(RawClient, self).__init__(*args, **kwargs)
+        if global_request_kwargs:
+            self.global_request_kwargs.update(global_request_kwargs)
 
     def __repr__(self) -> str:
         return f'<AsyncClient of "{self.api_url[:20]}">'
@@ -55,12 +58,16 @@ class AsyncClient(Client):
         else:
             raise ValueError(f'headers must be dict or dict subclass, not type {type(headers).__name__!r}')
         async with aiohttp.ClientSession() as session:
-            resp = await session.request(
-                method,
-                self.endpoint(path),
-                headers=headers,
-                **kwargs
-            )
+            try:
+                resp = await session.request(
+                    method,
+                    self.endpoint(path),
+                    headers=headers,
+                    **kwargs,
+                    **self.global_request_kwargs
+                )
+            except asyncio.exceptions.TimeoutError:
+                raise ResponseError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
         return await self.response_logic(resp, return_text)
 
     async def response_logic(self, response: aiohttp.ClientResponse, return_text=False) -> Union[dict, list, str]:

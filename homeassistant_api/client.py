@@ -253,3 +253,7 @@ class RawClient(RawWrapper):
 
 class Client(RawClient):
     """Uses RawClient to integrate data models as parameters"""
+    def __init__(self, *args, global_request_kwargs: dict = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if global_request_kwargs:
+            self.global_request_kawargs.update(global_request_kwargs)
