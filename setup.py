@@ -24,7 +24,7 @@ setup(
     extras_require={
         "async": ["aiohttp"]
     },
-    python_requires=">=2.7",
+    python_requires=">=3.6",
     provides=["homeassistant_api"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",

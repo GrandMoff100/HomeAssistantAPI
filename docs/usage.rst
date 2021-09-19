@@ -75,14 +75,19 @@ Entities
 
 AsyncClient
 =============
+Before you run this code you need to install the :code:`homeassistant_api[async]`
 And here is the async counterpart to the usage above.
-Except to run async code in the console using await you need to install :code:`aioconsole` and then run :code:`$ apython`
+Except if you want to run async code in the console using await you need to install :code:`aioconsole` and then run :code:`$ apython`
 
 
 Services
 ------------
 .. code-block:: python
-    
+
+    from homeassistant_api._async import AsyncClient
+
+    client = AsyncClient(url, token)
+
     domains = await client.get_domains()
     # {'homeassistant': <Domain homeassistant>, 'notify': <Domain notify>}
 
