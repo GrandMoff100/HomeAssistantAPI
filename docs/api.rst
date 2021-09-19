@@ -10,7 +10,7 @@ Clients
    :members:
    :inherited-members:
 
-.. autoclass:: AsyncClient
+.. autoclass:: homeassistant_api._async.AsyncClient
    :members:
    :inherited-members:
 
@@ -37,20 +37,20 @@ Data Models
    :members:
 
 
-.. autoclass:: AsyncDomain
+.. autoclass:: homeassistant_api._async.AsyncDomain
    :members:
 
-.. autoclass:: AsyncService
+.. autoclass:: homeassistant_api._async.AsyncService
    :members:
 
-.. autoclass:: AsyncGroup
+.. autoclass:: homeassistant_api._async.AsyncGroup
    :members:
 
-.. autoclass:: AsyncEntity
+.. autoclass:: homeassistant_api._async.AsyncEntity
    :members:
 
-.. autoclass:: AsyncState
+.. autoclass:: homeassistant_api._async.AsyncState
    :members:
 
-.. autoclass:: AsyncEvent
+.. autoclass:: homeassistant_api._async.AsyncEvent
    :members:

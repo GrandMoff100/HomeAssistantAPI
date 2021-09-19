@@ -252,7 +252,14 @@ class RawClient(RawWrapper):
 
 
 class Client(RawClient):
-    """Uses RawClient to integrate data models as parameters"""
+    """
+    The base object for interacting with Homeassistant
+
+    :param api_url: The location of the api endpoint. e.g. :code:`http://localhost:8123/api` Required.
+    :param token: The refresh or long lived access token to authenticate your requests. Required.
+    :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
+    """
+    
     def __init__(self, *args, global_request_kwargs: dict = None, **kwargs):
         super().__init__(*args, **kwargs)
         if global_request_kwargs:

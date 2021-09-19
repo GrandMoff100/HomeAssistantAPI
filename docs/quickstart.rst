@@ -5,7 +5,7 @@ Prerequisites
 ==============
 
 Homeassistant
------------
+---------------
 Before using this library, you need to have Homeassistant OS running on a device.
 Something like a Rasberry Pi or spare laptop.
 If you don't want to do that you can setup a Homeassistant container on your laptop or desktop with docker.
@@ -75,7 +75,7 @@ Then you should be all set to start using the project! If run into any problems 
 
 
 Example Usages
-==============
+================
 Some examples applications of this project include integrating it into a console executable, flask application or just a regular python script.
 You can start a project that allows you to use this from the command line.
 Or add it to a discord bot to manage your homeassistant from inside discord (you might want to use AsyncClient if you do)
