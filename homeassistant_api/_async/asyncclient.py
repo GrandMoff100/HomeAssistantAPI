@@ -1,6 +1,7 @@
 import json
 import simplejson
 import aiohttp
+import asyncio
 
 from typing import List, Tuple, Union
 from os.path import join as path
@@ -24,8 +25,18 @@ from ..errors import (
 
 
 class AsyncClient(Client):
-    def __init__(self, *args, **kwargs):
+    """
+    The async equivalent of :class:`Client`
+
+    :param api_url: The location of the api endpoint. e.g. :code:`http://localhost:8123/api` Required.
+    :param token: The refresh or long lived access token to authenticate your requests. Required.
+    :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
+    """
+
+    def __init__(self, *args, global_request_kwargs: dict = None, **kwargs):
         super(RawClient, self).__init__(*args, **kwargs)
+        if global_request_kwargs:
+            self.global_request_kwargs.update(global_request_kwargs)
 
     def __repr__(self) -> str:
         return f'<AsyncClient of "{self.api_url[:20]}">'
@@ -53,24 +64,32 @@ class AsyncClient(Client):
         if isinstance(headers, dict):
             headers.update(self._headers)
         else:
-            raise ValueError(f'headers must be dict or dict subclass, not type "{type(headers).__name__}"')
-
-        async with aiohttp.ClientSession(headers=headers) as session:
-            resp = await session.request(
-                method,
-                self.endpoint(path),
-                **kwargs
-            )
+            raise ValueError(f'headers must be dict or dict subclass, not type {type(headers).__name__!r}')
+        async with aiohttp.ClientSession() as session:
+            try:
+                resp = await session.request(
+                    method,
+                    self.endpoint(path),
+                    headers=headers,
+                    **kwargs,
+                    **self.global_request_kwargs
+                )
+            except asyncio.exceptions.TimeoutError:
+                raise ResponseError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
         return await self.response_logic(resp, return_text)
 
     async def response_logic(self, response: aiohttp.ClientResponse, return_text=False) -> Union[dict, list, str]:
         """Processes reponses from the api and formats them"""
-        if return_text:
-            return await response.text()
+        if content_type := response.headers.get('content-type'):
+            if content_type != self._headers.get('content-type'):
+                raise MalformedDataError(f'Homeassistant responded with non-json response: {await response.text()!r}')
         try:
             return await response.json()
-        except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
-            raise MalformedDataError(f'Homeassistant responded with non-json response: {repr(response.text)}')
+        except (
+            json.decoder.JSONDecodeError,
+            simplejson.decoder.JSONDecodeError
+        ):
+            raise MalformedDataError(f'Homeassistant responded with non-json response: {await response.text()!r}')
 
     # Response processing methods
     def process_services_json(self, json: dict) -> AsyncDomain:
@@ -86,7 +105,7 @@ class AsyncClient(Client):
 
     def process_event_json(self, json: dict) -> AsyncEvent:
         """Constructs Event model from json data"""
-        return AsyncEvent(**json)
+        return AsyncEvent(**json, client=self)
 
     # API information methods
     async def api_error_log(self) -> str:
