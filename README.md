@@ -7,8 +7,6 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/GrandMoff100/HomeassistantAPI?style=for-the-badge)
 ![GitHub release (latest by date)](https://img.shields.io/github/downloads/GrandMoff100/HomeassistantAPI/latest/total?style=for-the-badge)
 
-![GitHub Contributors Image](https://contrib.rocks/image?repo=GrandMoff100/HomeassistantAPI)
-
 ![Homeassistant Logo](/docs/images/homeassistant-logo.png)
 
 Python Wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
