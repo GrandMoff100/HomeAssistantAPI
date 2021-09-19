@@ -6,10 +6,12 @@ import simplejson
 import requests
 from typing import Union
 
-from .errors import MalformedDataError
+from .errors import MalformedDataError, ResponseError
 
 
 class RawWrapper:
+    global_request_kwargs = {}
+
     """Builds, and makes requests to the API"""
 
     def __init__(self, api_url: str, token: str) -> None:
@@ -47,13 +49,16 @@ class RawWrapper:
             headers.update(self._headers)
         else:
             raise ValueError(f'headers must be dict or dict subclass, not type "{type(headers).__name__}"')
-
-        resp = requests.request(
-            method,
-            self.endpoint(path),
-            headers=headers,
-            **kwargs
-        )
+        try:
+            resp = requests.request(
+                method,
+                self.endpoint(path),
+                headers=headers,
+                **kwargs,
+                **self.global_request_kwargs
+            )
+        except requests.exceptions.TimeoutError:
+            raise ResponseError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')    
         return self.response_logic(resp, return_text)
 
     def response_logic(self, response: requests.Response, return_text=False) -> Union[dict, list, str]:
