@@ -17,7 +17,7 @@ Features
 
 - Full consumption of the Homeassistant REST API endpoints
 - Convenient classes that represent data from the API
-- Asynchronous support for integration in async applications or libraries [COMING SOON]
+- Asynchronous support for integration in async applications or libraries
 - Modular design for intuitive readability
 
 Getting Started
