@@ -32,7 +32,6 @@ class AsyncClient(Client):
     :param token: The refresh or long lived access token to authenticate your requests. Required.
     :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """
-    
 
     def __init__(self, *args, global_request_kwargs: dict = None, **kwargs):
         super(RawClient, self).__init__(*args, **kwargs)
