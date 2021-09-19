@@ -58,7 +58,7 @@ class RawWrapper:
                 **self.global_request_kwargs
             )
         except requests.exceptions.TimeoutError:
-            raise ResponseError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')    
+            raise ResponseError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
         return self.response_logic(resp, return_text)
 
     def response_logic(self, response: requests.Response, return_text=False) -> Union[dict, list, str]:
