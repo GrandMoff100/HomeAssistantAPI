@@ -106,22 +106,22 @@ Entities
 .. code-block:: python
 
     entity_groups = await client.get_entities()
-    # {'person': <EntityGroup person>, 'zone': <EntityGroup zone>, ...}
+    # {'person': <AsyncEntityGroup person>, 'zone': <AsyncEntityGroup zone>, ...}
 
     door = await client.get_entity(entity_id='cover.garage_door')
-    # <Entity entity_id="cover.garage_door" state="<EntityState "closed">">
+    # <AsycnEntity entity_id="cover.garage_door" state="<AsyncEntityState "closed">">
 
     states = await client.get_states()
-    # [<EntityState "above_horizon" entity_id="sun.sun">, <EntityState "zoning" entity_id="zone.home">,...]
+    # [<AsyncEntityState "above_horizon" entity_id="sun.sun">, <AsyncEntityState "zoning" entity_id="zone.home">,...]
 
     state = await client.get_state('sun.sun')
-    # <EntityState "above_horizon" entity_id="sun.sun">
+    # <AsyncEntityState "above_horizon" entity_id="sun.sun">
 
     new_state = await client.set_state(state='my ToaTallY Whatever vAlUe 12t87932', group_id='my_favorite_colors', entity_slug='number_one')
-    # <EntityState "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
+    # <AsyncEntityState "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
     
-    # Alternatively you can set state from the entity class itself
-    from homeassistant_api import State
+    # Alternatively you can set state from the entity state class itself
+    from homeassistant_api._async import AsyncState
     
     # If you are wondering where door came from its about 15 lines up.
     door.state.state = 'My new state'
