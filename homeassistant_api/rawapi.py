@@ -57,7 +57,7 @@ class RawWrapper:
                 **kwargs,
                 **self.global_request_kwargs
             )
-        except requests.exceptions.TimeoutError:
+        except requests.exceptions.Timeout:
             raise ResponseError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
         return self.response_logic(resp, return_text)
 
@@ -70,7 +70,8 @@ class RawWrapper:
         except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
             raise MalformedDataError(f'Homeassistant responded with non-json response: {repr(response.text)}')
 
-    def construct_params(self, params: dict) -> str:
+    @staticmethod
+    def construct_params(params: dict) -> str:
         """Custom method for constructing non-standard query strings"""
         return '&'.join([
             k if v is None

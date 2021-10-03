@@ -14,7 +14,7 @@ class MalformedInputError(Error):
 
 
 class ResponseError(Error):
-    """Error raised when an api reponse is formatted unexpectedly."""
+    """Error raised when an api response is formatted unexpectedly."""
 
 
 class APIConfigurationError(Error):

@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from os.path import join as path
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Coroutine
 
 from .models import Group, Entity, State, Domain, JsonModel, Event
 from .errors import APIConfigurationError, ResponseError
@@ -55,7 +55,7 @@ class RawClient(RawWrapper):
         filter_entity: Entity = None,
         timestamp: Union[str, datetime] = None,  # Defaults to 1 day before
         end_timestamp: Union[str, datetime] = None
-    ) -> List[dict]:
+    ) -> Union[List[dict], Coroutine]:
         params = {}
         if filter_entity is not None:
             params.update(entity=filter_entity.entity_id)
@@ -78,7 +78,7 @@ class RawClient(RawWrapper):
         end_timestamp: datetime = None,
         minimal_state_data=False,
         significant_changes_only=False
-    ) -> Tuple[Tuple[dict]]:
+    ) -> Union[dict, list, str, Coroutine]:
         params = {}
         if entities is not None:
             params.update(filter_entity_id=','.join([ent.entity_id for ent in entities]))
@@ -263,4 +263,4 @@ class Client(RawClient):
     def __init__(self, *args, global_request_kwargs: dict = None, **kwargs):
         super().__init__(*args, **kwargs)
         if global_request_kwargs:
-            self.global_request_kawargs.update(global_request_kwargs)
+            self.global_request_kwargs.update(global_request_kwargs)
