@@ -16,7 +16,7 @@ from .models import (
 )
 
 from ..models import JsonModel
-from ..client import Client, FMT, RawClient
+from ..client import Client, RawClient
 from ..errors import (
     APIConfigurationError,
     ResponseError,
@@ -121,21 +121,8 @@ class AsyncClient(Client):
         filter_entity: AsyncEntity = None,
         timestamp: Union[str, datetime] = None,  # Defaults to 1 day before
         end_timestamp: Union[str, datetime] = None
-    ) -> List[dict]:
-        params = {}
-        if filter_entity is not None:
-            params.update(entity=filter_entity.entity_id)
-        if end_timestamp is not None:
-            if isinstance(end_timestamp, datetime):
-                end_timestamp = end_timestamp.strftime(FMT)
-            params.update(end_time=end_timestamp)
-        if timestamp is not None:
-            if isinstance(timestamp, datetime):
-                timestamp = timestamp.strftime(FMT)
-            url = path('logbook', timestamp)
-        else:
-            url = 'logbook'
-        return await self.request(url, params=params)
+    ) -> dict:
+        return await super().logbook_entries(filter_entity, timestamp, end_timestamp)
 
     async def get_history(
         self,
@@ -144,24 +131,14 @@ class AsyncClient(Client):
         end_timestamp: datetime = None,
         minimal_state_data=False,
         significant_changes_only=False
-    ) -> Tuple[Tuple[dict]]:
-        params = {}
-        if entities is not None:
-            params.update(filter_entity_id=','.join([ent.entity_id for ent in entities]))
-        if end_timestamp:
-            end_timestamp = end_timestamp.strftime(FMT)
-            params.update(end_time=end_timestamp)
-        if minimal_state_data:
-            params.update(minimal_response=None)
-        if significant_changes_only:
-            params.update(significant_changes_only=None)
-        if timestamp is not None:
-            if isinstance(timestamp, datetime):
-                timestamp = timestamp.strftime(FMT)
-            url = path('history/period', timestamp)
-        else:
-            url = 'history/period'
-        return await self.request(url, params=self.construct_params(params))
+    ) -> Union[dict, list, str]:
+        return await super().get_history(
+            entities,
+            timestamp,
+            end_timestamp,
+            minimal_state_data,
+            significant_changes_only
+        )
 
     async def get_rendered_template(self, template: str):
         return await self.request('template', json=dict(template=template), return_text=True, method='POST')
@@ -225,11 +202,12 @@ class AsyncClient(Client):
             state = await self.get_state(entity_id=entity_id)
         else:
             raise ValueError('Neither group and slug or entity_id provided. {help_msg}'.format(
-                help_msg='Use keyword arguments to pass entity_id. Or you can pass the entity_group and entity_slug instead'
+                help_msg='Use keyword arguments to pass entity_id. Or you can pass the entity_group and entity_slug '
+                         'instead '
             ))
         group_id, entity_slug = state.entity_id.split('.')
         group = AsyncGroup(group_id, self)
-        await group.add_entity(entity_slug, state)
+        group.add_entity(entity_slug, state)
         return await group.get_entity(entity_slug)
 
     # Services and domain methods
