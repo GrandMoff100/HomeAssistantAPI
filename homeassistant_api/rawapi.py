@@ -4,7 +4,8 @@ import os
 import requests
 from typing import Union
 from .processing import Processing
-d
+from .errors import RequestError
+
 
 class RawWrapper:
     global_request_kwargs = {}
@@ -28,7 +29,7 @@ class RawWrapper:
         """Constructs the headers to send to the api for every request"""
         return {
             "Authorization": f"Bearer {self._token}",
-            "content-type": "application/json",
+            "Content-Type": "application/json",
         }
 
     def request(
@@ -54,7 +55,7 @@ class RawWrapper:
                 **self.global_request_kwargs
             )
         except requests.exceptions.Timeout:
-            raise ResponseError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
+            raise RequestError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
         return self.response_logic(resp)
 
     def response_logic(self, response: requests.Response) -> Union[dict, list, str]:

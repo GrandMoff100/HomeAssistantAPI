@@ -5,7 +5,7 @@ from os.path import join as path
 from typing import List, Union, Tuple, Coroutine
 
 from .models import Group, Entity, State, Domain, JsonModel, Event
-from .errors import APIConfigurationError, ResponseError
+from .errors import APIConfigurationError
 from .rawapi import RawWrapper
 
 
@@ -120,7 +120,7 @@ class RawClient(RawWrapper):
         if res.get('message', None) == 'API running.':
             return True
         else:
-            raise ResponseError('Server response did not return message attribute')
+            raise ValueError('Server response did not return message attribute')
 
     def malformed_id(self, entity_id: str) -> bool:
         """Checks whether or not a given entity_id is formatted correctly"""

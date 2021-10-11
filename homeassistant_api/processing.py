@@ -1,3 +1,5 @@
+"""Module for """
+
 import json
 import simplejson
 import requests
@@ -5,7 +7,11 @@ import dataclasses
 
 from .errors import (
     MalformedDataError,
-    UnrecognizedStatusCodeError
+    UnexpectedStatusCodeError,
+    UnauthorizedError,
+    EndpointNotFoundError,
+    MethodNotAllowedError,
+    RequestError
 )
 
 
@@ -29,13 +35,15 @@ class Processing:
         if self.response.status_code in (200, 201):
             return self.process_content()
         elif self.response.status_code == 400:
-            pass
+            raise RequestError(self.request.content)
         elif self.response.status_code == 401:
-            pass
-        elif self.response.status_code == 403:
-            pass
+            raise UnauthorizedError()
         elif self.response.status_code == 404:
-            pass
+            raise EndpointNotFoundError(self.response.url)
+        elif self.response.status_code == 405:
+            raise MethodNotAllowedError(self.response.request.method)
         else:
-            raise UnrecognizedStatusCodeError(self.response.status_code)
+            print("If this happened, please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues with the request status code and the request content")
+            print(self.response.content)
+            raise UnexpectedStatusCodeError(self.response.status_code)
 
