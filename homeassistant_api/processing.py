@@ -23,11 +23,11 @@ class Processing:
             raise MalformedDataError(f"Json content could not be parsed correctly: {exc}")
 
     def process_content(self):
-        pass
+        return self.process_json()
 
     def process(self):
         if self.response.status_code in (200, 201):
-            pass
+            return self.process_content()
         elif self.response.status_code == 400:
             pass
         elif self.response.status_code == 401:
