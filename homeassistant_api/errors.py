@@ -22,4 +22,12 @@ class APIConfigurationError(Error):
 
 
 class ParameterMissingError(Error):
-    """Error raised when an expected attribute is missing from api response data"""
+    """Error raised when an expected attribute is missing from api response data."""
+
+
+class UnrecognizedStatusCodeError(Error):
+    """Error raised when Homeassistant returns a response with status code that was unexpected."""
+    
+    def __init__(self, code: int):
+        super().__init__(f"Homeassistant return response with an unrecognized status code {code!r}")
+
