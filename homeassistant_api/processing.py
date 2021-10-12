@@ -1,9 +1,11 @@
-"""Module for """
+"""Module for processing responses from homeassistant."""
 
 import json
 import simplejson
 import requests
 import dataclasses
+import asyncio
+
 
 from .errors import (
     MalformedDataError,
@@ -19,21 +21,29 @@ from .errors import (
 class Processing:
     response: requests.Response
 
-    def process_json(self):
-        try:
-            return self.response.json()
-        except (
-            json.decoder.JSONDecodeError,
-            simplejson.decoder.JSONDecodeError
-        ) as exc:
-            raise MalformedDataError(f"Json content could not be parsed correctly: {exc}")
+    _processors: dict = {}
 
-    def process_content(self):
-        return self.process_json()
+    _async_processors: dict = {}
 
-    def process(self):
+    def processor(self, mimetype: str):
+        def register_processor(processor):
+            if asyncio.iscoroutine(processor):
+                self._async_processors.update((mimetype, processor))
+            else:
+                self._processors.update((mimetype, processor))
+        return register_processor
+
+    def process_content(self, _async: bool):
+        mimetype = self.response.headers.get('content-type')
+        if _async:
+            processor = self._processors.get(mimetype)
+        else:
+            processor = self._async_processors.get(mimetype)
+        return processor(self)
+
+    def process(self, _async=False):
         if self.response.status_code in (200, 201):
-            return self.process_content()
+            return self.process_content(_async)
         elif self.response.status_code == 400:
             raise RequestError(self.request.content)
         elif self.response.status_code == 401:

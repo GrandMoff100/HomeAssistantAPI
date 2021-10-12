@@ -53,7 +53,6 @@ class AsyncClient(Client):
         path,
         method='GET',
         headers: dict = None,
-        return_text=False,
         **kwargs
     ) -> Union[dict, list, str]:
         """Base method for making requests to the api"""
@@ -74,7 +73,7 @@ class AsyncClient(Client):
                 )
             except asyncio.exceptions.TimeoutError:
                 raise RequestError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
-        return await self.response_logic(resp, return_text)
+        return await self.response_logic(resp)()
 
     # Response processing methods
     def process_services_json(self, json: dict) -> AsyncDomain:

@@ -8,9 +8,9 @@ from .errors import RequestError
 
 
 class RawWrapper:
-    global_request_kwargs = {}
-
     """Builds, and makes requests to the API"""
+
+    global_request_params = {}
 
     def __init__(self, api_url: str, token: str) -> None:
         """Prepares and stores API URL and Love Lived Access Token token"""
