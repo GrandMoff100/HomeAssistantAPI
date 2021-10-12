@@ -1,14 +1,11 @@
 """Module for processing responses from homeassistant."""
 
-import json
-import simplejson
 import requests
 import dataclasses
 import asyncio
 
 
 from .errors import (
-    MalformedDataError,
     UnexpectedStatusCodeError,
     UnauthorizedError,
     EndpointNotFoundError,
