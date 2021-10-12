@@ -1,18 +1,16 @@
 """Module for parent RawWrapper class"""
 
 import os
-import json
-import simplejson
 import requests
 from typing import Union
-
-from .errors import MalformedDataError, ResponseError
+from .processing import Processing
+from .errors import RequestError
 
 
 class RawWrapper:
-    global_request_kwargs = {}
-
     """Builds, and makes requests to the API"""
+
+    global_request_kwargs = {}
 
     def __init__(self, api_url: str, token: str) -> None:
         """Prepares and stores API URL and Love Lived Access Token token"""
@@ -31,7 +29,7 @@ class RawWrapper:
         """Constructs the headers to send to the api for every request"""
         return {
             "Authorization": f"Bearer {self._token}",
-            "content-type": "application/json",
+            "Content-Type": "application/json",
         }
 
     def request(
@@ -39,7 +37,6 @@ class RawWrapper:
         path,
         method='GET',
         headers: dict = None,
-        return_text=False,
         **kwargs
     ) -> Union[dict, list, str]:
         """Base method for making requests to the api"""
@@ -58,17 +55,13 @@ class RawWrapper:
                 **self.global_request_kwargs
             )
         except requests.exceptions.Timeout:
-            raise ResponseError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
-        return self.response_logic(resp, return_text)
+            raise RequestError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
+        return self.response_logic(resp)
 
-    def response_logic(self, response: requests.Response, return_text=False) -> Union[dict, list, str]:
+    def response_logic(self, response: requests.Response) -> Union[dict, list, str]:
         """Processes reponses from the api and formats them"""
-        if return_text:
-            return response.text
-        try:
-            return response.json()
-        except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
-            raise MalformedDataError(f'Homeassistant responded with non-json response: {repr(response.text)}')
+        processing = Processing(response)
+        return processing.process()
 
     @staticmethod
     def construct_params(params: dict) -> str:

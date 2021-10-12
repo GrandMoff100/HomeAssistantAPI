@@ -1,5 +1,3 @@
-import json
-import simplejson
 import aiohttp
 import asyncio
 
@@ -19,9 +17,11 @@ from ..models import JsonModel
 from ..client import Client, RawClient
 from ..errors import (
     APIConfigurationError,
-    ResponseError,
+    RequestError,
     MalformedDataError
 )
+
+from ..processing import Processing
 
 
 class AsyncClient(Client):
@@ -55,7 +55,6 @@ class AsyncClient(Client):
         path,
         method='GET',
         headers: dict = None,
-        return_text=False,
         **kwargs
     ) -> Union[dict, list, str]:
         """Base method for making requests to the api"""
@@ -75,21 +74,11 @@ class AsyncClient(Client):
                     **self.global_request_kwargs
                 )
             except asyncio.exceptions.TimeoutError:
-                raise ResponseError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
-        return await self.response_logic(resp, return_text)
-
-    async def response_logic(self, response: aiohttp.ClientResponse, return_text=False) -> Union[dict, list, str]:
-        """Processes reponses from the api and formats them"""
-        if content_type := response.headers.get('content-type'):
-            if content_type != self._headers.get('content-type'):
-                raise MalformedDataError(f'Homeassistant responded with non-json response: {await response.text()!r}')
-        try:
-            return await response.json()
-        except (
-            json.decoder.JSONDecodeError,
-            simplejson.decoder.JSONDecodeError
-        ):
-            raise MalformedDataError(f'Homeassistant responded with non-json response: {await response.text()!r}')
+                raise RequestError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
+        return await self.response_logic(resp)
+    
+    async def response_logic(self, response):
+        return await Processing(response).process(_async=True)
 
     # Response processing methods
     def process_services_json(self, json: dict) -> AsyncDomain:
@@ -162,7 +151,7 @@ class AsyncClient(Client):
         if res.get('message', None) == 'API running.':
             return True
         else:
-            raise ResponseError('Server response did not return message attribute')
+            raise MalformedDataError('Server response did not return message attribute')
 
     async def malformed_id(self, entity_id: str) -> bool:
         """Checks whether or not a given entity_id is formatted correctly"""
