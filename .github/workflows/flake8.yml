@@ -1,9 +1,7 @@
 name: Flake8
 
 on:
-  pull_request_target:
-    paths:
-      - '*.py'
+  pull_request:
   workflow_dispatch:
 
 jobs:

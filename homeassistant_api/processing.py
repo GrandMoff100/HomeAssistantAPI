@@ -3,8 +3,6 @@
 import simplejson
 import json
 import requests
-import dataclasses
-import asyncio
 
 
 from .errors import (

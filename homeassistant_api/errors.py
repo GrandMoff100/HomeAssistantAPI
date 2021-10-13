@@ -11,6 +11,7 @@ class RequestError(Error):
     def __init__(self, body: str):
         super().__init__(f"Bad Request: {body}")
 
+
 class MalformedDataError(Error):
     """Error raised when data from api is not formatted as JSON"""
 
@@ -29,7 +30,7 @@ class ParameterMissingError(Error):
 
 class UnexpectedStatusCodeError(Error):
     """Error raised when Homeassistant returns a response with status code that was unexpected."""
-    
+
     def __init__(self, code: int):
         super().__init__(f"Homeassistant return response with an unrecognized status code {code!r}")
 
