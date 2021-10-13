@@ -14,3 +14,8 @@
 **v2.3.0**
 - Bug fixes (see closed issues between releases)
 - Added global request kwargs parameter to Client objects (see [docs](homeassistantapi.rtfd.io/en/latest/api.html#homeassistant_api.Client))
+
+**v2.4.0**
+- Bug fixes (see closed issues between releases)
+- Added a processing framework for hooking into mimetype processing
+- Fixed some issues with some ``AsyncClient`` methods
