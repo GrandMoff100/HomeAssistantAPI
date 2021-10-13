@@ -5,7 +5,7 @@ from os.path import join as path
 from typing import List, Union, Tuple, Coroutine
 
 from .models import Group, Entity, State, Domain, JsonModel, Event
-from .errors import APIConfigurationError
+from .errors import APIConfigurationError, MalformedInputError
 from .rawapi import RawWrapper
 
 
@@ -26,7 +26,6 @@ class RawClient(RawWrapper):
     # Response processing methods
     def process_services_json(self, json: dict) -> Domain:
         """Constructs Domain and Service models from json data"""
-
         domain = Domain(json.get('domain'), self)
         for service_id, data in json.get('services').items():
             domain.add_service(service_id, **data)
@@ -43,12 +42,11 @@ class RawClient(RawWrapper):
     # API information methods
     def api_error_log(self) -> str:
         """Returns the server error log as a string"""
-        return self.request('error_log', return_text=True)
+        return self.request('error_log')
 
     def api_config(self) -> dict:
         """Returns the yaml configuration of homeassistant"""
-        res = self.request('config')
-        return res
+        return self.request('config')
 
     def logbook_entries(
         self,
@@ -159,9 +157,11 @@ class RawClient(RawWrapper):
         elif entity_id is not None:
             state = self.get_state(entity_id=entity_id)
         else:
-            raise ValueError('Neither group and slug or entity_id provided. {help_msg}'.format(
-                help_msg='Use keyword arguments to pass entity_id. Or you can pass the entity_group and entity_slug instead'
-            ))
+            raise ValueError(
+                'Neither group and slug or entity_id provided. {help_msg}'.format(
+                    help_msg='Use keyword arguments to pass entity_id. Or you can pass the entity_group and entity_slug instead'
+                )
+            )
         group_id, entity_slug = state.entity_id.split('.')
         group = Group(group_id, self)
         group.add_entity(entity_slug, state)
@@ -203,18 +203,23 @@ class RawClient(RawWrapper):
             entity_id = group + '.' + slug
         elif entity_id is None:
             raise ValueError('Neither group and slug or entity_id provided.')
+        if self.malformed_id(entity_id):
+            raise MalformedInputError(f"The entity_id, {entity_id!r}, is malformed")
+        
         data = self.request(path('states', entity_id))
         return self.process_state_json(data)
 
     def set_state(self, entity_id: str = None, state: str = None, group: str = None, slug: str = None, **payload) -> State:
         """Sets the state of the entity given (does not have to be a real entity) and returns the updated state"""
         if (group is None or slug is None) and entity_id is None:
-            raise ValueError('To use group or slug you need to pass both not just one.'
+            raise ValueError('To use group or slug you need to pass both not just one. '
                              'Make sure you are using keyword arguments.')
         if group is not None and slug is not None:
             entity_id = group + '.' + slug
         elif entity_id is None:
             raise ValueError('Neither group and slug or entity_id provided.')
+        if self.malformed_id(entity_id):
+            raise MalformedInputError(f"The entity_id, {entity_id!r}, is malformed")
         if state is None:
             raise ValueError('required parameter "state" is missing')
         payload.update(state=state)

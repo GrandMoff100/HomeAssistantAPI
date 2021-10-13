@@ -197,7 +197,7 @@ class AsyncClient(Client):
         group_id, entity_slug = state.entity_id.split('.')
         group = AsyncGroup(group_id, self)
         group.add_entity(entity_slug, state)
-        return await group.get_entity(entity_slug)
+        return group.get_entity(entity_slug)
 
     # Services and domain methods
     async def get_domains(self) -> JsonModel:
