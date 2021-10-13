@@ -61,6 +61,7 @@ class Processing:
             print(self.response.content)
             raise UnexpectedStatusCodeError(self.response.status_code)
 
+
 # List of default processors
 @Processing.processor("application/json")
 def process_json(response):

@@ -76,7 +76,7 @@ class AsyncClient(Client):
             except asyncio.exceptions.TimeoutError:
                 raise RequestError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
         return await self.response_logic(resp)
-    
+
     async def response_logic(self, response):
         return await Processing(response).process(_async=True)
 
@@ -197,7 +197,7 @@ class AsyncClient(Client):
         group_id, entity_slug = state.entity_id.split('.')
         group = AsyncGroup(group_id, self)
         group.add_entity(entity_slug, state)
-        return await group.get_entity(entity_slug)
+        return group.get_entity(entity_slug)
 
     # Services and domain methods
     async def get_domains(self) -> JsonModel:

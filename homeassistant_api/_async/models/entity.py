@@ -27,7 +27,7 @@ class AsyncEntity(Entity):
 
     def __repr__(self) -> str:
         """Returns a readable string indentifying each Entity"""
-        return f'<AsyncEntity entity_id="{self.entity_id}" state="{self.state}">'
+        return f'<AsyncEntity entity_id="{self.entity_id}" state="{self.state.state}">'
 
     async def get_state(self) -> AsyncState:
         """Returns the state last fetched from the api."""

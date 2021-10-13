@@ -40,7 +40,7 @@ class Entity:
 
     def __repr__(self) -> str:
         """Returns a readable string indentifying each Entity"""
-        return f'<Entity entity_id="{self.entity_id}" state="{self.state}">'
+        return f'<Entity entity_id="{self.entity_id}" state="{self.state.state}">'
 
     def get_state(self) -> State:
         """Returns the state last fetched from the api."""
