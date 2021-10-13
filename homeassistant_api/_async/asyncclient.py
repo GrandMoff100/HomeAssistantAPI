@@ -76,7 +76,7 @@ class AsyncClient(Client):
             except asyncio.exceptions.TimeoutError:
                 raise RequestError(f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)')
         return await self.response_logic(resp)
-    
+
     async def response_logic(self, response):
         return await Processing(response).process(_async=True)
 

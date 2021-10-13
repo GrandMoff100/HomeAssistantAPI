@@ -205,7 +205,6 @@ class RawClient(RawWrapper):
             raise ValueError('Neither group and slug or entity_id provided.')
         if self.malformed_id(entity_id):
             raise MalformedInputError(f"The entity_id, {entity_id!r}, is malformed")
-        
         data = self.request(path('states', entity_id))
         return self.process_state_json(data)
 
