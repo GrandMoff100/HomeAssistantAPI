@@ -45,13 +45,13 @@ Installation with pip is really easy and will install the dependencies this proj
 .. code-block:: bash
 
    # To install the latest stable version from Pypi
-   pip install homeassistant_api
+   $ pip install homeassistant_api
 
    # To install the latest dev version
-   pip install git+https://github.com/GrandMoff100/HomeassistantAPI/tree/dev
+   $ pip install git+https://github.com/GrandMoff100/HomeassistantAPI/tree/dev
 
    # Example of installing a pre-release
-   pip install homeassistant_api==2.0.0a1
+   $ pip install homeassistant_api==2.0.0a1
 
 
 Installating with :code:`git`

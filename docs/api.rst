@@ -3,6 +3,7 @@ Code Reference
 
 .. currentmodule:: homeassistant_api
 
+
 Clients
 --------
 
@@ -54,3 +55,34 @@ Data Models
 
 .. autoclass:: homeassistant_api._async.AsyncEvent
    :members:
+
+
+Processing
+-----------
+
+
+.. autoclass:: Processing
+   :members:
+
+
+Exceptions
+-----------
+
+.. autoclass:: RequestError
+
+.. autoclass:: MalformedDataError
+
+.. autoclass:: MalformedInputError
+
+.. autoclass:: APIConfigurationError
+
+.. autoclass:: ParameterMissingError
+
+.. autoclass:: UnexpectedStatusCodeError
+
+.. autoclass:: UnauthorizedError
+
+.. autoclass:: EndpointNotFoundError
+
+.. autoclass:: MethodNotAllowedError
+

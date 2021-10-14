@@ -16,6 +16,8 @@ from .errors import (
 
 
 class Processing:
+    """The class uses to processors (functions) to convert data from homeassistsant into python data types via mimetypes."""
+
     response: requests.Response = None
     _processors: dict = {}
     _async_processors: dict = {}
@@ -23,17 +25,26 @@ class Processing:
     def __init__(self, response):
         self.response = response
 
-    def processor(mimetype: str):
+    @staticmethod
+    def processor(mimetype: str, override=False):
+        """A decorator used to register a response converter function."""
         def register_processor(processor):
-            Processing._processors.update({mimetype: processor})
+            if mimetype not in Processing._processors or override:
+                Processing._processors.update({mimetype: processor})
+            return processor
         return register_processor
 
-    def async_processor(mimetype: str):
+    @staticmethod
+    def async_processor(mimetype: str, override=False):
+        """A decorator used to register an async response converter function."""
         def register_async_processor(async_processor):
-            Processing._async_processors.update({mimetype: async_processor})
+            if mimetype not in Processing._async_processors or override:
+                Processing._async_processors.update({mimetype: async_processor})
+            return async_processor
         return register_async_processor
 
     def process_content(self, _async: bool):
+        """Looks up processors by content-type and then calls the processor with the response."""
         mimetype = self.response.headers.get('content-type')
         if _async:
             processor = self._async_processors.get(mimetype, async_process_text)
@@ -42,6 +53,7 @@ class Processing:
         return processor(self.response)
 
     def process(self, _async=False):
+        """Validates the http status code before starting to process the repsonse content"""
         if _async:
             status_code = self.response.status
         else:
@@ -65,6 +77,7 @@ class Processing:
 # List of default processors
 @Processing.processor("application/json")
 def process_json(response):
+    """Returns the json dict content of the response."""
     try:
         return response.json()
     except (
@@ -76,11 +89,13 @@ def process_json(response):
 
 @Processing.processor("text/plain")
 def process_text(response):
+    """Returns the plaintext of the reponse."""
     return response.text
 
 
 @Processing.async_processor("application/json")
 async def async_process_json(response):
+    """Returns the json dict content of the response."""
     try:
         return await response.json()
     except (
@@ -92,4 +107,5 @@ async def async_process_json(response):
 
 @Processing.async_processor("text/plain")
 async def async_process_text(response):
+    """Returns the plaintext of the reponse."""
     return await response.text()
