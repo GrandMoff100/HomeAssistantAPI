@@ -26,17 +26,21 @@ class Processing:
         self.response = response
 
     @staticmethod
-    def processor(mimetype: str):
+    def processor(mimetype: str, override=False):
         """A decorator used to register a response converter function."""
         def register_processor(processor):
-            Processing._processors.update({mimetype: processor})
+            if mimetype not in Processing._processors or override:
+                Processing._processors.update({mimetype: processor})
+            return processor
         return register_processor
 
     @staticmethod
-    def async_processor(mimetype: str):
+    def async_processor(mimetype: str, override=False):
         """A decorator used to register an async response converter function."""
         def register_async_processor(async_processor):
-            Processing._async_processors.update({mimetype: async_processor})
+            if mimetype not in Processing._async_processors or override:
+                Processing._async_processors.update({mimetype: async_processor})
+            return processor
         return register_async_processor
 
     def process_content(self, _async: bool):
