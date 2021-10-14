@@ -17,7 +17,7 @@ from .errors import (
 
 class Processing:
     """The class uses to processors (functions) to convert data from homeassistsant into python data types via mimetypes."""
-    
+
     response: requests.Response = None
     _processors: dict = {}
     _async_processors: dict = {}
@@ -40,7 +40,7 @@ class Processing:
         def register_async_processor(async_processor):
             if mimetype not in Processing._async_processors or override:
                 Processing._async_processors.update({mimetype: async_processor})
-            return processor
+            return async_processor
         return register_async_processor
 
     def process_content(self, _async: bool):
