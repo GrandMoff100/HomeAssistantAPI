@@ -31,8 +31,8 @@ class ParameterMissingError(HomeassistantAPIError):
 class UnexpectedStatusCodeError(HomeassistantAPIError):
     """Error raised when Homeassistant returns a response with status code that was unexpected."""
 
-    def __init__(self, code: int):
-        super().__init__(f"Homeassistant return response with an unrecognized status code {code!r}")
+    def __init__(self, code: int, content):
+        super().__init__(f"Homeassistant return response with an unrecognized status code {code!r}.\n{content}")
 
 
 class UnauthorizedError(HomeassistantAPIError):

@@ -15,7 +15,7 @@ To register a response processor you need to import the Processing class and the
     from homeassistant_api.processing import process_json
 
 
-    @Processing.processor("text/plain", override=True)
+    @Processing.processor("application/octet-stream", override=True)
     def text_processor(response):
         return response.text.lower()
 
@@ -33,9 +33,10 @@ To register a response processor you need to import the Processing class and the
     client = Client(url, token)
     print(client.get_entities())
 
+
 In this example. 
 The first processor (a function wrapped with the processor decorator) is going to be called when we receive a response that has that as its :code:`Content-Type` header.
-Because :code:`homeassistant_api` provides processors for :code:`text/plain` and :code:`application/json` by default,
+Because :code:`homeassistant_api` provides processors for :code:`application/octet-stream` and :code:`application/json` by default,
 we need to tell :code:`homeassistant_api` to override the default processor with :code:`override=True`.
 
 The second processor is an async processor that only gets called when AsyncClient receives a response that has :code:`text/csv` as its :code:`Content-Type` header.
@@ -43,4 +44,6 @@ If you wanted to override :code:`homeassistant_api`'s default json processing us
 Such as using instead, the :code:`ujson` module (which is faster but more limiting).
 
 The third processor function implements the default processor function for the :code:`application/json` mimetype after printing a string.
-If you wanted to run some intermediate processing 
+If you wanted to run some intermediate processing.
+
+Most likely the only processors you will ever use are :code:`application/json` and :code:`application/octet-stream`
