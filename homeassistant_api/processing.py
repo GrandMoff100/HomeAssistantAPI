@@ -70,8 +70,7 @@ class Processing:
             raise MethodNotAllowedError(self.response.request.method)
         else:
             print("If this happened, please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues with the request status code and the request content")
-            print(self.response.content)
-            raise UnexpectedStatusCodeError(self.response.status_code)
+            raise UnexpectedStatusCodeError(self.response.status_code, self.response.content)
 
 
 # List of default processors
@@ -87,7 +86,7 @@ def process_json(response):
         raise MalformedDataError(f'Homeassistant responded with non-json response: {repr(response.text)}')
 
 
-@Processing.processor("text/plain")
+@Processing.processor("application/octet-stream")
 def process_text(response):
     """Returns the plaintext of the reponse."""
     return response.text
@@ -105,7 +104,7 @@ async def async_process_json(response):
         raise MalformedDataError(f'Homeassistant responded with non-json response: {repr(await response.text())}')
 
 
-@Processing.async_processor("text/plain")
+@Processing.async_processor("application/octet-stream")
 async def async_process_text(response):
     """Returns the plaintext of the reponse."""
     return await response.text()

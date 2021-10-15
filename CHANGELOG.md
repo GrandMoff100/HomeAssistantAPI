@@ -19,3 +19,7 @@
 - Bug fixes (see closed issues between releases)
 - Added a processing framework for hooking into mimetype processing
 - Fixed some issues with some ``AsyncClient`` methods
+
+**v2.4.0.post1**
+- Replaced `text/plain` with `application/octet-stream` in docs and processing module.
+- Added message content to UnrecognizedStatusCodeError to help with user debugging
