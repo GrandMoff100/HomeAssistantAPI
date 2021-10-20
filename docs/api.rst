@@ -68,21 +68,21 @@ Processing
 Exceptions
 -----------
 
-.. autoclass:: RequestError
+.. autoclass:: homeassistant_api.errors.RequestError
 
-.. autoclass:: MalformedDataError
+.. autoclass:: homeassistant_api.errors.MalformedDataError
 
-.. autoclass:: MalformedInputError
+.. autoclass:: homeassistant_api.errors.MalformedInputError
 
-.. autoclass:: APIConfigurationError
+.. autoclass:: homeassistant_api.errors.APIConfigurationError
 
-.. autoclass:: ParameterMissingError
+.. autoclass:: homeassistant_api.errors.ParameterMissingError
 
-.. autoclass:: UnexpectedStatusCodeError
+.. autoclass:: homeassistant_api.errors.UnexpectedStatusCodeError
 
-.. autoclass:: UnauthorizedError
+.. autoclass:: homeassistant_api.errors.UnauthorizedError
 
-.. autoclass:: EndpointNotFoundError
+.. autoclass:: homeassistant_api.errors.EndpointNotFoundError
 
-.. autoclass:: MethodNotAllowedError
+.. autoclass:: homeassistant_api.errors.MethodNotAllowedError
 
