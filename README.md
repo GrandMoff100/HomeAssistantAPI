@@ -14,8 +14,7 @@ Python Wrapper for Homeassistant's [REST API](https://developers.home-assistant.
 
 Please ⭐️ the repo if you find this project useful or cool!
 
-For contributing guidelines see towards the bottom.
-
+Here is a quick example.
 ```py
 from homeassistant_api import Client
 
@@ -24,10 +23,14 @@ client = Client(
     '<Long Lived Access Token>'
 )
 
-client.get_domains().cover.open_garage(entity_id='cover.my_garage_door')
+services = client.get_domains()
+
+services.light.turn_on(entity_id='light.living_room_lamp')
 ```
 
 # Documentation
-All documentation, api reference, Contribution guidelines and pretty much everything else you'd want to know is on our readthedocs site [here](https://homeassistantapi.rtfd.io)
+All documentation, API reference, Contribution guidelines and pretty much everything else you'd want to know is on our readthedocs site [here](https://homeassistantapi.rtfd.io)
 
 If theres something missing open an issue and let us know! Thanks!
+
+Go make some cool stuff! Maybe come back and tell us about it in a [discussion](https://github.com/GrandMoff100/HomeAssistantAPI/discussions)? We'd love to hear about how you use our library!!
