@@ -6,11 +6,25 @@
 
 .. image:: ./images/homeassistant-logo.png
 
-
 Welcome to Homeassistant API!
 =============================
 
 Homeassistant API is a pythonic module that interacts with `Homeassistant's REST API integration <https://developers.home-assistant.io/docs/api/rest>`_
+
+Index
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   Home <self>
+   quickstart
+   usage
+   faq
+   api
+   processing
+   credits
+
 
 Features
 ----------
@@ -24,16 +38,6 @@ Getting Started
 -------------------
 
 Is this your first time using the library? This is the place to get started!
-
-.. toctree::
-   :maxdepth: 1
-
-   Home <index>
-   quickstart
-   usage
-   faq
-   api
-   processing
 
 
 Example

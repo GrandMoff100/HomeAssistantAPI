@@ -62,5 +62,16 @@ body {
     padding: 0.4% 0.4% 0.3%;
     background: #e8e8e8;
     border: transparent;
-    /* font-weight: bold; */
+}
+
+.ethical-rst {
+    visibility: hidden;
+}
+
+.wy-side-nav-search {
+    background: #4a94c4;
+}
+
+.version {
+    color: #d9d9d9;
 }
