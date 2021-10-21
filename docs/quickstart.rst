@@ -1,3 +1,4 @@
+***********
 Quickstart
 ***********
 
@@ -9,7 +10,7 @@ Homeassistant
 Before using this library, you need to have Homeassistant OS running on a device.
 Something like a Rasberry Pi or spare laptop.
 If you don't want to do that you can setup a Homeassistant container on your laptop or desktop with docker.
-See `here <https://www.home-assistant.io/installation/>`_ for how to install the installation right for you.
+See `here <https://www.home-assistant.io/installation/>`__ for how to install the installation right for you.
 
 
 
@@ -25,7 +26,7 @@ The :code:`api` integration is also enabled when you enable the :code:`default_c
 Access Token
 --------------
 Then once you have done that you need to head over to your profile and set up a "Long Lived Access Token" to input to your script later.
-A good guide on how to do that is `here <https://www.home-assistant.io/docs/authentication/#your-account-profile>`_
+A good guide on how to do that is `here <https://www.home-assistant.io/docs/authentication/#your-account-profile>`__
 
 Exposing Homeassistant to the Web
 --------------------------------------
