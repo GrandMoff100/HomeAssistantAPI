@@ -14,5 +14,5 @@ from .errors import (
     MethodNotAllowedError
 )
 
-__version__ = '2.4.0.post1'
+__version__ = '2.4.0.post2'
 __name__ = 'Homeassistant API'

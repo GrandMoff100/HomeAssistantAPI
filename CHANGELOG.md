@@ -23,3 +23,6 @@
 **v2.4.0.post1**
 - Replaced `text/plain` with `application/octet-stream` in docs and processing module.
 - Added message content to UnrecognizedStatusCodeError to help with user debugging
+
+**v2.4.0.post2**
+- Fixed wrong check in malformed_id function
