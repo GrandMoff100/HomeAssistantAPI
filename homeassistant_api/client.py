@@ -126,7 +126,7 @@ class RawClient(RawWrapper):
             ' ' in entity_id,
             '.' not in entity_id,
             '-' in entity_id,
-            entity_id.lower() == entity_id
+            entity_id.lower() != entity_id
         ]
         return True in checks
 
