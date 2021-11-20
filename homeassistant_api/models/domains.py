@@ -77,4 +77,7 @@ class Service:
         return [
             self.domain.client.process_state_json(state_data)
             for state_data in data
-        ]
+        ]   
+
+    def __call__(self, **service_data):
+        return self.trigger(**service_data)
