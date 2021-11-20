@@ -25,7 +25,7 @@ client = Client(
 
 services = client.get_domains()
 
-services.light.turn_on(entity_id='light.living_room_lamp')
+services.light.turn_on.trigger(entity_id='light.living_room_lamp')
 ```
 
 # Documentation
