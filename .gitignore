@@ -9,14 +9,10 @@ __pycache__/
 # Pycharm
 .idea/
 venv/
-core/
 
 # Repl.it
 .replit
-pyproject.toml
-poetry.lock
-*.expl
-dev.py
+.breakpoints
 
 # Distribution / packaging
 .Python

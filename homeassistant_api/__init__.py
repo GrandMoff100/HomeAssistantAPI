@@ -1,18 +1,15 @@
 from .client import Client, RawClient
-from .models import Group, Entity, Domain, Service, State, Event
-from .processing import Processing
 from .errors import (
+    APIConfigurationError,
+    EndpointNotFoundError,
     HomeassistantAPIError,
-    RequestError,
     MalformedDataError,
     MalformedInputError,
-    APIConfigurationError,
+    MethodNotAllowedError,
     ParameterMissingError,
-    UnexpectedStatusCodeError,
+    RequestError,
     UnauthorizedError,
-    EndpointNotFoundError,
-    MethodNotAllowedError
+    UnexpectedStatusCodeError,
 )
-
-__version__ = '2.4.0.post2'
-__name__ = 'Homeassistant API'
+from .models import Domain, Entity, Event, Group, Service, State
+from .processing import Processing

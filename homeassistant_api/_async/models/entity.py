@@ -1,21 +1,20 @@
 """Module for Entity and entity Group data models"""
 
 from os.path import join as path
-from .states import AsyncState
 
-from ...models import Group, Entity
+from ...models import Entity, Group
+from .states import AsyncState
 
 
 class AsyncGroup(Group):
     """Represents the groups that entities belong to"""
+
     def __repr__(self):
-        return f'<AsyncGroup {self.group_id}>'
+        return f"<AsyncGroup {self.group_id}>"
 
     def add_entity(self, entity_slug: str, state: AsyncState) -> None:
         """Registers entities to this Group object"""
-        self.entities.update({
-            entity_slug: AsyncEntity(entity_slug, state, self)
-        })
+        self.entities.update({entity_slug: AsyncEntity(entity_slug, state, self)})
 
     def get_entity(self, entity_slug: str):
         """Returns Entity with the given name if it exists. Otherwise returns None"""
@@ -36,22 +35,16 @@ class AsyncEntity(Entity):
 
     async def fetch_state(self) -> AsyncState:
         """Asks homeassistant for the state of the entity and sets it locally"""
-        state_data = self.group.client.request(path(
-            'states',
-            self.entity_id
-        ))
+        state_data = self.group.client.request(path("states", self.entity_id))
         self.state = self.group.client.process_state_json(state_data)
         return self.state
 
     async def set_state(self, state: AsyncState) -> AsyncState:
         """Tells homeassistant to set the given State object (you can construct the state object yourself)"""
         state_data = await self.group.client.request(
-            path(
-                'states',
-                self.group.group_id + '.' + self.id
-            ),
-            method='POST',
-            json=state
+            path("states", self.group.group_id + "." + self.id),
+            method="POST",
+            json=state,
         )
         self.state = self.group.client.process_state_json(state_data)
         return self.state
@@ -59,4 +52,4 @@ class AsyncEntity(Entity):
     @property
     def entity_id(self):
         """Constructs the entity_id string from its group and slug"""
-        return self.group.group_id + '.' + self.id
+        return self.group.group_id + "." + self.id

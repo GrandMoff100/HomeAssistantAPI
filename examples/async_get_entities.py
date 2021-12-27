@@ -1,9 +1,10 @@
-import os
 import asyncio
+import os
+
 from homeassistant_api import AsyncClient
 
-url = os.getenv('HOMEASSISTANT_API_ENDPOINT')
-token = os.getenv('HOMEASSISTANT_API_TOKEN')
+url = os.getenv("HOMEASSISTANT_API_ENDPOINT")
+token = os.getenv("HOMEASSISTANT_API_TOKEN")
 
 
 async def main():

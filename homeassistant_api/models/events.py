@@ -16,15 +16,10 @@ class Event:
         self.client = client
 
     def __repr__(self):
-        return f'<Event {self.event_type}>'
+        return f"<Event {self.event_type}>"
 
     def fire(self, **event_data):
         data = self.client.request(
-            path(
-                'events',
-                self.event_type
-            ),
-            method='POST',
-            json=event_data
+            path("events", self.event_type), method="POST", json=event_data
         )
-        return data.get('message', 'No message provided')
+        return data.get("message", "No message provided")

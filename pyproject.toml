@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "Home Assistant API"
+version = "2.4.1"
+description = "Python Wrapper for Homeassistant's REST API"
+authors = ["GrandMoff100 <minecraftcrusher100@gmail.com>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+homepage = "https://github.com/GrandMoff100/HomeAssistantAPI"
+repository = "https://github.com/GrandMoff100/HomeAssistantAPI"
+documentation = "https://homeassistantapi.rtfd.io"
+packages = [
+    { include = "homeassistant_api" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "^2.26.0"
+simplejson = "^3.17.6"
+aiohttp = {version = "^3.8.1", extras = ["async"]}
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+black = "^21.12b0"
+mypy = "^0.920"
+pytest = "^6.2.5"
+
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -18,13 +18,11 @@ class Domain:
 
     def __repr__(self) -> str:
         """Returns readable string indentifying each Domain class"""
-        return f'<Domain {self.domain_id}>'
+        return f"<Domain {self.domain_id}>"
 
     def add_service(self, service_id: str, **data) -> None:
         """Registers services into a domain to be used or accessed"""
-        self.services.update({
-            service_id: Service(service_id, self, **data)
-        })
+        self.services.update({service_id: Service(service_id, self, **data)})
 
     def get_service(self, service_id: str):
         """Return a Service with the given service_id, returns None if no such service exists"""
@@ -49,7 +47,7 @@ class Service:
         name: str = None,
         description: str = None,
         fields: dict = None,
-        target: dict = None
+        target: dict = None,
     ) -> None:
         self.id = service_id
         self.domain = domain
@@ -66,18 +64,13 @@ class Service:
         """Triggers the service associated with this object."""
 
         data = self.domain.client.request(
-            path(
-                'services',
-                self.domain.domain_id,
-                self.id
-            ),
-            method='POST',
-            json=service_data
+            path("services", self.domain.domain_id, self.id),
+            method="POST",
+            json=service_data,
         )
         return [
-            self.domain.client.process_state_json(state_data)
-            for state_data in data
-        ]   
+            self.domain.client.process_state_json(state_data) for state_data in data
+        ]
 
     def __call__(self, **service_data):
         return self.trigger(**service_data)

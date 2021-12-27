@@ -17,13 +17,11 @@ class AsyncDomain(Domain):
         super().__init__(*args, **kwargs)
 
     def __repr__(self):
-        return f'<AsyncDomain {self.domain_id}>'
+        return f"<AsyncDomain {self.domain_id}>"
 
     def add_service(self, service_id: str, **data) -> None:
         """Registers services into a domain to be used or accessed"""
-        self.services.update({
-            service_id: AsyncService(service_id, self, **data)
-        })
+        self.services.update({service_id: AsyncService(service_id, self, **data)})
 
     def get_service(self, service_id: str):
         """Return a Service with the given service_id, returns None if no such service exists"""
@@ -40,15 +38,10 @@ class AsyncService(Service):
         """Triggers the service associated with this object."""
 
         data = await self.domain.client.request(
-            path(
-                'services',
-                self.domain.domain_id,
-                self.id
-            ),
-            method='POST',
-            json=service_data
+            path("services", self.domain.domain_id, self.id),
+            method="POST",
+            json=service_data,
         )
         return [
-            self.domain.client.process_state_json(state_data)
-            for state_data in data
+            self.domain.client.process_state_json(state_data) for state_data in data
         ]
