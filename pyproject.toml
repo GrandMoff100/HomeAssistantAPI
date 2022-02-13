@@ -26,7 +26,6 @@ black = "^21.12b0"
 mypy = "^0.920"
 pytest = "^6.2.5"
 
-
 [tool.isort]
 profile = "black"
 

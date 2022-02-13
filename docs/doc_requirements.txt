@@ -1,4 +1,3 @@
 sphinx-rtd-theme
-simplejson
-requests
-aiohttp
+toml
+types-toml
