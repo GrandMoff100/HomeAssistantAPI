@@ -15,10 +15,12 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Install flake8
-        run: pip install flake8
-      - name: Run flake8
-        uses: suo/flake8-github-action@releases/v1
-        with:
-          checkName: 'flake8_py3'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install poetry
+          poetry install
+      - name: Run Linters
+        run: |
+          black homeassistant_api --check
+          isort homeassistant_api --check-only
+          mypy homeasistant_api --show-error-codes
+          pylint homeasistant_api

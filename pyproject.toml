@@ -17,6 +17,7 @@ python = "^3.7"
 requests = "^2.26.0"
 simplejson = "^3.17.6"
 aiohttp = {version = "^3.8.1", extras = ["async"]}
+pre-commit = "^2.17.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
@@ -28,6 +29,11 @@ pytest = "^6.2.5"
 
 [tool.isort]
 profile = "black"
+
+[tool.pylint.messages_control]
+disable = [
+    "invalid-name"
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
