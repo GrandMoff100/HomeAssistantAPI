@@ -1,7 +1,8 @@
 """File for Service and Domain data models"""
 
+from dataclasses import dataclass
 from os.path import join as path
-from typing import List
+from typing import List, Optional
 
 from .base import JsonModel
 from .states import State
@@ -37,34 +38,26 @@ class Domain:
         return super().__getattribute__(attr)
 
 
+@dataclass()
 class Service:
     """Class representing services from homeassistant"""
 
-    def __init__(
-        self,
-        service_id: str,
-        domain: Domain,
-        name: str = None,
-        description: str = None,
-        fields: dict = None,
-        target: dict = None,
-    ) -> None:
-        self.id = service_id
-        self.domain = domain
-        self.name = name
-        self.description = description
-        self.fields = fields
-        self.target = target
+    service_id: str
+    domain: Domain
+    name: Optional[str] = None
+    description: Optional[str] = None
+    fields: Optional[dict] = None
+    target: Optional[dict] = None
 
     def __repr__(self):
         """Returns a readable string indentifying each Service"""
-        return f'<Service {self.id} domain="{self.domain.domain_id}">'
+        return f'<Service {self.service_id} domain="{self.domain.domain_id}">'
 
     def trigger(self, **service_data) -> List[State]:
         """Triggers the service associated with this object."""
 
         data = self.domain.client.request(
-            path("services", self.domain.domain_id, self.id),
+            path("services", self.domain.domain_id, self.service_id),
             method="POST",
             json=service_data,
         )

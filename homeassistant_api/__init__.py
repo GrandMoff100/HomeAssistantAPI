@@ -1,4 +1,6 @@
-from .client import Client, RawClient
+"""Imports all module stuff for convenience."""
+from ._async import AsyncClient
+from .client import Client
 from .errors import (
     APIConfigurationError,
     EndpointNotFoundError,

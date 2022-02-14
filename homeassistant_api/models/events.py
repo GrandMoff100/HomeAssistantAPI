@@ -19,6 +19,7 @@ class Event:
         return f"<Event {self.event_type}>"
 
     def fire(self, **event_data):
+        """Fires the corresponding event in Home Assistant."""
         data = self.client.request(
             path("events", self.event_type), method="POST", json=event_data
         )

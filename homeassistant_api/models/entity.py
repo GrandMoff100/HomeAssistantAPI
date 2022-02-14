@@ -43,7 +43,6 @@ class Entity:
 
     def get_state(self) -> State:
         """Returns the state last fetched from the api."""
-        # TODO: add caching
         return self.state
 
     def fetch_state(self) -> State:
@@ -53,7 +52,10 @@ class Entity:
         return self.state
 
     def set_state(self, state: State) -> State:
-        """Tells homeassistant to set the given State object (you can construct the state object yourself)"""
+        """
+        Tells homeassistant to set the given State object.
+        (You can construct the state object yourself.)
+        """
         state_data = self.group.client.request(
             path("states", self.group.group_id + "." + self.id),
             method="POST",

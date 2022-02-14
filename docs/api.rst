@@ -50,9 +50,6 @@ Data Models
 .. autoclass:: homeassistant_api._async.AsyncEntity
    :members:
 
-.. autoclass:: homeassistant_api._async.AsyncState
-   :members:
-
 .. autoclass:: homeassistant_api._async.AsyncEvent
    :members:
 

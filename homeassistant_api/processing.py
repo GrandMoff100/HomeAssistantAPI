@@ -16,9 +16,9 @@ from .errors import (
 
 
 class Processing:
-    """The class uses to processors (functions) to convert data from homeassistsant into python data types via mimetypes."""
+    """Uses to processor functions to convert json data into common python data types."""
 
-    response: requests.Response = None
+    response: requests.Response
     _processors: dict = {}
     _async_processors: dict = {}
 
@@ -64,21 +64,22 @@ class Processing:
             status_code = self.response.status_code
         if status_code in (200, 201):
             return self.process_content(_async)
-        elif status_code == 400:
-            raise RequestError(self.request.content)
-        elif status_code == 401:
+        if status_code == 400:
+            raise RequestError(self.response.content)
+        if status_code == 401:
             raise UnauthorizedError()
-        elif status_code == 404:
+        if status_code == 404:
             raise EndpointNotFoundError(self.response.url)
-        elif status_code == 405:
+        if status_code == 405:
             raise MethodNotAllowedError(self.response.request.method)
-        else:
-            print(
-                "If this happened, please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues with the request status code and the request content"
-            )
-            raise UnexpectedStatusCodeError(
-                self.response.status_code, self.response.content
-            )
+        print(
+            "If this happened, "
+            "please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues "
+            "with the request status code and the request content"
+        )
+        raise UnexpectedStatusCodeError(
+            self.response.status_code, self.response.content
+        )
 
 
 # List of default processors
@@ -87,10 +88,10 @@ def process_json(response):
     """Returns the json dict content of the response."""
     try:
         return response.json()
-    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
+    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError) as err:
         raise MalformedDataError(
             f"Homeassistant responded with non-json response: {repr(response.text)}"
-        )
+        ) from err
 
 
 @Processing.processor("application/octet-stream")
@@ -104,10 +105,10 @@ async def async_process_json(response):
     """Returns the json dict content of the response."""
     try:
         return await response.json()
-    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
+    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError) as err:
         raise MalformedDataError(
             f"Homeassistant responded with non-json response: {repr(await response.text())}"
-        )
+        ) from err
 
 
 @Processing.async_processor("application/octet-stream")

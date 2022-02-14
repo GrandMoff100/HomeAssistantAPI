@@ -1,0 +1,31 @@
+name: Code Standards
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  code_styling:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Install Dependencies
+        run: |
+          pip install poetry
+          poetry config virtualenvs.create false
+          poetry install
+      - name: Run Black
+        run: black homeassistant_api --check
+      - name: Run iSort
+        run: isort homeassistant_api --check-only
+      - name: Run Flake8
+        run: flake8 homeassistant_api
+      - name: Run MyPy
+        run: mypy homeassistant_api --show-error-codes
+      - name: Run PyLint
+        run: pylint homeassistant_api

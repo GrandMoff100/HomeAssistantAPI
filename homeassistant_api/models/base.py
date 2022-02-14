@@ -8,6 +8,7 @@ class JsonModel(dict):
 
     def __init__(self, json: dict = None, **kwargs) -> None:
         """Updates self with passed json data and kwargs"""
+        super().__init__()
         if json:
             self.update(json)
         if kwargs:

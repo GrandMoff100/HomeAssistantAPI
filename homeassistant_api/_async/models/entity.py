@@ -1,9 +1,7 @@
 """Module for Entity and entity Group data models"""
+from os.path import join
 
-from os.path import join as path
-
-from ...models import Entity, Group
-from .states import AsyncState
+from ...models import Entity, Group, State
 
 
 class AsyncGroup(Group):
@@ -12,7 +10,7 @@ class AsyncGroup(Group):
     def __repr__(self):
         return f"<AsyncGroup {self.group_id}>"
 
-    def add_entity(self, entity_slug: str, state: AsyncState) -> None:
+    def add_entity(self, entity_slug: str, state: State) -> None:
         """Registers entities to this Group object"""
         self.entities.update({entity_slug: AsyncEntity(entity_slug, state, self)})
 
@@ -28,26 +26,24 @@ class AsyncEntity(Entity):
         """Returns a readable string indentifying each Entity"""
         return f'<AsyncEntity entity_id="{self.entity_id}" state="{self.state.state}">'
 
-    async def get_state(self) -> AsyncState:
+    async def async_get_state(self) -> State:
         """Returns the state last fetched from the api."""
-        # TODO: add caching
         return self.state
 
-    async def fetch_state(self) -> AsyncState:
+    async def async_fetch_state(self) -> State:
         """Asks homeassistant for the state of the entity and sets it locally"""
-        state_data = self.group.client.request(path("states", self.entity_id))
+        state_data = self.group.client.async_request(join("states", self.entity_id))
         self.state = self.group.client.process_state_json(state_data)
         return self.state
 
-    async def set_state(self, state: AsyncState) -> AsyncState:
-        """Tells homeassistant to set the given State object (you can construct the state object yourself)"""
-        state_data = await self.group.client.request(
-            path("states", self.group.group_id + "." + self.id),
-            method="POST",
-            json=state,
+    async def async_set_state(self, state: State) -> State:
+        """Tells homeassistant to set the given State object."""
+        return await self.group.client.async_set_state(
+            self.entity_id,
+            group=self.group.group_id,
+            slug=self.id,
+            **state,
         )
-        self.state = self.group.client.process_state_json(state_data)
-        return self.state
 
     @property
     def entity_id(self):

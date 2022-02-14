@@ -1,4 +1,4 @@
-# Configuration file for the Sphinx documentation builder.
+"""Configuration file for the Sphinx documentation builder."""
 #
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
@@ -13,22 +13,23 @@
 import os
 import sys
 
+import toml  # type: ignore[import]
+
 sys.path.insert(0, os.path.abspath("../"))
 sys.path.append(os.path.abspath("extensions"))
-
-from homeassistant_api import __version__
 
 # -- Project information -----------------------------------------------------
 
 project = "Homeassistant API"
-copyright = "2021, Nate Larsen"
+copyright = "2021, Nate Larsen"  # pylint: disable=redefined-builtin
 author = "Nate Larsen"
 
 # The full version, including alpha/beta/rc tags
-
-version = __version__
-release = version
-
+try:
+    data = toml.load("../pyproject.toml")
+    release = version = data["tool"]["poetry"]["version"]
+except KeyError:
+    release = version = "1.0.0"
 
 # -- General configuration ---------------------------------------------------
 
@@ -42,7 +43,7 @@ branch = (
     else "v" + version
 )
 
-extensions = ["sphinx.ext.autodoc", "resourcelinks"]
+extensions = ["sphinx.ext.autodoc", "resourcelinks", "sphinx_autodoc_typehints"]
 
 resource_links = {
     "repo": "https://github.com/GrandMoff100/HomeassistantAPI/",
