@@ -26,6 +26,6 @@ jobs:
       - name: Run Flake8
         run: flake8 homeassistant_api
       - name: Run MyPy
-        run: mypy homeasistant_api --show-error-codes
-      - name: Runn PyLint
-        run: pylint homeasistant_api
+        run: mypy homeassistant_api --show-error-codes
+      - name: Run PyLint
+        run: pylint homeasisstant_api
