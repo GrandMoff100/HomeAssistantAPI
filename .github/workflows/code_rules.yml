@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  flake8_py3:
+  code_styling:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python
@@ -18,9 +18,13 @@ jobs:
         run: |
           pip install poetry
           poetry install
-      - name: Run Linters
-        run: |
-          black homeassistant_api --check
-          isort homeassistant_api --check-only
-          mypy homeasistant_api --show-error-codes
-          pylint homeasistant_api
+      - name: Run Black
+        run: black homeassistant_api --check
+      - name: Run iSort
+        run: isort homeassistant_api --check-only
+      - name: Run Flake8
+        run: flake8 homeasistant_api
+      - name: Run MyPy
+        run: mypy homeasistant_api --show-error-codes
+      - name: Runn PyLint
+        run: pylint homeasistant_api
