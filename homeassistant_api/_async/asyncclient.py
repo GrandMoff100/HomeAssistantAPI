@@ -1,18 +1,18 @@
 import asyncio
 from datetime import datetime
 from os.path import join as path
-from typing import List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union, cast
 
 import aiohttp
 
-from ..client import Client, RawClient
+from ..client import RawWrapper
 from ..errors import APIConfigurationError, MalformedDataError, RequestError
-from ..models import JsonModel
+from ..models import JsonModel, State
 from ..processing import Processing
-from .models import AsyncDomain, AsyncEntity, AsyncEvent, AsyncGroup, AsyncState
+from .models import AsyncDomain, AsyncEntity, AsyncEvent, AsyncGroup
 
 
-class AsyncClient(Client):
+class AsyncClient(RawWrapper):
     """
     The async equivalent of :class:`Client`
 
@@ -22,7 +22,7 @@ class AsyncClient(Client):
     """
 
     def __init__(self, *args, global_request_kwargs: dict = None, **kwargs):
-        super(RawClient, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if global_request_kwargs:
             self.global_request_kwargs.update(global_request_kwargs)
 
@@ -38,8 +38,12 @@ class AsyncClient(Client):
         pass
 
     # Very important request function
-    async def request(
-        self, path, method="GET", headers: dict = None, **kwargs
+    async def async_request(
+        self,
+        path,
+        method="GET",
+        headers: dict = None,
+        **kwargs,
     ) -> Union[dict, list, str]:
         """Base method for making requests to the api"""
         if headers is None:
@@ -71,14 +75,17 @@ class AsyncClient(Client):
     # Response processing methods
     def process_services_json(self, json: dict) -> AsyncDomain:
         """Constructs Domain and Service models from json data"""
-        domain = AsyncDomain(json.get("domain"), self)
-        for service_id, data in json.get("services").items():
+        domain = AsyncDomain(cast(str, json.get("domain")), self)
+        services = json.get("services")
+        if services is None:
+            raise ValueError("Missing services atrribute in passed json argument.")
+        for service_id, data in services.items():
             domain.add_service(service_id, **data)
         return domain
 
-    def process_state_json(self, json: dict) -> AsyncState:
+    def process_state_json(self, json: dict) -> State:
         """Constructs State model from json data"""
-        return AsyncState(**json)
+        return State(**json)
 
     def process_event_json(self, json: dict) -> AsyncEvent:
         """Constructs Event model from json data"""
@@ -87,11 +94,11 @@ class AsyncClient(Client):
     # API information methods
     async def api_error_log(self) -> str:
         """Returns the server error log as a string"""
-        return await self.request("error_log", return_text=True)
+        return cast(str, await self.async_request("error_log", return_text=True))
 
     async def api_config(self) -> dict:
         """Returns the yaml configuration of homeassistant"""
-        return await self.request("config")
+        return cast(dict, await self.async_request("config"))
 
     async def logbook_entries(
         self,
@@ -99,7 +106,8 @@ class AsyncClient(Client):
         timestamp: Union[str, datetime] = None,  # Defaults to 1 day before
         end_timestamp: Union[str, datetime] = None,
     ) -> dict:
-        return await super().logbook_entries(filter_entity, timestamp, end_timestamp)
+        # TODO: Implement async logbook_entries
+        pass
 
     async def get_history(
         self,
@@ -109,35 +117,40 @@ class AsyncClient(Client):
         minimal_state_data=False,
         significant_changes_only=False,
     ) -> Union[dict, list, str]:
-        return await super().get_history(
-            entities,
-            timestamp,
-            end_timestamp,
-            minimal_state_data,
-            significant_changes_only,
-        )
+        # TODO: Implement async get_history
+        pass
 
     async def get_rendered_template(self, template: str):
-        return await self.request(
-            "template", json=dict(template=template), return_text=True, method="POST"
+        return await self.async_request(
+            "template",
+            json=dict(template=template),
+            return_text=True,
+            method="POST",
         )
 
     async def get_discovery_info(self) -> dict:
         """Returns a dictionary of discovery info such as internal_url and version"""
-        return await self.request("discovery_info")
+        return cast(dict, await self.async_request("discovery_info"))
 
     # API check methods
-    async def check_api_config(self) -> True:
+    async def check_api_config(self) -> bool:
         """Asks homeassistant to validate its configuration file"""
-        res = await self.request("config/core/check_config", method="POST")
-        valid = {"valid": True, "invalid": False}.get(res["result"], None)
-        if not valid:
+        res = await self.async_request("config/core/check_config", method="POST")
+        res = cast(Dict[Any, Any], res)
+        valid = {"valid": True, "invalid": False}.get(
+            cast(
+                str,
+                res["result"],
+            ),
+            False,
+        )
+        if valid is False:
             raise APIConfigurationError(res["errors"])
         return valid
 
-    async def check_api_running(self) -> True:
+    async def check_api_running(self) -> bool:
         """Asks homeassistant if its running"""
-        res = await self.request("")
+        res = cast(Dict[Any, Any], await self.async_request(""))
         if res.get("message", None) == "API running.":
             return True
         else:
@@ -187,38 +200,52 @@ class AsyncClient(Client):
                 )
             )
         group_id, entity_slug = state.entity_id.split(".")
-        group = AsyncGroup(group_id, self)
-        group.add_entity(entity_slug, state)
-        return group.get_entity(entity_slug)
+        group = AsyncGroup(cast(str, group_id), self)
+        group.add_entity(cast(str, entity_slug), state)
+        return group.get_entity(cast(str, entity_slug))
 
     # Services and domain methods
     async def get_domains(self) -> JsonModel:
         """Fetches all Services from the api"""
-        services = await self.request("services")
-        services = [self.process_services_json(data) for data in services]
+        services = await self.async_request("services")
+        services = [
+            self.process_services_json(data)
+            for data in cast(List[Dict[Any, Any]], services)
+        ]
         services = {service.domain_id: service for service in services}
         return JsonModel(services)
 
     async def trigger_service(
-        self, domain: str, service: str, **service_data
-    ) -> List[AsyncState]:
+        self,
+        domain: str,
+        service: str,
+        **service_data,
+    ) -> List[State]:
         """Tells homeassistant to trigger a service, returns stats changed while being called"""
-        data = await self.request(
-            path("services", domain, service), method="POST", json=service_data
+        data = await self.async_request(
+            path("services", domain, service),
+            method="POST",
+            json=service_data,
         )
-        return [self.process_state_json(state_data) for state_data in data]
+        return [
+            self.process_state_json(state_data)
+            for state_data in cast(List[Dict[Any, Any]], data)
+        ]
 
     # EntityState methods
     async def get_state(
-        self, entity_id: str = None, group: str = None, slug: str = None
-    ) -> AsyncState:
+        self,
+        entity_id: str = None,
+        group: str = None,
+        slug: str = None,
+    ) -> State:
         """Fetches the state of the entity specified"""
         if group is not None and slug is not None:
             entity_id = group + "." + slug
         elif entity_id is None:
             raise ValueError("Neither group and slug or entity_id provided.")
-        data = await self.request(path("states", entity_id))
-        return self.process_state_json(data)
+        data = await self.async_request(path("states", entity_id))
+        return self.process_state_json(cast(Dict[Any, Any], data))
 
     async def set_state(
         self,
@@ -227,7 +254,7 @@ class AsyncClient(Client):
         group: str = None,
         slug: str = None,
         **payload,
-    ) -> AsyncState:
+    ) -> State:
         """Sets the state of the entity given (does not have to be a real entity) and returns the updated state"""
         if group is None or slug is None:
             raise ValueError(
@@ -241,27 +268,38 @@ class AsyncClient(Client):
         if state is None:
             raise ValueError('required parameter "state" is missing')
         payload.update(state=state)
-        data = await self.request(
+        data = await self.async_request(
             path("states", entity_id), method="POST", json=payload
         )
-        return self.process_state_json(data)
+        return self.process_state_json(cast(Dict[Any, Any], data))
 
-    async def get_states(self) -> List[AsyncState]:
+    async def get_states(self) -> List[State]:
         """Gets the states of all entitites within homeassistant"""
-        data = await self.request("states")
-        return [self.process_state_json(state_data) for state_data in data]
+        data = await self.async_request("states")
+        return [
+            self.process_state_json(state_data)
+            for state_data in cast(List[Dict[Any, Any]], data)
+        ]
 
     # Event methods
     async def get_events(self) -> JsonModel:
         """Gets the Events that happen within homeassistant"""
-        data = await self.request("events")
-        events = [self.process_event_json(event_info) for event_info in data]
-        events = {evt.event_type: evt for evt in events}
-        return JsonModel(events)
+        data = await self.async_request("events")
+        if not isinstance(data, list):
+            events = [
+                self.process_event_json(event_info)
+                for event_info in cast(List[Dict[Any, Any]], data)
+            ]
+            return JsonModel({evt.event_type: evt for evt in events})
+        raise TypeError()  # TODO: Add error description here
 
     async def fire_event(self, event_type: str, **event_data) -> str:
         """Fires a given event_type within homeassistant. Must be an existing event_type."""
-        data = await self.request(
+        data = await self.async_request(
             path("events", event_type), method="POST", json=event_data
         )
+        if not isinstance(data, dict):
+            raise TypeError(
+                f"Invalid return type from API. Expected {dict!r} got {type(data)!r}"
+            )
         return data.get("message", "No message provided")

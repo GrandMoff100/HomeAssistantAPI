@@ -1,7 +1,7 @@
 """Module for parent RawWrapper class"""
 
 import os
-from typing import Union
+from typing import Dict, Union
 
 import requests
 
@@ -12,7 +12,7 @@ from .processing import Processing
 class RawWrapper:
     """Builds, and makes requests to the API"""
 
-    global_request_kwargs = {}
+    global_request_kwargs: Dict[str, str] = {}
 
     def __init__(self, api_url: str, token: str) -> None:
         """Prepares and stores API URL and Love Lived Access Token token"""
@@ -23,8 +23,7 @@ class RawWrapper:
 
     def endpoint(self, path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""
-        url = os.path.join(self.api_url, path)
-        return url
+        return os.path.join(self.api_url, path)
 
     @property
     def _headers(self) -> dict:
@@ -35,7 +34,11 @@ class RawWrapper:
         }
 
     def request(
-        self, path, method="GET", headers: dict = None, **kwargs
+        self,
+        path,
+        method="GET",
+        headers: dict = None,
+        **kwargs,
     ) -> Union[dict, list, str]:
         """Base method for making requests to the api"""
         if headers is None:
@@ -47,12 +50,12 @@ class RawWrapper:
                 f'headers must be dict or dict subclass, not type "{type(headers).__name__}"'
             )
         try:
+            kwargs.update(self.global_request_kwargs)
             resp = requests.request(
                 method,
                 self.endpoint(path),
                 headers=headers,
                 **kwargs,
-                **self.global_request_kwargs,
             )
         except requests.exceptions.Timeout:
             raise RequestError(

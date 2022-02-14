@@ -1,3 +1,5 @@
+"""Imports all module stuff for convenience."""
+from ._async import AsyncClient
 from .client import Client, RawClient
 from .errors import (
     APIConfigurationError,

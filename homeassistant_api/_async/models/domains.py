@@ -3,18 +3,11 @@
 from os.path import join as path
 from typing import List
 
-from ...models import Domain, Service
-from .states import AsyncState
+from ...models import Domain, Service, State
 
 
 class AsyncDomain(Domain):
     """A class representing the domain that services belong to."""
-
-    async def __new__(cls):
-        return cls
-
-    async def __init__(*args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     def __repr__(self):
         return f"<AsyncDomain {self.domain_id}>"
@@ -34,11 +27,15 @@ class AsyncService(Service):
     def __repr__(self):
         return f'<AsyncService {self.id} domain="{self.domain.domain_id}">'
 
-    async def trigger(self, **service_data) -> List[AsyncState]:
+    async def async_trigger(self, **service_data) -> List[State]:
         """Triggers the service associated with this object."""
 
         data = await self.domain.client.request(
-            path("services", self.domain.domain_id, self.id),
+            path(
+                "services",
+                self.domain.domain_id,
+                self.service_id,
+            ),
             method="POST",
             json=service_data,
         )

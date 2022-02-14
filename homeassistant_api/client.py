@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from os.path import join as path
-from typing import Coroutine, List, Tuple, Union
+from typing import Any, Coroutine, Dict, List, Optional, Tuple, Union, cast
 
 from .const import DATE_FMT
 from .errors import APIConfigurationError, MalformedInputError
@@ -25,8 +25,11 @@ class RawClient(RawWrapper):
     # Response processing methods
     def process_services_json(self, json: dict) -> Domain:
         """Constructs Domain and Service models from json data"""
-        domain = Domain(json.get("domain"), self)
-        for service_id, data in json.get("services").items():
+        domain = Domain(cast(str, json.get("domain")), self)
+        services = json.get("services")
+        if services is None:
+            raise ValueError("Missing services atrribute in passed json argument.")
+        for service_id, data in services.items():
             domain.add_service(service_id, **data)
         return domain
 
@@ -41,19 +44,19 @@ class RawClient(RawWrapper):
     # API information methods
     def api_error_log(self) -> str:
         """Returns the server error log as a string"""
-        return self.request("error_log")
+        return cast(str, self.request("error_log"))
 
     def api_config(self) -> dict:
         """Returns the yaml configuration of homeassistant"""
-        return self.request("config")
+        return cast(dict, self.request("config"))
 
     def logbook_entries(
         self,
         filter_entity: Entity = None,
         timestamp: Union[str, datetime] = None,  # Defaults to 1 day before
         end_timestamp: Union[str, datetime] = None,
-    ) -> Union[List[dict], Coroutine]:
-        params = {}
+    ) -> List[dict]:
+        params: Dict[str, str] = {}
         if filter_entity is not None:
             params.update(entity=filter_entity.entity_id)
         if end_timestamp is not None:
@@ -66,59 +69,65 @@ class RawClient(RawWrapper):
             url = path("logbook", timestamp)
         else:
             url = "logbook"
-        return self.request(url, params=params)
+        return cast(List[dict], self.request(url, params=params))
 
     def get_history(
         self,
         entities: Tuple[Entity] = None,
-        timestamp: datetime = None,  # Defaults to 1 day before
+        timestamp: datetime = None,  # Defaults to 1 day before. Ref:
         end_timestamp: datetime = None,
-        minimal_state_data=False,
-        significant_changes_only=False,
-    ) -> Union[dict, list, str, Coroutine]:
-        params = {}
+        minimal_state_data: bool = False,
+        significant_changes_only: bool = False,
+    ) -> Union[dict, list, str, Coroutine[Any, Any, Union[dict, list, str]]]:
+        params: Dict[str, Optional[str]] = {}
+
         if entities is not None:
-            params.update(
-                filter_entity_id=",".join([ent.entity_id for ent in entities])
-            )
-        if end_timestamp:
-            end_timestamp = end_timestamp.strftime(FMT)
-            params.update(end_time=end_timestamp)
+            params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
+        if end_timestamp is not None:
+            params["end_time"] = end_timestamp.strftime(DATE_FMT)
         if minimal_state_data:
-            params.update(minimal_response=None)
+            params["minimal_response"] = None
         if significant_changes_only:
-            params.update(significant_changes_only=None)
+            params["significant_changes_only"] = None
         if timestamp is not None:
             if isinstance(timestamp, datetime):
-                timestamp = timestamp.strftime(FMT)
-            url = path("history/period", timestamp)
+                formatted_timestamp = timestamp.strftime(DATE_FMT)
+                url = path("history/period", formatted_timestamp)
+            else:
+                raise TypeError(f"timestamp needs to be of type {datetime!r}")
         else:
             url = "history/period"
         return self.request(url, params=self.construct_params(params))
 
     def get_rendered_template(self, template: str) -> str:
-        return self.request(
-            "template", json=dict(template=template), return_text=True, method="POST"
+        return cast(
+            str,
+            self.request(
+                "template",
+                json=dict(template=template),
+                return_text=True,
+                method="POST",
+            ),
         )
 
     def get_discovery_info(self) -> dict:
         """Returns a dictionary of discovery info such as internal_url and version"""
         res = self.request("discovery_info")
-        return res
+        return cast(dict, res)
 
     # API check methods
-    def check_api_config(self) -> True:
+    def check_api_config(self) -> bool:
         """Asks homeassistant to validate its configuration file"""
-        res = self.request("config/core/check_config", method="POST")
-        valid = {"valid": True, "invalid": False}.get(res["result"], None)
-        if not valid:
+        res = cast(dict, self.request("config/core/check_config", method="POST"))
+        valid = {"valid": True, "invalid": False}.get(res["result"], False)
+        if valid is False:
             raise APIConfigurationError(res["errors"])
         return valid
 
-    def check_api_running(self) -> True:
+    def check_api_running(self) -> bool:
         """Asks homeassistant if its running"""
         res = self.request("")
-        if res.get("message", None) == "API running.":
+        if cast(dict, res).get("message", None) == "API running.":
             return True
         else:
             raise ValueError("Server response did not return message attribute")
@@ -166,24 +175,25 @@ class RawClient(RawWrapper):
                 )
             )
         group_id, entity_slug = state.entity_id.split(".")
-        group = Group(group_id, self)
-        group.add_entity(entity_slug, state)
-        return group.get_entity(entity_slug)
+        group = Group(cast(str, group_id), self)
+        group.add_entity(cast(str, entity_slug), state)
+        return group.get_entity(cast(str, entity_slug))
 
     # Services and domain methods
     def get_domains(self) -> JsonModel:
         """Fetches all Services from the api"""
-        services = self.request("services")
-        services = [self.process_services_json(data) for data in services]
-        services = {service.domain_id: service for service in services}
-        return JsonModel(services)
+        data = self.request("services")
+        services = [self.process_services_json(data) for data in cast(List[dict], data)]
+        return JsonModel({service.domain_id: service for service in services})
 
     def trigger_service(self, domain: str, service: str, **service_data) -> List[State]:
         """Tells homeassistant to trigger a service, returns stats changed while being called"""
         data = self.request(
             path("services", domain, service), method="POST", json=service_data
         )
-        return [self.process_state_json(state_data) for state_data in data]
+        return [
+            self.process_state_json(state_data) for state_data in cast(List[dict], data)
+        ]
 
     # EntityState methods
     def get_state(
@@ -197,7 +207,7 @@ class RawClient(RawWrapper):
         if self.malformed_id(entity_id):
             raise MalformedInputError(f"The entity_id, {entity_id!r}, is malformed")
         data = self.request(path("states", entity_id))
-        return self.process_state_json(data)
+        return self.process_state_json(cast(dict, data))
 
     def set_state(
         self,
@@ -207,7 +217,10 @@ class RawClient(RawWrapper):
         slug: str = None,
         **payload,
     ) -> State:
-        """Sets the state of the entity given (does not have to be a real entity) and returns the updated state"""
+        """
+        Sets the state of an entity and it does not have to be backed by a real entity.
+        Returns the new state afterwards.
+        """
         if (group is None or slug is None) and entity_id is None:
             raise ValueError(
                 "To use group or slug you need to pass both not just one. "
@@ -222,26 +235,37 @@ class RawClient(RawWrapper):
         if state is None:
             raise ValueError('required parameter "state" is missing')
         payload.update(state=state)
-        data = self.request(path("states", entity_id), method="POST", json=payload)
-        return self.process_state_json(data)
+        data = self.request(
+            path("states", entity_id),
+            method="POST",
+            json=payload,
+        )
+        return self.process_state_json(cast(dict, data))
 
     def get_states(self) -> List[State]:
         """Gets the states of all entitites within homeassistant"""
         data = self.request("states")
-        return [self.process_state_json(state_data) for state_data in data]
+        return [
+            self.process_state_json(state_data) for state_data in cast(List[dict], data)
+        ]
 
     # Event methods
     def get_events(self) -> JsonModel:
         """Gets the Events that happen within homeassistant"""
         data = self.request("events")
-        events = [self.process_event_json(event_info) for event_info in data]
-        events = {evt.event_type: evt for evt in events}
-        return JsonModel(events)
+        events = [
+            self.process_event_json(event_info) for event_info in cast(List[dict], data)
+        ]
+        return JsonModel({evt.event_type: evt for evt in events})
 
     def fire_event(self, event_type: str, **event_data) -> str:
         """Fires a given event_type within homeassistant. Must be an existing event_type."""
-        data = self.request(path("events", event_type), method="POST", json=event_data)
-        return data.get("message", "No message provided")
+        data = self.request(
+            path("events", event_type),
+            method="POST",
+            json=event_data,
+        )
+        return cast(dict, data).get("message", "No message provided")
 
 
 class Client(RawClient):
