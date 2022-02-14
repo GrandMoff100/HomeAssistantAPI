@@ -17,6 +17,7 @@ jobs:
       - name: Install flake8
         run: |
           pip install poetry
+          poetry config virtualenvs.create false
           poetry install
       - name: Run Black
         run: black homeassistant_api --check
