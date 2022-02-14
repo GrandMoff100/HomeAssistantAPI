@@ -21,8 +21,6 @@ Index
    quickstart
    usage
    faq
-   api
-   processing
    credits
 
 
@@ -58,7 +56,8 @@ Contributing
 -------------
 
 We very warmly welcome contributions.
-If you have an idea or some code you want to add to the project please fork :resource:`the repository <repo>`, make your changes, and open a pull request. 
-Most likely your changes will get merged if your code passes flake8 without any errors, and adds some functionality to the project. 
+If you have an idea or some code you want to add to the project please fork :resource:`the repository <repo>`, make your changes, and open a pull request.
+Most likely your changes will get merged if your code passes flake8 without any errors, and adds some functionality to the project.
 We'd love to incorporate your unique ideas and perspective!
 
+We would love to give a special shoutout to `<FoxNerdSaysMoo> https://github.com/FoxNerdSaysMoo` for contributions to some of the awesome theme styling on these docs!
