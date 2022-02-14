@@ -34,7 +34,8 @@ profile = "black"
 
 [tool.pylint.messages_control]
 disable = [
-    "invalid-name"
+    "invalid-name",
+    "duplicate-code"
 ]
 
 [build-system]

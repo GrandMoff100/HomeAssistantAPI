@@ -1,6 +1,6 @@
 """File for Service and Domain data models"""
 
-from os.path import join as path
+from os.path import join
 from typing import List
 
 from ...models import Domain, Service, State
@@ -25,13 +25,13 @@ class AsyncService(Service):
     """Class representing services from homeassistant"""
 
     def __repr__(self):
-        return f'<AsyncService {self.id} domain="{self.domain.domain_id}">'
+        return f'<AsyncService {self.service_id} domain="{self.domain.domain_id}">'
 
     async def async_trigger(self, **service_data) -> List[State]:
         """Triggers the service associated with this object."""
 
         data = await self.domain.client.request(
-            path(
+            join(
                 "services",
                 self.domain.domain_id,
                 self.service_id,

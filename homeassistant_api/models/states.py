@@ -1,3 +1,4 @@
+"""Module for the Entity State model."""
 from ..errors import ParameterMissingError
 from .base import JsonModel
 

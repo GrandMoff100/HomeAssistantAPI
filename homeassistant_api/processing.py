@@ -16,7 +16,7 @@ from .errors import (
 
 
 class Processing:
-    """Uses to processor functions to convert json data from homeassistsant into common python data types."""
+    """Uses to processor functions to convert json data into common python data types."""
 
     response: requests.Response
     _processors: dict = {}
@@ -65,7 +65,7 @@ class Processing:
         if status_code in (200, 201):
             return self.process_content(_async)
         if status_code == 400:
-            raise RequestError(self.request.content)
+            raise RequestError(self.response.content)
         if status_code == 401:
             raise UnauthorizedError()
         if status_code == 404:
@@ -88,10 +88,10 @@ def process_json(response):
     """Returns the json dict content of the response."""
     try:
         return response.json()
-    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
+    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError) as err:
         raise MalformedDataError(
             f"Homeassistant responded with non-json response: {repr(response.text)}"
-        )
+        ) from err
 
 
 @Processing.processor("application/octet-stream")
@@ -105,10 +105,10 @@ async def async_process_json(response):
     """Returns the json dict content of the response."""
     try:
         return await response.json()
-    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError):
+    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError) as err:
         raise MalformedDataError(
             f"Homeassistant responded with non-json response: {repr(await response.text())}"
-        )
+        ) from err
 
 
 @Processing.async_processor("application/octet-stream")

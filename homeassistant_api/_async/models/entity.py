@@ -1,5 +1,5 @@
 """Module for Entity and entity Group data models"""
-from os.path import join as path
+from os.path import join
 
 from ...models import Entity, Group, State
 
@@ -28,24 +28,22 @@ class AsyncEntity(Entity):
 
     async def async_get_state(self) -> State:
         """Returns the state last fetched from the api."""
-        # TODO: add caching
         return self.state
 
     async def async_fetch_state(self) -> State:
         """Asks homeassistant for the state of the entity and sets it locally"""
-        state_data = self.group.client.async_request(path("states", self.entity_id))
+        state_data = self.group.client.async_request(join("states", self.entity_id))
         self.state = self.group.client.process_state_json(state_data)
         return self.state
 
     async def async_set_state(self, state: State) -> State:
         """Tells homeassistant to set the given State object."""
-        state_data = await self.group.client.async_request(
-            path("states", self.group.group_id + "." + self.id),
-            method="POST",
-            json=state,
+        return await self.group.client.async_set_state(
+            self.entity_id,
+            group=self.group.group_id,
+            slug=self.id,
+            **state,
         )
-        self.state = self.group.client.process_state_json(state_data)
-        return self.state
 
     @property
     def entity_id(self):
