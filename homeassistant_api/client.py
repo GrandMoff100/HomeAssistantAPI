@@ -4,11 +4,10 @@ from datetime import datetime
 from os.path import join as path
 from typing import Coroutine, List, Tuple, Union
 
+from .const import DATE_FMT
 from .errors import APIConfigurationError, MalformedInputError
 from .models import Domain, Entity, Event, Group, JsonModel, State
 from .rawapi import RawWrapper
-
-FMT = "%Y-%m-%dT%H:%M:%S%z"
 
 
 class RawClient(RawWrapper):
@@ -59,11 +58,11 @@ class RawClient(RawWrapper):
             params.update(entity=filter_entity.entity_id)
         if end_timestamp is not None:
             if isinstance(end_timestamp, datetime):
-                end_timestamp = end_timestamp.strftime(FMT)
+                end_timestamp = end_timestamp.strftime(DATE_FMT)
             params.update(end_time=end_timestamp)
         if timestamp is not None:
             if isinstance(timestamp, datetime):
-                timestamp = timestamp.strftime(FMT)
+                timestamp = timestamp.strftime(DATE_FMT)
             url = path("logbook", timestamp)
         else:
             url = "logbook"
