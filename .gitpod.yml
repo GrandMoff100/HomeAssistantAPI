@@ -1,4 +1,6 @@
 tasks:
+  - before: |
+      echo $GPG_KEY | base64 -d | gpg --import --pinentry=loopback --passphrase "$GPG_PASSPHRASE"
   - init: |
       pip install poetry
       poetry config virtualenvs.create false
