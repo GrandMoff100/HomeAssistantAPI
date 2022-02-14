@@ -7,3 +7,7 @@ vscode:
   extensions:
     - ms-python.python
     - matangover.mypy
+ports:
+  - port: 8000
+    visibility: public
+    onOpen: ignore

@@ -29,6 +29,10 @@ types-docutils = "^0.17.5"
 types-requests = "^2.27.9"
 types-simplejson = "^3.17.3"
 pylint = "^2.12.2"
+sphinx-rtd-theme = "^1.0.0"
+toml = "^0.10.2"
+types-toml = "^0.10.4"
+sphinx-autodoc-typehints = "^1.17.0"
 
 [tool.isort]
 profile = "black"

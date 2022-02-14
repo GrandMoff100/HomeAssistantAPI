@@ -26,7 +26,7 @@ author = "Nate Larsen"
 
 # The full version, including alpha/beta/rc tags
 try:
-    data = toml.load("pyproject.toml")
+    data = toml.load("../pyproject.toml")
     release = version = data["tool"]["poetry"]["version"]
 except KeyError:
     release = version = "1.0.0"
@@ -43,7 +43,7 @@ branch = (
     else "v" + version
 )
 
-extensions = ["sphinx.ext.autodoc", "resourcelinks", "sphinx-autodoc-typehints"]
+extensions = ["sphinx.ext.autodoc", "resourcelinks", "sphinx_autodoc_typehints"]
 
 resource_links = {
     "repo": "https://github.com/GrandMoff100/HomeassistantAPI/",

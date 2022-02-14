@@ -1,4 +1,0 @@
-sphinx-rtd-theme
-toml
-types-toml
-sphinx-autodoc-typehints
