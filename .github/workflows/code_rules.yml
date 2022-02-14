@@ -28,4 +28,4 @@ jobs:
       - name: Run MyPy
         run: mypy homeassistant_api --show-error-codes
       - name: Run PyLint
-        run: pylint homeasisstant_api
+        run: pylint homeassisstant_api
