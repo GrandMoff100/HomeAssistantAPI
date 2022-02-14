@@ -1,10 +1,13 @@
 tasks:
   - before: |
       echo $GPG_KEY | base64 -d | gpg --import --pinentry=loopback --passphrase "$GPG_PASSPHRASE"
+      echo 'pinentry-mode loopback' >> ~/.gnupg/gpg.conf
   - init: |
       pip install poetry
       poetry config virtualenvs.create false
       poetry install
+  - command: |
+  
 vscode:
   extensions:
     - ms-python.python
