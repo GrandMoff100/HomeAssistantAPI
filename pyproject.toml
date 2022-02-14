@@ -28,6 +28,7 @@ pytest = "^6.2.5"
 types-docutils = "^0.17.5"
 types-requests = "^2.27.9"
 types-simplejson = "^3.17.3"
+pylint = "^2.12.2"
 
 [tool.isort]
 profile = "black"
