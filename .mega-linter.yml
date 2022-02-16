@@ -8,5 +8,5 @@ APPLY_FIXES: all # all, none, or list of linter keys
   # - COPYPASTE # Uncomment to disable checks of excessive copy-pastes
   # - SPELL # Uncomment to disable checks of spelling mistakes
 SHOW_ELAPSED_TIME: true
-FILEIO_REPORTER: false
+FILEIO_REPORTER: true
 # DISABLE_ERRORS: true # Uncomment if you want MegaLinter to detect errors but not block CI to pass
