@@ -59,12 +59,11 @@ Contributing Guidelines
 --------------------------
 
 We very warmly welcome contributions.
-This library has come a long since its one-file humble beginning as a Saturday afternoon project with some buddies.
-But there is still much much much more to do! Which is exciting!
-If you're a developer that has an idea, suggestion or just wants to be helpful.
+This library has come a long way since its one-file humble beginning. On a Saturday afternoon with some buddies.
+But while miuch has been done already there is still much much much more to do! Which is exciting!
+If you're a developer that has an idea, suggestion or just wants to be helpful because you're nice.
 See our *newly minted* :ref:`Development page <development_page>` for contribution ideas, guidelines, procedures and what to expect with your PR.
 Happy developing! We hope to see your PRs soon.
-
 
 
 ..
