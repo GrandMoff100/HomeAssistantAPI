@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Home Assistant API"
-version = "2.4.1"
+version = "3.0.0"
 description = "Python Wrapper for Homeassistant's REST API"
 authors = ["GrandMoff100 <minecraftcrusher100@gmail.com>"]
 license = "GPL-3.0-or-later"
