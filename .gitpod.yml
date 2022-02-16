@@ -6,13 +6,11 @@ tasks:
       pip install poetry
       poetry config virtualenvs.create false
       poetry install
-  - command: |
-  
 vscode:
   extensions:
     - ms-python.python
     - matangover.mypy
-ports:
+    - rogalmic.bash-debugports:
   - port: 8000
     visibility: public
     onOpen: ignore

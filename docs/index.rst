@@ -20,23 +20,21 @@ Index
    Home <self>
    quickstart
    usage
-   faq
-   credits
+   development
 
 
 Features
 ----------
 
 - Full consumption of the Homeassistant REST API endpoints
-- Convenient classes that represent data from the API
-- Asynchronous support for integration in async applications or libraries
+- Convenient classes that represent data from the Home Assistant REST API
+- Syncrononous and Asynchronous support for integrating in with all applications and/or libraries
 - Modular design for intuitive readability
 
 Getting Started
 -------------------
 
-Is this your first time using the library? This is the place to get started!
-
+Is this your first time using the library? Start with our :ref:`Quickstart Section <quickstart>`
 
 Example
 ---------
@@ -44,20 +42,30 @@ Example
 .. literalinclude:: ../examples/basic.py
    :language: python
 
-Many more examples are available in the :resource:`repository <examples>`. Feel feel to open a pull request and add your own! See Contributing Guidelines
+Want more?
+Many more examples are available in the :resource:`repository <examples>`.
+Feel feel to open a pull request and add your own!
+See the :ref:`Contributing Section <contributing_section>`.
 
 
 Code Reference
 ---------------
-View the documentation for each class and function :doc:`here <api>`.
+View the documentation for each class and method :doc:`here <api>`.
 
 
-Contributing
--------------
+.. _contributing_section:
+
+Contributing Guidelines
+--------------------------
 
 We very warmly welcome contributions.
-If you have an idea or some code you want to add to the project please fork :resource:`the repository <repo>`, make your changes, and open a pull request.
-Most likely your changes will get merged if your code passes flake8 without any errors, and adds some functionality to the project.
-We'd love to incorporate your unique ideas and perspective!
+This library has come a long since its one-file humble beginning as a Saturday afternoon project with some buddies.
+But there is still much much much more to do! Which is exciting!
+If you're a developer that has an idea, suggestion or just wants to be helpful.
+See our *newly minted* :ref:`Development page <development_page>` for contribution ideas, guidelines, procedures and what to expect with your PR.
+Happy developing! We hope to see your PRs soon.
 
-We would love to give a special shoutout to `<FoxNerdSaysMoo> https://github.com/FoxNerdSaysMoo` for contributions to some of the awesome theme styling on these docs!
+
+
+..
+   We would love to give a special shoutout to `FoxNerdSaysMoo <https://github.com/FoxNerdSaysMoo>` for contributions to some of the awesome theme styling on these docs!
