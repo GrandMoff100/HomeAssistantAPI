@@ -38,7 +38,7 @@ class Entity:
         self.group = group
 
     def __repr__(self) -> str:
-        """Returns a readable string indentifying each Entity"""
+        """Returns a readable string identifying each Entity"""
         return f'<Entity entity_id="{self.entity_id}" state="{self.state.state}">'
 
     def get_state(self) -> State:

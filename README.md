@@ -7,7 +7,7 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/GrandMoff100/HomeassistantAPI?style=for-the-badge)
 ![GitHub release (latest by date)](https://img.shields.io/github/downloads/GrandMoff100/HomeassistantAPI/latest/total?style=for-the-badge)
 
-![Homeassistant Logo](/docs/images/homeassistant-logo.png)
+![Homeassistant Logo](https://github.com/GrandMoff100/HomeAssistantAPI/blob/7edb4e6298d37bda19c08b807613c6d351788491/docs/images/homeassistant-logo.png?raw=true)
 
 Python Wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
 
@@ -28,7 +28,7 @@ services = client.get_domains()
 services.light.turn_on(entity_id='light.living_room_lamp')
 ```
 
-# Documentation
+## Documentation
 All documentation, API reference, Contribution guidelines and pretty much everything else you'd want to know is on our readthedocs site [here](https://homeassistantapi.rtfd.io)
 
 If theres something missing open an issue and let us know! Thanks!

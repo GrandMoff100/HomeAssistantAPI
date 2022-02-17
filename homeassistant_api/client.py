@@ -63,7 +63,7 @@ class Client(RawWrapper, JsonProcessingMixin):
 
     @classmethod
     def response_logic(cls, response: requests.Response) -> Union[dict, list, str]:
-        """Processes reponses from the api and formats them"""
+        """Processes responses from the api and formats them"""
         processing = Processing(response)
         return processing.process()
 
@@ -277,7 +277,7 @@ class Client(RawWrapper, JsonProcessingMixin):
         return self.process_state_json(cast(dict, data))
 
     def get_states(self) -> List[State]:
-        """Gets the states of all entitites within homeassistant"""
+        """Gets the states of all entities within homeassistant"""
         data = self.request("states")
         return [
             self.process_state_json(state_data) for state_data in cast(List[dict], data)

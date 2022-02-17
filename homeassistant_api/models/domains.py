@@ -18,7 +18,7 @@ class Domain:
         self.services = JsonModel()
 
     def __repr__(self) -> str:
-        """Returns readable string indentifying each Domain class"""
+        """Returns readable string identifying each Domain class"""
         return f"<Domain {self.domain_id}>"
 
     def add_service(self, service_id: str, **data) -> None:
@@ -50,7 +50,7 @@ class Service:
     target: Optional[dict] = None
 
     def __repr__(self):
-        """Returns a readable string indentifying each Service"""
+        """Returns a readable string identifying each Service"""
         return f'<Service {self.service_id} domain="{self.domain.domain_id}">'
 
     def trigger(self, **service_data) -> List[State]:
