@@ -6,8 +6,6 @@ tasks:
       pip install poetry
       poetry config virtualenvs.create false
       poetry install
-  - command: |
-  
 vscode:
   extensions:
     - ms-python.python
