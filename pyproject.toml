@@ -7,7 +7,7 @@ license = "GPL-3.0-or-later"
 readme = "README.md"
 homepage = "https://github.com/GrandMoff100/HomeAssistantAPI"
 repository = "https://github.com/GrandMoff100/HomeAssistantAPI"
-documentation = "https://homeassistantapi.rtfd.io"
+documentation = "https://homeassistantapi.readthedocs.io"
 packages = [
     { include = "homeassistant_api" },
 ]
@@ -42,6 +42,9 @@ disable = [
     "invalid-name",
     "duplicate-code"
 ]
+
+[tool.bandit]
+skips = ["B105"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

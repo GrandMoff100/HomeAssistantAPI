@@ -13,7 +13,7 @@ class JsonProcessingMixin:
         domain = Domain(cast(str, json.get("domain")), self)
         services = json.get("services")
         if services is None:
-            raise ValueError("Missing services atrribute in passed json argument.")
+            raise ValueError("Missing services attribute in passed json argument.")
         for service_id, data in services.items():
             domain.add_service(service_id, **data)
         return domain

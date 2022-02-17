@@ -23,7 +23,7 @@ class AsyncEntity(Entity):
     """Represents entities inside of homeassistant"""
 
     def __repr__(self) -> str:
-        """Returns a readable string indentifying each Entity"""
+        """Returns a readable string identifying each Entity"""
         return f'<AsyncEntity entity_id="{self.entity_id}" state="{self.state.state}">'
 
     async def async_get_state(self) -> State:

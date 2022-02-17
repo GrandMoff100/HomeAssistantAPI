@@ -10,6 +10,9 @@ __pycache__/
 .idea/
 venv/
 
+# Megalinter
+report/
+
 # Repl.it
 .replit
 .breakpoints

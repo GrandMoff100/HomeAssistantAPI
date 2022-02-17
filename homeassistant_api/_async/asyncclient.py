@@ -4,7 +4,7 @@ from datetime import datetime
 from os.path import join
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
-import aiohttp
+import aiohttp  # type: ignore[import]
 
 from ..client import RawWrapper
 from ..const import DATE_FMT
@@ -280,7 +280,7 @@ class AsyncClient(RawWrapper, JsonProcessingMixin):
         return self.process_state_json(cast(Dict[Any, Any], data))
 
     async def async_get_states(self) -> List[State]:
-        """Gets the states of all entitites within homeassistant"""
+        """Gets the states of all entities within homeassistant"""
         data = await self.async_request("states")
         return [
             self.process_state_json(state_data)
