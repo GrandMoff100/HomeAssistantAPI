@@ -4,7 +4,7 @@ from datetime import datetime
 from os.path import join
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
-import aiohttp
+import aiohttp  # type: ignore[import]
 
 from ..client import RawWrapper
 from ..const import DATE_FMT

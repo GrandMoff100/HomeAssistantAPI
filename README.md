@@ -19,8 +19,8 @@ Here is a quick example.
 from homeassistant_api import Client
 
 client = Client(
-    '<API URL>',
-    '<Long Lived Access Token>'
+    '<API Server URL>',
+    '<Your Long Lived Access-Token>'
 )
 
 services = client.get_domains()
@@ -29,7 +29,7 @@ services.light.turn_on(entity_id='light.living_room_lamp')
 ```
 
 ## Documentation
-All documentation, API reference, Contribution guidelines and pretty much everything else you'd want to know is on our readthedocs site [here](https://homeassistantapi.rtfd.io)
+All documentation, API reference, Contribution guidelines and pretty much everything else you'd want to know is on our readthedocs site [here](https://homeassistantapi.readthedocs.io)
 
 If theres something missing open an issue and let us know! Thanks!
 

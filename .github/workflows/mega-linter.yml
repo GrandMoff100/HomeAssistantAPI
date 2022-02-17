@@ -48,6 +48,7 @@ jobs:
           PYTHON_ISORT_CONFIG_FILE: pyproject.toml
           PYTHON_PYLINT_CONFIG_FILE: pyproject.toml
           PYTHON_FLAKE8_CONFIG_FILE: tox.ini
+          PYTHON_BANDIT_CONFIG_FILE: pyproject.toml
 
       # Upload MegaLinter artifacts
       - name: Archive production artifacts

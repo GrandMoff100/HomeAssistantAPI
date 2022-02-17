@@ -13,7 +13,7 @@
 
 **v2.3.0**
 - Bug fixes (see closed issues between releases)
-- Added global request kwargs parameter to Client objects (see [docs](homeassistantapi.rtfd.io/en/latest/api.html))
+- Added global request kwargs parameter to Client objects (see [docs](homeassistantapi.readthedocs.io/en/latest/api.html))
 
 **v2.4.0**
 - Bug fixes (see closed issues between releases)

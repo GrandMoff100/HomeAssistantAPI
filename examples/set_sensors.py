@@ -2,7 +2,7 @@ from homeassistant_api import Client
 
 client = Client(
     "http://homeassistant.local:8123/api",
-    "eyavkjbdljbasdkjh1ip8921hgbjhl18t71lbjio8172gh",
+    "myfabulousapikey",
 )
 
 new_state = client.set_state(
