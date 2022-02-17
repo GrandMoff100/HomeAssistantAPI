@@ -29,7 +29,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.MEGALINTER_TOKEN || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       # MegaLinter
@@ -43,7 +43,7 @@ jobs:
           # https://megalinter.github.io/configuration/
           VALIDATE_ALL_CODEBASE: true # Set ${{ github.event_name == &#39;push&#39; &amp;&amp; github.ref == &#39;refs/heads/main&#39; }} to validate only diff with main branch
           APPLY_FIXES_MODE: commit
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MEGALINTER_TOKEN || secrets.GITHUB_TOKEN }}
 
       # Upload MegaLinter artifacts
       - name: Archive production artifacts
