@@ -3,27 +3,29 @@
 import os
 from typing import Dict, Optional
 
+from pydantic import BaseModel
+
 from .errors import MalformedInputError
 
 
-class RawWrapper:
+class RawWrapper(BaseModel):
     """Builds, and makes requests to the API"""
 
+    api_url: str
+    _token: str
     global_request_kwargs: Dict[str, str] = {}
 
-    def __init__(self, api_url: str, token: str) -> None:
-        """Prepares and stores API URL and Love Lived Access Token token"""
-        self.api_url = api_url
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         if not self.api_url.endswith("/"):
             self.api_url += "/"
-        self._token = token
 
     def endpoint(self, path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""
         return os.path.join(self.api_url, path)
 
     @property
-    def _headers(self) -> dict:
+    def _headers(self) -> Dict[str, str]:
         """Constructs the headers to send to the api for every request"""
         return {
             "Authorization": f"Bearer {self._token}",
@@ -46,7 +48,7 @@ class RawWrapper:
         return headers
 
     @staticmethod
-    def construct_params(params: dict) -> str:
+    def construct_params(params: Dict[str, Optional[str]]) -> str:
         """Custom method for constructing non-standard query strings"""
         return "&".join([k if v is None else f"{k}={v}" for k, v in params.items()])
 

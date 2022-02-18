@@ -1,30 +1,39 @@
 """Module for Entity and entity Group data models"""
 from os.path import join
+from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
-from ...models import Entity, Group, State
+from pydantic import BaseModel
+
+from ...models import State
+
+if TYPE_CHECKING:
+    from homeassistant_api import Client
 
 
-class AsyncGroup(Group):
+class AsyncGroup(BaseModel):
     """Represents the groups that entities belong to"""
 
-    def __repr__(self):
-        return f"<AsyncGroup {self.group_id}>"
+    group_id: str
+    client: "Client"
+    entities: Dict[str, "AsyncEntity"] = {}
 
     def add_entity(self, entity_slug: str, state: State) -> None:
         """Registers entities to this Group object"""
-        self.entities.update({entity_slug: AsyncEntity(entity_slug, state, self)})
+        self.entities.update(
+            {entity_slug: AsyncEntity(slug=entity_slug, state=state, group=self)}
+        )
 
-    def get_entity(self, entity_slug: str):
+    def get_entity(self, entity_slug: str) -> Optional["AsyncEntity"]:
         """Returns Entity with the given name if it exists. Otherwise returns None"""
-        return self.entities.get(entity_slug, None)
+        return self.entities.get(entity_slug)
 
 
-class AsyncEntity(Entity):
+class AsyncEntity(BaseModel):
     """Represents entities inside of homeassistant"""
 
-    def __repr__(self) -> str:
-        """Returns a readable string identifying each Entity"""
-        return f'<AsyncEntity entity_id="{self.entity_id}" state="{self.state.state}">'
+    slug: str
+    state: State
+    group: AsyncGroup
 
     async def async_get_state(self) -> State:
         """Returns the state last fetched from the api."""
@@ -32,8 +41,12 @@ class AsyncEntity(Entity):
 
     async def async_fetch_state(self) -> State:
         """Asks homeassistant for the state of the entity and sets it locally"""
-        state_data = self.group.client.async_request(join("states", self.entity_id))
-        self.state = self.group.client.process_state_json(state_data)
+        state_data = await self.group.client.async_request(
+            join("states", self.entity_id)
+        )
+        self.state = self.group.client.process_state_json(
+            cast(Dict[str, Any], state_data)
+        )
         return self.state
 
     async def async_set_state(self, state: State) -> State:
@@ -41,11 +54,11 @@ class AsyncEntity(Entity):
         return await self.group.client.async_set_state(
             self.entity_id,
             group=self.group.group_id,
-            slug=self.id,
-            **state,
+            slug=self.slug,
+            **state.dict(),
         )
 
     @property
     def entity_id(self):
         """Constructs the entity_id string from its group and slug"""
-        return self.group.group_id + "." + self.id
+        return self.group.group_id + "." + self.slug

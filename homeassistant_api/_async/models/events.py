@@ -1,10 +1,13 @@
 """Event Model File"""
-from typing import Dict, cast
+from typing import TYPE_CHECKING, Dict, cast
 
-from ...models import Event
+from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from homeassistant_api import Client
 
 
-class AsyncEvent(Event):
+class AsyncEvent(BaseModel):
     """
     Event class for Homeassistant Event Triggers
 
@@ -12,8 +15,9 @@ class AsyncEvent(Event):
     https://data.home-assistant.io/docs/events
     """
 
-    def __repr__(self):
-        return f"<AsyncEvent {self.event_type}>"
+    event_type: str
+    listener_count: int
+    client: "Client"
 
     async def async_fire(self, **event_data) -> str:
         """Fires the event type in homeassistant. Ex. `on_startup`"""
