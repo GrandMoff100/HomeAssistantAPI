@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from os.path import join
-from typing import Any, Dict, List, Optional, Tuple, Union, cast, Generator
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
 
 import requests
 
@@ -94,16 +94,15 @@ class RawClient(RawWrapper, JsonProcessingMixin):
 
     def get_entity_histories(self, *args, **kwargs) -> Generator[History, None, None]:
         """
-        Returns a list of entity state changes from homeassistant.
-        (Working on adding a Model for this.)
+        Yields entity state histories. See docs on the `History` model.
         """
-        params, url = self.prepare_get_history_params(*args, **kwargs)
+        params, url = self.prepare_get_entity_histories_params(*args, **kwargs)
         data = self.request(
             url,
             params=self.construct_params(params),
         )
-        for changes in data:
-            yield History.parse_obj({"changes": changes})
+        for states in data:
+            yield History.parse_obj({"states": states})
 
     def get_rendered_template(self, template: str) -> str:
         """

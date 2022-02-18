@@ -2,7 +2,7 @@
 import asyncio
 from datetime import datetime
 from os.path import join
-from typing import Any, Dict, AsyncGenerator, List, Literal, Optional, Tuple, Union, cast
+from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
 
 import aiohttp
 
@@ -97,18 +97,20 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         )
 
     async def async_get_entity_histories(
-        self, *args, **kwargs,
+        self,
+        *args,
+        **kwargs,
     ) -> AsyncGenerator[History, None]:
         """
         Returns a generator of entity state histories from homeassistant.
         """
-        params, url = self.prepare_get_history_params(*args, **kwargs)
+        params, url = self.prepare_get_entity_histories_params(*args, **kwargs)
         data = await self.async_request(
             url,
             params=self.construct_params(params),
         )
-        for changes in data:
-            yield History.parse_obj({"changes": changes})
+        for states in data:
+            yield History.parse_obj({"states": states})
 
     async def async_get_rendered_template(self, template: str):
         """Renders a given Jinja2 template string with homeassistant context data."""

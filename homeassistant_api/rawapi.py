@@ -6,9 +6,9 @@ from typing import Dict, Optional, Tuple
 
 from pydantic import BaseModel
 
+from .const import DATE_FMT
 from .errors import MalformedInputError
 from .models import Entity
-from .const import DATE_FMT
 
 
 class RawWrapper(BaseModel):
@@ -87,8 +87,8 @@ class RawWrapper(BaseModel):
             raise MalformedInputError(f"The entity_id, {entity_id!r}, is malformed")
         return entity_id
 
-    def prepare_get_history_params(  # pylint: disable=too-many-arguments
-        self,
+    @staticmethod
+    def prepare_get_entity_histories_params(
         entities: Optional[Tuple[Entity, ...]] = None,
         start_timestamp: Optional[datetime] = None,
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
@@ -96,6 +96,8 @@ class RawWrapper(BaseModel):
         minimal_state_data: bool = False,
         significant_changes_only: bool = False,
     ) -> Tuple[Dict[str, Optional[str]], str]:
+
+        """Pre-logic for `Client.get_entity_histories` and `Client.async_get_entity_histories`."""
         params: Dict[str, Optional[str]] = {}
         if entities is not None:
             params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])

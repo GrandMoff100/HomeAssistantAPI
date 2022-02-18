@@ -1,5 +1,5 @@
 """Module containing the primary Client class."""
-from typing import Dict
+from typing import Dict, Optional
 
 from ._async import RawAsyncClient
 from .rawapi import RawWrapper
@@ -13,11 +13,13 @@ class Client(RawClient, RawAsyncClient):
         self,
         api_url: str,
         token: str,
-        global_request_kwargs: Dict[str, str] = {},
+        global_request_kwargs: Optional[Dict[str, str]] = None,
     ):
         if token is None:
             raise ValueError("Access-Token cannot be None.")
-        super(RawWrapper, self).__init__(
+        if global_request_kwargs is None:
+            global_request_kwargs = {}
+        super(RawWrapper, self).__init__(  # pylint: disable=bad-super-call
             api_url=api_url,
             token=token,
             global_request_kwargs=global_request_kwargs,
