@@ -2,14 +2,14 @@
 import asyncio
 from datetime import datetime
 from os.path import join
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, AsyncGenerator, List, Literal, Optional, Tuple, Union, cast
 
 import aiohttp
 
 from ..const import DATE_FMT
 from ..errors import APIConfigurationError, MalformedDataError, RequestError
 from ..mixins import JsonProcessingMixin
-from ..models import Domain, Event, State
+from ..models import Domain, Event, History, State
 from ..processing import Processing
 from ..rawapi import RawWrapper
 from .models import AsyncEntity, AsyncGroup
@@ -39,7 +39,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         method: str = "GET",
         headers: Optional[Dict[str, str]] = None,
         **kwargs,
-    ) -> Union[dict, list, str]:
+    ) -> Union[Dict[str, Any], List[Dict[str, Any]], str]:
         """Base method for making requests to the api"""
         async with aiohttp.ClientSession() as session:
             try:
@@ -69,7 +69,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def async_api_config(self) -> Dict[str, Any]:
         """Returns the yaml configuration of homeassistant"""
-        return cast(dict, await self.async_request("config"))
+        return cast(Dict[str, Any], await self.async_request("config"))
 
     async def async_logbook_entries(
         self,
@@ -96,43 +96,19 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
             await self.async_request(url, params=params),
         )
 
-    async def async_get_history(  # pylint: disable=too-many-arguments
-        self,
-        entities: Tuple[AsyncEntity, ...] = None,
-        start_timestamp: datetime = None,  # Defaults to 1 day before
-        end_timestamp: datetime = None,
-        minimal_state_data=False,
-        significant_changes_only=False,
-    ) -> List[Dict[str, Any]]:
+    async def async_get_entity_histories(
+        self, *args, **kwargs,
+    ) -> AsyncGenerator[History, None]:
         """
-        Returns a list of entity state changes from homeassistant.
-        (Working on adding a Model for this.)
+        Returns a generator of entity state histories from homeassistant.
         """
-        params: Dict[str, Optional[str]] = {}
-
-        if entities is not None:
-            params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
-        if end_timestamp is not None:
-            params["end_time"] = end_timestamp.strftime(DATE_FMT)
-        if minimal_state_data:
-            params["minimal_response"] = None
-        if significant_changes_only:
-            params["significant_changes_only"] = None
-        if start_timestamp is not None:
-            if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-                url = join("history/period", formatted_timestamp)
-            else:
-                raise TypeError(f"timestamp needs to be of type {datetime!r}")
-        else:
-            url = "history/period"
-        return cast(
-            List[Dict[str, Any]],
-            await self.async_request(
-                url,
-                params=self.construct_params(params),
-            ),
+        params, url = self.prepare_get_history_params(*args, **kwargs)
+        data = await self.async_request(
+            url,
+            params=self.construct_params(params),
         )
+        for changes in data:
+            yield History.parse_obj({"changes": changes})
 
     async def async_get_rendered_template(self, template: str):
         """Renders a given Jinja2 template string with homeassistant context data."""
@@ -145,7 +121,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def async_get_discovery_info(self) -> Dict[str, Any]:
         """Returns a dictionary of discovery info such as internal_url and version"""
-        return cast(dict, await self.async_request("discovery_info"))
+        return cast(Dict[str, Any], await self.async_request("discovery_info"))
 
     # API check methods
     async def async_check_api_config(self) -> bool:

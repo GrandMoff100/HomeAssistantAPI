@@ -2,8 +2,8 @@
 from typing import Dict
 
 from ._async import RawAsyncClient
-from .rawclient import RawClient
 from .rawapi import RawWrapper
+from .rawclient import RawClient
 
 
 class Client(RawClient, RawAsyncClient):

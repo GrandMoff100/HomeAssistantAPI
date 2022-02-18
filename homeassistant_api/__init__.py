@@ -12,5 +12,5 @@ from .errors import (
     UnauthorizedError,
     UnexpectedStatusCodeError,
 )
-from .models import Domain, Entity, Event, Group, Service, State
+from .models import Domain, Entity, Event, Group, History, Service, State
 from .processing import Processing

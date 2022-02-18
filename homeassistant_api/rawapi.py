@@ -1,11 +1,14 @@
 """Module for parent RawWrapper class"""
 
 import os
-from typing import Dict, Optional
+from datetime import datetime
+from typing import Dict, Optional, Tuple
 
 from pydantic import BaseModel
 
 from .errors import MalformedInputError
+from .models import Entity
+from .const import DATE_FMT
 
 
 class RawWrapper(BaseModel):
@@ -27,7 +30,6 @@ class RawWrapper(BaseModel):
     @property
     def _headers(self) -> Dict[str, str]:
         """Constructs the headers to send to the api for every request"""
-        print(self)
         return {
             "Authorization": f"Bearer {self.token}",
             "Content-Type": "application/json",
@@ -84,3 +86,31 @@ class RawWrapper(BaseModel):
         if self.malformed_id(entity_id):
             raise MalformedInputError(f"The entity_id, {entity_id!r}, is malformed")
         return entity_id
+
+    def prepare_get_history_params(  # pylint: disable=too-many-arguments
+        self,
+        entities: Optional[Tuple[Entity, ...]] = None,
+        start_timestamp: Optional[datetime] = None,
+        # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
+        end_timestamp: Optional[datetime] = None,
+        minimal_state_data: bool = False,
+        significant_changes_only: bool = False,
+    ) -> Tuple[Dict[str, Optional[str]], str]:
+        params: Dict[str, Optional[str]] = {}
+        if entities is not None:
+            params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
+        if end_timestamp is not None:
+            params["end_time"] = end_timestamp.strftime(DATE_FMT)
+        if minimal_state_data:
+            params["minimal_response"] = None
+        if significant_changes_only:
+            params["significant_changes_only"] = None
+        if start_timestamp is not None:
+            if isinstance(start_timestamp, datetime):
+                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
+                url = os.path.join("history/period", formatted_timestamp)
+            else:
+                raise TypeError(f"timestamp needs to be of type {datetime!r}")
+        else:
+            url = "history/period"
+        return params, url

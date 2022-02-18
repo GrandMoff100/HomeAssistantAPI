@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
 from pydantic import BaseModel
 
-from ...models import State
+from ...models import History, State
 
 if TYPE_CHECKING:
     from homeassistant_api import Client
@@ -62,3 +62,12 @@ class AsyncEntity(BaseModel):
     def entity_id(self):
         """Constructs the entity_id string from its group and slug"""
         return self.group.group_id + "." + self.slug
+
+    async def async_get_history(self, *args, **kwargs) -> History:
+        async for history in self.group.client.async_get_entity_histories(
+            entities=(self,),
+            *args,
+            **kwargs,
+        ):
+            break
+        return history

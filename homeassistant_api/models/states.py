@@ -1,5 +1,5 @@
 """Module for the Entity State model."""
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
 
@@ -9,7 +9,7 @@ class State(BaseModel):
 
     entity_id: str
     state: str
-    attributes: Dict[str, str] = {}
+    attributes: Dict[str, Any] = {}
     last_changed: Optional[str] = None
     last_updated: Optional[str] = None
     context: Dict[str, str] = {}

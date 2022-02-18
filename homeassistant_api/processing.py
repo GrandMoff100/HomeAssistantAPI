@@ -59,8 +59,12 @@ class Processing(BaseModel):
         """Validates the http status code before starting to process the repsonse content"""
         if _async := isinstance(self.response, aiohttp.ClientResponse):
             status_code = self.response.status
-        elif _async := not isinstance(self.response, requests.Response):
+        elif (_async := not isinstance(self.response, requests.Response)) is False:
             status_code = self.response.status_code
+        else:
+            raise ValueError(
+                f"Only expected a response object from requests or aiohttp. Got {self.response!r}"
+            )
         if status_code in (200, 201):
             return self.process_content(_async)
         if status_code == 400:

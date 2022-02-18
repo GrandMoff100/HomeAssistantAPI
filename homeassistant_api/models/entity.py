@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 from pydantic import BaseModel
 
 from .states import State
+from .history import History
 
 if TYPE_CHECKING:
     from homeassistant_api import Client
@@ -76,3 +77,12 @@ class Entity(BaseModel):
     def entity_id(self):
         """Constructs the entity_id string from its group and slug"""
         return self.group.group_id + "." + self.slug
+
+    def get_history(self, *args, **kwargs) -> History:
+        for history in self.group.client.get_entity_histories(
+            entities=(self,),
+            *args,
+            **kwargs,
+        ):
+            break
+        return history
