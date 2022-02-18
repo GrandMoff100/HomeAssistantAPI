@@ -12,7 +12,7 @@ class RawWrapper(BaseModel):
     """Builds, and makes requests to the API"""
 
     api_url: str
-    _token: str
+    token: str
     global_request_kwargs: Dict[str, str] = {}
 
     def __init__(self, *args, **kwargs) -> None:
@@ -27,8 +27,9 @@ class RawWrapper(BaseModel):
     @property
     def _headers(self) -> Dict[str, str]:
         """Constructs the headers to send to the api for every request"""
+        print(self)
         return {
-            "Authorization": f"Bearer {self._token}",
+            "Authorization": f"Bearer {self.token}",
             "Content-Type": "application/json",
         }
 

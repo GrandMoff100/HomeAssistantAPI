@@ -26,6 +26,9 @@ class Processing(BaseModel):
     response: requests.Response
     _processors: Dict[str, Tuple[Callable, ...]] = {}
 
+    class Config:
+        arbitrary_types_allowed: bool = True
+
     @staticmethod
     def processor(mimetype: str):
         """A decorator used to register a response converter function."""

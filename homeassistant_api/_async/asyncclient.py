@@ -24,10 +24,6 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    api_url: str
-    token: str
-    global_request_kwargs: Dict[str, str] = {}
-
     async def __aenter__(self):
         await self.async_check_api_running()
         await self.async_check_api_config()

@@ -23,13 +23,6 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: Kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    api_url: str
-    token: str
-    global_request_kwargs: Dict[str, str] = {}
-
-    def __repr__(self) -> str:
-        return f'<Client of "{self.api_url[:20]}">'
-
     def __enter__(self):
         self.check_api_running()
         self.check_api_config()
