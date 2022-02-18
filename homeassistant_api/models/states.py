@@ -1,24 +1,15 @@
 """Module for the Entity State model."""
-from ..errors import ParameterMissingError
-from .base import JsonModel
+from typing import Dict, Optional
+
+from pydantic import BaseModel
 
 
-class State(JsonModel):
-    """A class representing a state of an entity."""
+class State(BaseModel):
+    """A model representing a state of an entity."""
 
-    def __init__(self, json: dict = None, **data):
-        super().__init__(json, **data)
-        if "entity_id" not in self:
-            raise ParameterMissingError('"entity_id" attribute is a required parameter')
-        if "state" not in self:
-            raise ParameterMissingError('"state" attribute is a required parameter')
-
-        self.update(
-            attributes=self.get("attributes", {}),
-            last_changed=self.get("last_changed", None),
-            last_updated=self.get("last_updated", None),
-            context=self.get("context", {}),
-        )
-
-    def __repr__(self):
-        return f'<EntityState "{self.state}">'
+    entity_id: str
+    state: str
+    attributes: Dict[str, str] = {}
+    last_changed: Optional[str] = None
+    last_updated: Optional[str] = None
+    context: Dict[str, str] = {}

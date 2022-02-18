@@ -1,5 +1,4 @@
-"""Imports all module stuff for convenience."""
-from ._async import AsyncClient
+"""Imports all library stuff for convenience."""
 from .client import Client
 from .errors import (
     APIConfigurationError,

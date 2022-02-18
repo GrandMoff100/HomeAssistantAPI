@@ -1,5 +1,5 @@
 """Module for processing JSON data from homeassistant."""
-from typing import cast
+from typing import Any, Dict, cast
 
 from ._async.models import AsyncDomain, AsyncEvent
 from .models import Domain, Event, State
@@ -8,9 +8,9 @@ from .models import Domain, Event, State
 class JsonProcessingMixin:
     """Converts different JSON model types from homeassistant."""
 
-    def process_services_json(self, json: dict) -> Domain:
+    def process_services_json(self, json: Dict[str, Any]) -> Domain:
         """Constructs Domain and Service models from json data"""
-        domain = Domain(cast(str, json.get("domain")), self)
+        domain = Domain(domain_id=cast(str, json.get("domain")), client=self)
         services = json.get("services")
         if services is None:
             raise ValueError("Missing services attribute in passed json argument.")
@@ -19,17 +19,20 @@ class JsonProcessingMixin:
         return domain
 
     @staticmethod
-    def process_state_json(json: dict) -> State:
+    def process_state_json(json: Dict[str, Any]) -> State:
         """Constructs State model from json data"""
         return State(**json)
 
-    def process_event_json(self, json: dict) -> Event:
+    def process_event_json(self, json: Dict[str, Any]) -> Event:
         """Constructs Event model from json data"""
         return Event(**json, client=self)
 
-    async def async_process_services_json(self, json: dict) -> AsyncDomain:
+    async def async_process_services_json(
+        self,
+        json: Dict[str, Any],
+    ) -> AsyncDomain:
         """Constructs Domain and Service models from json data"""
-        domain = AsyncDomain(cast(str, json.get("domain")), self)
+        domain = AsyncDomain(domain_id=cast(str, json.get("domain")), client=self)
         services = json.get("services")
         if services is None:
             raise ValueError("Missing services atrribute in passed json argument.")
@@ -38,10 +41,13 @@ class JsonProcessingMixin:
         return domain
 
     @staticmethod
-    async def async_process_state_json(json: dict) -> State:
+    async def async_process_state_json(json: Dict[str, Any]) -> State:
         """Constructs State model from json data"""
         return State(**json)
 
-    async def async_process_event_json(self, json: dict) -> AsyncEvent:
+    async def async_process_event_json(
+        self,
+        json: Dict[str, Any],
+    ) -> AsyncEvent:
         """Constructs Event model from json data"""
         return AsyncEvent(**json, client=self)
