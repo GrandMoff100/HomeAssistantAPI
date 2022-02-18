@@ -1,15 +1,19 @@
 import asyncio
 import os
 
-from homeassistant_api import AsyncClient
+from homeassistant_api import Client
 
 url = os.getenv("HOMEASSISTANT_API_ENDPOINT")
 token = os.getenv("HOMEASSISTANT_API_TOKEN")
 
 
 async def main():
-    async with AsyncClient(url, token) as client:
-        data = await client.get_entities()
+    # Initialize main object
+    client = Client(url, token)
+    # Uses async context manager to ping the server.
+    async with client:
+        # All async methods are prefixed with `async_`.
+        data = await client.async_get_entities()
         print(data)
 
 
