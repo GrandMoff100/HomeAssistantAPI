@@ -5,6 +5,7 @@ from os.path import join
 from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
 
 import requests
+from requests_cache import CachedSession
 
 from .const import DATE_FMT
 from .errors import APIConfigurationError, RequestError
@@ -22,6 +23,8 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     :param token: The refresh or long lived access token to authenticate your requests. Required.
     :param global_request_kwargs: Kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
+
+    _session: CachedSession = CachedSession(expire_after=30, backend="memory")
 
     def __enter__(self):
         self.check_api_running()
@@ -42,7 +45,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         try:
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
-            resp = requests.request(
+            resp = self._session.request(
                 method,
                 self.endpoint(path),
                 headers=self.prepare_headers(headers),

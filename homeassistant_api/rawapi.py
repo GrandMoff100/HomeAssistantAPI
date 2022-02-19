@@ -4,22 +4,29 @@ import os
 from datetime import datetime
 from typing import Dict, Optional, Tuple
 
-from pydantic import BaseModel
-
 from .const import DATE_FMT
 from .errors import MalformedInputError
 from .models import Entity
 
 
-class RawWrapper(BaseModel):
+class RawWrapper:
     """Builds, and makes requests to the API"""
 
     api_url: str
     token: str
-    global_request_kwargs: Dict[str, str] = {}
+    global_request_kwargs: Dict[str, str]
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(
+        self,
+        api_url: str,
+        token: str,
+        global_request_kwargs: Optional[Dict[str, str]] = None,
+    ) -> None:
+        self.api_url = api_url
+        self.token = token
+        if global_request_kwargs is None:
+            global_request_kwargs = {}
+        self.global_request_kwargs = global_request_kwargs
         if not self.api_url.endswith("/"):
             self.api_url += "/"
 
