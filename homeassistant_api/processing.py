@@ -2,12 +2,14 @@
 
 import inspect
 import json
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict, Tuple, Union
 
-import aiohttp
-import requests
 import simplejson
+from aiohttp import ClientResponse
+from aiohttp_client_cache.response import CachedResponse as AsyncCachedResponse
 from pydantic import BaseModel
+from requests import Response
+from requests_cache import CachedResponse
 
 from .errors import (
     EndpointNotFoundError,
@@ -23,10 +25,12 @@ from .errors import (
 class Processing(BaseModel):
     """Uses to processor functions to convert json data into common python data types."""
 
-    response: requests.Response
+    response: Union[Response, CachedResponse, ClientResponse, AsyncCachedResponse]
     _processors: Dict[str, Tuple[Callable, ...]] = {}
 
-    class Config:
+    class Config:  # pylint: disable=too-few-public-methods
+        """A pydantic config class."""
+
         arbitrary_types_allowed: bool = True
 
     @staticmethod
@@ -43,7 +47,8 @@ class Processing(BaseModel):
 
     def process_content(self, _async: bool):
         """Looks up processors by content-type and then calls the processor with the response."""
-        mimetype = self.response.headers.get("content-type", "text/plain")
+
+        mimetype = self.response.headers.get("content-type", "text/plain")  # type: ignore[arg-type]
         for processor in self._processors.get(mimetype, ()):
             if not _async ^ inspect.iscoroutinefunction(processor):
                 return processor(self.response)
@@ -57,9 +62,11 @@ class Processing(BaseModel):
 
     def process(self):
         """Validates the http status code before starting to process the repsonse content"""
-        if _async := isinstance(self.response, aiohttp.ClientResponse):
+        if _async := isinstance(self.response, ClientResponse):
             status_code = self.response.status
-        elif (_async := not isinstance(self.response, requests.Response)) is False:
+        elif _async := isinstance(self.response, AsyncCachedResponse):
+            status_code = self.response.status
+        elif (_async := not isinstance(self.response, Response)) is False:
             status_code = self.response.status_code
         else:
             raise ValueError(

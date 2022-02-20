@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
 from pydantic import BaseModel
 
-from .states import State
 from .history import History
+from .states import State
 
 if TYPE_CHECKING:
     from homeassistant_api import Client
@@ -79,6 +79,8 @@ class Entity(BaseModel):
         return self.group.group_id + "." + self.slug
 
     def get_history(self, *args, **kwargs) -> History:
+        """Gets the previous `State`'s of the `Entity`"""
+        history = None
         for history in self.group.client.get_entity_histories(
             entities=(self,),
             *args,

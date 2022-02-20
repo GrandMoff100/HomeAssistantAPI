@@ -5,6 +5,7 @@ from os.path import join
 from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
 
 import requests
+from requests_cache import CachedSession
 
 from .const import DATE_FMT
 from .errors import APIConfigurationError, RequestError
@@ -23,13 +24,18 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: Kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
+    _session: Optional[CachedSession] = None
+
     def __enter__(self):
+        self._session = CachedSession(expire_after=30, backend="memory")
+        self._session.__enter__()
         self.check_api_running()
         self.check_api_config()
         return self
 
     def __exit__(self, *args):
-        pass
+        self._session.__exit__()
+        self._session = None
 
     def request(
         self,
@@ -42,7 +48,8 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         try:
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
-            resp = requests.request(
+            assert self._session is not None
+            resp = self._session.request(
                 method,
                 self.endpoint(path),
                 headers=self.prepare_headers(headers),
