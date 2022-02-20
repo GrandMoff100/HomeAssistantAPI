@@ -9,7 +9,7 @@ on:
   pull_request:
     branches:
       - master
-      - megalinter/megalinter/flavors/documentation@v5
+      - dev
 
 env: # Comment env block if you do not want to apply fixes
   # Apply linter fixes configuration
