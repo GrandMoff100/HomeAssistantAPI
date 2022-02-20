@@ -4,7 +4,7 @@ from datetime import datetime
 from os.path import join
 from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
 
-import aiohttp
+from aiohttp_client_cache import CachedSession
 
 from ..const import DATE_FMT
 from ..errors import APIConfigurationError, MalformedDataError, RequestError
@@ -24,13 +24,16 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
+    _session: Optional[CachedSession] = None
+
     async def __aenter__(self):
+        self._session = CachedSession(expire_after=30)
+        await self._session.__aenter__()
         await self.async_check_api_running()
-        await self.async_check_api_config()
         return self
 
-    async def __aexit__(self, cls, obj, tb):
-        pass
+    async def __aexit__(self, cls, obj, traceback):
+        await self._session.__aexit__(cls, obj, traceback)
 
     # Very important request function
     async def async_request(
@@ -41,26 +44,26 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         **kwargs,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], str]:
         """Base method for making requests to the api"""
-        async with aiohttp.ClientSession() as session:
-            try:
-                if self.global_request_kwargs is not None:
-                    kwargs.update(self.global_request_kwargs)
-                resp = await session.request(
-                    method,
-                    self.endpoint(path),
-                    headers=self.prepare_headers(headers),
-                    **kwargs,
-                )
-            except asyncio.exceptions.TimeoutError as err:
-                raise RequestError(
-                    f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
-                ) from err
+        try:
+            if self.global_request_kwargs is not None:
+                kwargs.update(self.global_request_kwargs)
+            assert self._session is not None
+            resp = await self._session.request(
+                method,
+                self.endpoint(path),
+                headers=self.prepare_headers(headers),
+                **kwargs,
+            )
+        except asyncio.exceptions.TimeoutError as err:
+            raise RequestError(
+                f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
+            ) from err
         return await self.async_response_logic(resp)
 
     @staticmethod
     async def async_response_logic(response):
         """Processes custom mimetype content asyncronously."""
-        return await Processing(response).process()
+        return await Processing(response=response).process()
 
     # API information methods
     async def async_api_error_log(self) -> str:

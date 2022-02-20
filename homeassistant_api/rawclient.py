@@ -24,15 +24,18 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: Kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    _session: CachedSession = CachedSession(expire_after=30, backend="memory")
+    _session: Optional[CachedSession] = None
 
     def __enter__(self):
+        self._session = CachedSession(expire_after=30, backend="memory")
+        self._session.__enter__()
         self.check_api_running()
         self.check_api_config()
         return self
 
     def __exit__(self, *args):
-        pass
+        self._session.__exit__()
+        self._session = None
 
     def request(
         self,
@@ -45,6 +48,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         try:
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
+            assert self._session is not None
             resp = self._session.request(
                 method,
                 self.endpoint(path),
