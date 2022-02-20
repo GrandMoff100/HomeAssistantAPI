@@ -2,14 +2,15 @@
 
 from datetime import datetime
 from os.path import join
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
 
 import requests
+from requests_cache import CachedSession
 
 from .const import DATE_FMT
 from .errors import APIConfigurationError, RequestError
 from .mixins import JsonProcessingMixin
-from .models import Domain, Entity, Event, Group, State
+from .models import Domain, Entity, Event, Group, History, State
 from .processing import Processing
 from .rawapi import RawWrapper
 
@@ -23,20 +24,18 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: Kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    api_url: str
-    token: str
-    global_request_kwargs: Dict[str, str] = {}
-
-    def __repr__(self) -> str:
-        return f'<Client of "{self.api_url[:20]}">'
+    _session: Optional[CachedSession] = None
 
     def __enter__(self):
+        self._session = CachedSession(expire_after=30, backend="memory")
+        self._session.__enter__()
         self.check_api_running()
         self.check_api_config()
         return self
 
     def __exit__(self, *args):
-        pass
+        self._session.__exit__()
+        self._session = None
 
     def request(
         self,
@@ -49,7 +48,8 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         try:
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
-            resp = requests.request(
+            assert self._session is not None
+            resp = self._session.request(
                 method,
                 self.endpoint(path),
                 headers=self.prepare_headers(headers),
@@ -64,8 +64,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     @classmethod
     def response_logic(cls, response: requests.Response) -> Union[dict, list, str]:
         """Processes responses from the api and formats them"""
-        processing = Processing(response=response)
-        return processing.process()
+        return Processing(response=response).process()
 
     # API information methods
     def api_error_log(self) -> str:
@@ -74,7 +73,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
 
     def api_config(self) -> Dict[str, Any]:
         """Returns the yaml configuration of homeassistant."""
-        return cast(dict, self.request("config"))
+        return cast(Dict[str, Any], self.request("config"))
 
     def logbook_entries(
         self,
@@ -100,44 +99,17 @@ class RawClient(RawWrapper, JsonProcessingMixin):
             url = "logbook"
         return cast(List[Dict[str, Any]], self.request(url, params=params))
 
-    def get_history(  # pylint: disable=too-many-arguments
-        self,
-        entities: Optional[Tuple[Entity, ...]] = None,
-        start_timestamp: Optional[datetime] = None,
-        # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
-        end_timestamp: Optional[datetime] = None,
-        minimal_state_data: bool = False,
-        significant_changes_only: bool = False,
-    ) -> List[Dict[str, Any]]:
+    def get_entity_histories(self, *args, **kwargs) -> Generator[History, None, None]:
         """
-        Returns a list of entity state changes from homeassistant.
-        (Working on adding a Model for this.)
+        Yields entity state histories. See docs on the `History` model.
         """
-        params: Dict[str, Optional[str]] = {}
-
-        if entities is not None:
-            params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
-        if end_timestamp is not None:
-            params["end_time"] = end_timestamp.strftime(DATE_FMT)
-        if minimal_state_data:
-            params["minimal_response"] = None
-        if significant_changes_only:
-            params["significant_changes_only"] = None
-        if start_timestamp is not None:
-            if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-                url = join("history/period", formatted_timestamp)
-            else:
-                raise TypeError(f"timestamp needs to be of type {datetime!r}")
-        else:
-            url = "history/period"
-        return cast(
-            List[Dict[str, Any]],
-            self.request(
-                url,
-                params=self.construct_params(params),
-            ),
+        params, url = self.prepare_get_entity_histories_params(*args, **kwargs)
+        data = self.request(
+            url,
+            params=self.construct_params(params),
         )
+        for states in data:
+            yield History.parse_obj({"states": states})
 
     def get_rendered_template(self, template: str) -> str:
         """

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
 from pydantic import BaseModel
 
+from .history import History
 from .states import State
 
 if TYPE_CHECKING:
@@ -76,3 +77,14 @@ class Entity(BaseModel):
     def entity_id(self):
         """Constructs the entity_id string from its group and slug"""
         return self.group.group_id + "." + self.slug
+
+    def get_history(self, *args, **kwargs) -> History:
+        """Gets the previous `State`'s of the `Entity`"""
+        history = None
+        for history in self.group.client.get_entity_histories(
+            entities=(self,),
+            *args,
+            **kwargs,
+        ):
+            break
+        return history

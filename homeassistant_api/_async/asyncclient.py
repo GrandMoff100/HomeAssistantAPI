@@ -2,14 +2,14 @@
 import asyncio
 from datetime import datetime
 from os.path import join
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
 
-import aiohttp
+from aiohttp_client_cache import CachedSession
 
 from ..const import DATE_FMT
 from ..errors import APIConfigurationError, MalformedDataError, RequestError
 from ..mixins import JsonProcessingMixin
-from ..models import Domain, Event, State
+from ..models import Domain, Event, History, State
 from ..processing import Processing
 from ..rawapi import RawWrapper
 from .models import AsyncEntity, AsyncGroup
@@ -24,17 +24,16 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    api_url: str
-    token: str
-    global_request_kwargs: Dict[str, str] = {}
+    _session: Optional[CachedSession] = None
 
     async def __aenter__(self):
+        self._session = CachedSession(expire_after=30)
+        await self._session.__aenter__()
         await self.async_check_api_running()
-        await self.async_check_api_config()
         return self
 
-    async def __aexit__(self, cls, obj, tb):
-        pass
+    async def __aexit__(self, cls, obj, traceback):
+        await self._session.__aexit__(cls, obj, traceback)
 
     # Very important request function
     async def async_request(
@@ -43,28 +42,28 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         method: str = "GET",
         headers: Optional[Dict[str, str]] = None,
         **kwargs,
-    ) -> Union[dict, list, str]:
+    ) -> Union[Dict[str, Any], List[Dict[str, Any]], str]:
         """Base method for making requests to the api"""
-        async with aiohttp.ClientSession() as session:
-            try:
-                if self.global_request_kwargs is not None:
-                    kwargs.update(self.global_request_kwargs)
-                resp = await session.request(
-                    method,
-                    self.endpoint(path),
-                    headers=self.prepare_headers(headers),
-                    **kwargs,
-                )
-            except asyncio.exceptions.TimeoutError as err:
-                raise RequestError(
-                    f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
-                ) from err
+        try:
+            if self.global_request_kwargs is not None:
+                kwargs.update(self.global_request_kwargs)
+            assert self._session is not None
+            resp = await self._session.request(
+                method,
+                self.endpoint(path),
+                headers=self.prepare_headers(headers),
+                **kwargs,
+            )
+        except asyncio.exceptions.TimeoutError as err:
+            raise RequestError(
+                f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
+            ) from err
         return await self.async_response_logic(resp)
 
     @staticmethod
     async def async_response_logic(response):
         """Processes custom mimetype content asyncronously."""
-        return await Processing(response).process()
+        return await Processing(response=response).process()
 
     # API information methods
     async def async_api_error_log(self) -> str:
@@ -73,7 +72,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def async_api_config(self) -> Dict[str, Any]:
         """Returns the yaml configuration of homeassistant"""
-        return cast(dict, await self.async_request("config"))
+        return cast(Dict[str, Any], await self.async_request("config"))
 
     async def async_logbook_entries(
         self,
@@ -100,43 +99,21 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
             await self.async_request(url, params=params),
         )
 
-    async def async_get_history(  # pylint: disable=too-many-arguments
+    async def async_get_entity_histories(
         self,
-        entities: Tuple[AsyncEntity, ...] = None,
-        start_timestamp: datetime = None,  # Defaults to 1 day before
-        end_timestamp: datetime = None,
-        minimal_state_data=False,
-        significant_changes_only=False,
-    ) -> List[Dict[str, Any]]:
+        *args,
+        **kwargs,
+    ) -> AsyncGenerator[History, None]:
         """
-        Returns a list of entity state changes from homeassistant.
-        (Working on adding a Model for this.)
+        Returns a generator of entity state histories from homeassistant.
         """
-        params: Dict[str, Optional[str]] = {}
-
-        if entities is not None:
-            params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
-        if end_timestamp is not None:
-            params["end_time"] = end_timestamp.strftime(DATE_FMT)
-        if minimal_state_data:
-            params["minimal_response"] = None
-        if significant_changes_only:
-            params["significant_changes_only"] = None
-        if start_timestamp is not None:
-            if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-                url = join("history/period", formatted_timestamp)
-            else:
-                raise TypeError(f"timestamp needs to be of type {datetime!r}")
-        else:
-            url = "history/period"
-        return cast(
-            List[Dict[str, Any]],
-            await self.async_request(
-                url,
-                params=self.construct_params(params),
-            ),
+        params, url = self.prepare_get_entity_histories_params(*args, **kwargs)
+        data = await self.async_request(
+            url,
+            params=self.construct_params(params),
         )
+        for states in data:
+            yield History.parse_obj({"states": states})
 
     async def async_get_rendered_template(self, template: str):
         """Renders a given Jinja2 template string with homeassistant context data."""
@@ -149,7 +126,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def async_get_discovery_info(self) -> Dict[str, Any]:
         """Returns a dictionary of discovery info such as internal_url and version"""
-        return cast(dict, await self.async_request("discovery_info"))
+        return cast(Dict[str, Any], await self.async_request("discovery_info"))
 
     # API check methods
     async def async_check_api_config(self) -> bool:
