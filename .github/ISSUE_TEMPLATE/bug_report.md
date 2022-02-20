@@ -24,9 +24,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. Ubuntu]
- - OS Version [e.g. 18.2]
- - HomeAssistantAPI Version: [e.g. 0.0.3]
+- OS: [e.g. Ubuntu]
+- OS Version [e.g. 18.2]
+- HomeAssistantAPI Version: [e.g. 0.0.3]
 
 **Additional context**
 Add any other context about the problem here.

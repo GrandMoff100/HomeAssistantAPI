@@ -9,7 +9,9 @@ Prerequisites
 
 Homeassistant
 ---------------
-Before using this library, you need to have Homeassistant OS or Home Assistant Core running on a device (i.e. Rasberry Pi, Spare Laptop, etc.), Docker container, or `Home Assistant development environment`.
+Before using this library, you need to have Homeassistant OS running on a device.
+Something like a `Raspberry Pi 3 or 4 <https://www.raspberrypi.com>` or spare laptop.
+If you don't want to do that you can setup a Homeassistant container on your laptop or desktop with docker.
 See `here <https://www.home-assistant.io/installation/>`__ for how to install the installation right for you.
 
 Configuring the REST API Server in Homeassistant
@@ -56,7 +58,7 @@ Installation with pip is really easy and will install the dependencies this proj
    $ pip install homeassistant_api==2.0.0a1
 
 
-Installating with :code:`git`
+Installing with :code:`git`
 ----------------------------------
 
 To install with git we're going to clone the repository and then run :code:`$ poetry install` like so.

@@ -1,12 +1,11 @@
-
-@import '../basic.css';
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono&family=Roboto+Condensed:wght@700&family=Source+Sans+Pro&display=swap');
+@import "../basic.css";
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Mono&family=Roboto+Condensed:wght@700&family=Source+Sans+Pro&display=swap");
 
 img {
-    margin-bottom: 10px;
-    width: 80%;
-    height: auto;
-    border-radius: 10px;
+  margin-bottom: 10px;
+  width: 80%;
+  height: auto;
+  border-radius: 10px;
 }
 
 /*
@@ -16,65 +15,77 @@ div.sphinxsidebarwrapper {
 */
 
 div.sphinxsidebar {
-    width: 260px;
-    font-size: 14px;
-    line-height: 1.5;
+  width: 260px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .wy-nav-content {
-    max-width: 1500px;
-    width: 70%;
+  max-width: 1500px;
+  width: 70%;
 }
 
 .rst-content img {
-    max-width: 800px;
-    width: 80%;
-    margin-bottom: 3%;
+  max-width: 800px;
+  width: 80%;
+  margin-bottom: 3%;
 }
 
-.rst-content div[class^="highlight"], .rst-content pre.literal-block {
-    border: transparent;
-    overflow-x: auto;
-    margin: 1px 0 24px;
-    border-radius: 10px;
-    background: #f1f1f1;
+.rst-content div[class^="highlight"],
+.rst-content pre.literal-block {
+  border: transparent;
+  overflow-x: auto;
+  margin: 1px 0 24px;
+  border-radius: 10px;
+  background: #f1f1f1;
 }
 
-.rst-content .linenodiv pre, .rst-content div[class^="highlight"] pre, .rst-content pre.literal-block {
-    font-family: 'Noto Sans Mono', monospace;
-    font-size: 12px;
-    line-height: 1.4;
+.rst-content .linenodiv pre,
+.rst-content div[class^="highlight"] pre,
+.rst-content pre.literal-block {
+  font-family: "Noto Sans Mono", monospace;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
-.rst-content .toctree-wrapper > p.caption, h1, h2, h3, h4, h5, h6, legend {
-    margin-top: 0;
-    font-weight: 700;
-    /*font-family: 'Roboto Condensed', sans-serif;*/
+.rst-content .toctree-wrapper > p.caption,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+legend {
+  margin-top: 0;
+  font-weight: 700;
+
+  /* font-family: 'Roboto Condensed', sans-serif; */
 }
 
 body {
-    font-family: 'Source Sans Pro', sans-serif;
-    font-weight: 400;
-    color: #404040;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 400;
+  color: #404040;
 }
 
-.rst-content code.literal, .rst-content tt.literal {
-    color: #373737;
-    white-space: normal;
-    border-radius: 0.5em;
-    padding: 0.4% 0.4% 0.3%;
-    background: #e8e8e8;
-    border: transparent;
+.rst-content code.literal,
+.rst-content tt.literal {
+  color: #373737;
+  white-space: normal;
+  border-radius: 0.5em;
+  padding: 0.4% 0.4% 0.3%;
+  background: #e8e8e8;
+  border: transparent;
 }
 
 .ethical-rst {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .wy-side-nav-search {
-    background: #4a94c4;
+  background: #4a94c4;
 }
 
 .version {
-    color: #d9d9d9;
+  color: #d9d9d9;
 }

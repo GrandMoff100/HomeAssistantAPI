@@ -1,8 +1,14 @@
 """Event Model File"""
-from os.path import join as path
+
+from typing import TYPE_CHECKING, Dict, cast
+
+from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from homeassistant_api import Client
 
 
-class Event:
+class Event(BaseModel):
     """
     Event class for Homeassistant Event Triggers
 
@@ -10,17 +16,11 @@ class Event:
     https://data.home-assistant.io/docs/events
     """
 
-    def __init__(self, event: str, listener_count: int, client):
-        self.event_type = event
-        self.listener_count = listener_count
-        self.client = client
+    event_type: str
+    listener_count: int
+    client: "Client"
 
-    def __repr__(self):
-        return f"<Event {self.event_type}>"
-
-    def fire(self, **event_data):
+    def fire(self, **event_data) -> str:
         """Fires the corresponding event in Home Assistant."""
-        data = self.client.request(
-            path("events", self.event_type), method="POST", json=event_data
-        )
-        return data.get("message", "No message provided")
+        data = self.client.fire_event(self.event_type, **event_data)
+        return cast(Dict[str, str], data).get("message", "No message provided")

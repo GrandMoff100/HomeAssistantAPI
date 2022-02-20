@@ -56,3 +56,9 @@ class MethodNotAllowedError(HomeassistantAPIError):
 
     def __init__(self, method: str):
         super().__init__(f"Request made with invalid method {method!r}")
+
+
+class ProcessorNotFoundError(HomeassistantAPIError):
+    """
+    Error raised when a response is encountered that homeassistant_api is not told how to handle.
+    """

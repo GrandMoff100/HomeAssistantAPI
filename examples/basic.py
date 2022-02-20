@@ -1,3 +1,4 @@
+import os
 from homeassistant_api import Client
 
 

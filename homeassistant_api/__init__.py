@@ -1,5 +1,4 @@
-"""Imports all module stuff for convenience."""
-from ._async import AsyncClient
+"""Imports all library stuff for convenience."""
 from .client import Client
 from .errors import (
     APIConfigurationError,
@@ -13,5 +12,5 @@ from .errors import (
     UnauthorizedError,
     UnexpectedStatusCodeError,
 )
-from .models import Domain, Entity, Event, Group, Service, State
+from .models import Domain, Entity, Event, Group, History, Service, State
 from .processing import Processing
