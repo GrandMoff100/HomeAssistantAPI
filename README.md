@@ -18,14 +18,14 @@ Here is a quick example.
 ```py
 from homeassistant_api import Client
 
-client = Client(
+with Client(
     '<API Server URL>',
     '<Your Long Lived Access-Token>'
-)
+) as client:
 
-services = client.get_domains()
+    light = client.get_domain("light")
 
-services.light.turn_on(entity_id='light.living_room_lamp')
+    light.turn_on(entity_id='light.living_room_lamp')
 ```
 
 ## Documentation
