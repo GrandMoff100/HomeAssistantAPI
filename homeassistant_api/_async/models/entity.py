@@ -63,9 +63,9 @@ class AsyncEntity(BaseModel):
         """Constructs the entity_id string from its group and slug"""
         return self.group.group_id + "." + self.slug
 
-    async def async_get_history(self, *args, **kwargs) -> History:
+    async def async_get_history(self, *args, **kwargs) -> Optional[History]:
         """Gets the previous `State`'s of the `Entity`."""
-        history = None
+        history: Optional[History] = None
         async for history in self.group.client.async_get_entity_histories(
             entities=(self,),
             *args,
