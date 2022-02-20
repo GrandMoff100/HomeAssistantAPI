@@ -21,14 +21,11 @@ from .errors import (
     UnexpectedStatusCodeError,
 )
 
-SyncResponse = Union[Response, CachedResponse]
-AsyncResponse = Union[ClientResponse, AsyncCachedResponse]
-
 
 class Processing(BaseModel):
     """Uses to processor functions to convert json data into common python data types."""
 
-    response: Union[SyncResponse, AsyncResponse]
+    response: Union[Response, CachedResponse, ClientResponse, AsyncCachedResponse]
     _processors: Dict[str, Tuple[Callable, ...]] = {}
 
     class Config:  # pylint: disable=too-few-public-methods
@@ -50,7 +47,8 @@ class Processing(BaseModel):
 
     def process_content(self, _async: bool):
         """Looks up processors by content-type and then calls the processor with the response."""
-        mimetype = self.response.headers.get("content-type", "text/plain")
+
+        mimetype = self.response.headers.get("content-type", "text/plain")  # type: ignore[arg-type]
         for processor in self._processors.get(mimetype, ()):
             if not _async ^ inspect.iscoroutinefunction(processor):
                 return processor(self.response)
