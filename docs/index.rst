@@ -27,9 +27,10 @@ Features
 ----------
 
 - Full consumption of the Homeassistant REST API endpoints
-- Convenient classes that represent data from the Home Assistant REST API
+- Convenient Pydantic Models for data validation 
 - Syncrononous and Asynchronous support for integrating in with all applications and/or libraries
 - Modular design for intuitive readability
+- Request caching for efficiencient repeated requests.
 
 Getting Started
 -------------------

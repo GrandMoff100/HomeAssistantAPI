@@ -1,15 +1,13 @@
 from homeassistant_api import Client
 
-api_url = "<API URL>"  # Something like http://localhost:8123/api
-token = "<Long Lived Access Token>"  # Used to aunthenticate yourself with homeassistant
+
+api_url = "https://larsen-hassio.duckdns.org:8123/api"  # Something like http://localhost:8123/api
+token = os.getenv("HOMEASSISTANT_TOKEN")  # Used to aunthenticate yourself with homeassistant
 # See the documentation on how to obtain a Long Lived Access Token
 
 
-client = Client(api_url, token)  # Creates main object
+with Client(api_url, token) as client:  # Create Client objecty and check that its running.
+    light = client.get_domain("light")
 
-
-light = client.get_domains().light  # gets the light domain from homeassistant
-
-
-# Tells homeassistant to trigger the turn_on service on the given entity_id
-light.turn_on.trigger(entity_id="light.front_room")
+    # Tells homeassistant to trigger the turn_on service on the given entity_id
+    light.turn_on(entity_id="light.front_room")

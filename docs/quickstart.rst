@@ -13,7 +13,7 @@ Before using this library, you need to have Homeassistant OS or Home Assistant C
 See `here <https://www.home-assistant.io/installation/>`__ for how to install the installation right for you.
 
 Configuring the REST API Server in Homeassistant
-======================================
+=======================================================
 
 Enable the :code:`api` integration in Homeassistant
 ------------------------------------------------------
