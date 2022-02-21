@@ -3,8 +3,7 @@
 from os.path import join
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
-from pydantic import BaseModel
-
+from .base import BaseModel
 from .history import History
 from .states import State
 
@@ -51,7 +50,7 @@ class Entity(BaseModel):
         return self.state
 
     def fetch_state(self) -> State:
-        """Asks homeassistant for the state of the entity and sets it locally"""
+        """Asks Home Assistant for the state of the entity and sets it locally"""
         state_data = self.group.client.request(join("states", self.entity_id))
         self.state = self.group.client.process_state_json(
             cast(Dict[str, Any], state_data)
@@ -60,7 +59,7 @@ class Entity(BaseModel):
 
     def set_state(self, state: State) -> State:
         """
-        Tells homeassistant to set the given State object.
+        Tells Home Assistant to set the given State object.
         (You can construct the state object yourself.)
         """
         state_data = self.group.client.request(

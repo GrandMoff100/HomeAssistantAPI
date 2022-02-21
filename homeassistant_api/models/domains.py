@@ -1,9 +1,7 @@
 """File for Service and Domain data models"""
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
 
-from typing import TYPE_CHECKING, Dict, Optional, Tuple
-
-from pydantic import BaseModel
-
+from .base import BaseModel
 from .states import State
 
 if TYPE_CHECKING:
@@ -20,7 +18,13 @@ class Domain(BaseModel):
     def add_service(self, service_id: str, **data) -> None:
         """Registers services into a domain to be used or accessed"""
         self.services.update(
-            {service_id: Service(service_id=service_id, domain=self, **data)}
+            {
+                service_id: Service(
+                    service_id=service_id,
+                    domain=self,
+                    **data,
+                )
+            }
         )
 
     def get_service(self, service_id: str):
@@ -36,15 +40,25 @@ class Domain(BaseModel):
         return super().__getattribute__(attr)
 
 
+class ServiceField(BaseModel):
+    """Model for service parameters/fields."""
+
+    description: str
+    example: Any
+    selector: Optional[Dict[str, Any]] = None
+    name: Optional[str] = None
+    required: Optional[bool] = None
+
+
 class Service(BaseModel):
     """Model representing services from homeassistant"""
 
     service_id: str
     domain: Domain
     name: Optional[str] = None
-    description: Optional[Dict[str, str]] = None
-    fields: Optional[Dict[str, str]] = None
-    target: Optional[Dict[str, str]] = None
+    description: Optional[str] = None
+    fields: Optional[Dict[str, ServiceField]] = None
+    target: Optional[Dict[str, dict]] = None
 
     def trigger(self, **service_data) -> Tuple[State, ...]:
         """Triggers the service associated with this object."""

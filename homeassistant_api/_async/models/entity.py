@@ -2,9 +2,7 @@
 from os.path import join
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
-from pydantic import BaseModel
-
-from ...models import History, State
+from ...models import BaseModel, History, State
 
 if TYPE_CHECKING:
     from homeassistant_api import Client
@@ -40,7 +38,7 @@ class AsyncEntity(BaseModel):
         return self.state
 
     async def async_fetch_state(self) -> State:
-        """Asks homeassistant for the state of the entity and sets it locally"""
+        """Asks Home Assistant for the state of the entity and sets it locally"""
         state_data = await self.group.client.async_request(
             join("states", self.entity_id)
         )
@@ -50,7 +48,7 @@ class AsyncEntity(BaseModel):
         return self.state
 
     async def async_set_state(self, state: State) -> State:
-        """Tells homeassistant to set the given State object."""
+        """Tells Home Assistant to set the given State object."""
         return await self.group.client.async_set_state(
             self.entity_id,
             group=self.group.group_id,

@@ -1,6 +1,10 @@
+*******************
+Advanced Section
+*******************
+
 Response Processing
 **********************
-Homeassistant API uses functions called processors.
+Home Assistant API uses functions called processors.
 These functions take a Response object as a parameter and return the python data type associated with the content-type header.
 
 How To Register Response Processors (Converters)
@@ -34,7 +38,7 @@ To register a response processor you need to import the Processing class and the
     print(client.get_entities())
 
 
-In this example. 
+In this example.
 The first processor (a function wrapped with the processor decorator) is going to be called when we receive a response that has that as its :code:`Content-Type` header.
 Because :code:`homeassistant_api` provides processors for :code:`application/octet-stream` and :code:`application/json` by default,
 we need to tell :code:`homeassistant_api` to override the default processor with :code:`override=True`.

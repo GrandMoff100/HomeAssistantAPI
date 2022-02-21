@@ -44,7 +44,8 @@ profile = "black"
 disable = [
     "invalid-name",
     "duplicate-code",
-    "no-member"
+    "no-member",
+    "too-few-public-methods"
 ]
 
 [tool.pylint.master]

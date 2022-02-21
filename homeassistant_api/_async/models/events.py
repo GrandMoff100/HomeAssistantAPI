@@ -1,7 +1,7 @@
 """Event Model File"""
 from typing import TYPE_CHECKING, Dict, cast
 
-from pydantic import BaseModel
+from ...models import BaseModel
 
 if TYPE_CHECKING:
     from homeassistant_api import Client
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class AsyncEvent(BaseModel):
     """
-    Event class for Homeassistant Event Triggers
+    Event class for Home Assistant Event Triggers
 
     For attribute information see the Data Science docs on Event models.
     https://data.home-assistant.io/docs/events

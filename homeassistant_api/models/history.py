@@ -1,8 +1,7 @@
 """Module for the History model."""
 from typing import Tuple
 
-from pydantic import BaseModel
-
+from .base import BaseModel
 from .states import State
 
 

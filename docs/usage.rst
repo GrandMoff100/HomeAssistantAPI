@@ -7,10 +7,9 @@ The Basics...
 **************
 
 This library is centered around the :code:`Client` class.
-Once you have have your api base url and Long Lived Access Token from homeassistant we can start to do stuff.
-The rest of this guide assumes you have the :code:`Client` (or :code:`AsyncClient`) saved to a :code:`client` variable like this.
-Most of these examples require some integrations to be setup inside homeassistant for the examples to actually work.
-
+Once you have have your api base url and Long Lived Access Token from Home Assistant we can start to do stuff.
+The rest of this guide assumes you have the :code:`Client` saved to a :code:`client` variable.
+Most of these examples require some integrations to be setup inside Home Assistant for the examples to actually work.
 
 .. code-block:: python
     :linenos:
@@ -21,7 +20,26 @@ Most of these examples require some integrations to be setup inside homeassistan
     URL = '<API BASE URL>'
     TOKEN = '<LONG LIVED ACCESS TOKEN>'
 
+    # Assigns the Client object to a variable and checks if it's running.
     client = Client(URL, TOKEN)
+
+    service = client.get_domain("light")  # Gets the light service domain from Home Assistant
+
+    service.turn_on(entity_id="light.my_living_room_light")
+    # Triggers the light.turn_on service on the entity `light.my_living_room_light`
+
+
+.. code-block:: python
+   :linenos:
+
+    from homeassistant_api import Client
+
+    # You can also initialize Client before you use it.
+
+    client = Client("https://myhomeassistant.duckdns.org:8123/api", "mylongtokenpasswordthingyfoobar")
+
+    with client:
+        client.get_state("")
 
 
 Client
@@ -32,17 +50,12 @@ Services
 ---------
 .. code-block:: python
 
-    domains = client.get_domains()
-    # {'homeassistant': <Domain homeassistant>, 'notify': <Domain notify>}
+    light = client.get_domain("light")
 
-    service = domains.cover.services.close_cover # Works the same as domains['cover'].services['open_cover']
-    # <Service open_cover domain="cover">
+    print(light.services)
+    # {'turn_on': Service(service_id='turn_on', name='Turn on', description='Turn on one or more lights and adjust properties of the light, even when they are turned on already.\n', ...
 
-    changed_states = client.trigger_service('cover', 'close_cover', entity_id='cover.garage_door')
-    # Alternatively (using fetched service from above)
-    changed_states = service.trigger(entity_id='cover.garage_door')
-    # [<EntityState "closing" entity_id="cover.garage_door">]
-
+    changed_states = light.toggle(entity_id="light.light_bulb_1")
 
 Entities
 ---------
@@ -50,56 +63,55 @@ Entities
 .. code-block:: python
 
     entity_groups = client.get_entities()
-    # {'person': <EntityGroup person>, 'zone': <EntityGroup zone>, ...}
+    # {'person': <Group person>, 'zone': <Group zone>, ...}
 
     door = client.get_entity(entity_id='cover.garage_door')
     # <Entity entity_id="cover.garage_door" state="<EntityState "closed">">
 
     states = client.get_states()
-    # [<EntityState "above_horizon" entity_id="sun.sun">, <EntityState "zoning" entity_id="zone.home">,...]
+    # [<State "above_horizon" entity_id="sun.sun">, <State "zoning" entity_id="zone.home">,...]
 
     state = client.get_state('sun.sun')
-    # <EntityState "above_horizon" entity_id="sun.sun">
+    # <State "above_horizon" entity_id="sun.sun">
 
     new_state = client.set_state(state='my ToaTallY Whatever vAlUe 12t87932', group_id='my_favorite_colors', entity_slug='number_one')
-    # <EntityState "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
+    # <State "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
 
     # Alternatively you can set state from the entity class itself
     from homeassistant_api import State
 
     # If you are wondering where door came from its about 15 lines up.
-    door.state.state = 'My new state'
-    door.state.attributes['open_height'] = '23'
-    door.set_state(door.state)
-    # <EntityState "My new state" entity_id="cover.garage_door">
+    door.set_state(State(state="My new state", attributes={"open_height": "5ft"}))
+    # <State "My new state" entity_id="cover.garage_door">
 
 
-AsyncClient
-=============
-Before you run this code you need to install the :code:`homeassistant_api[async]` (it just installs :code:`aiohttp`).
-Here is the async counterpart to the usage above.
-Except how to run async code in the console without starting an eventloop yourself you ask? You can install :code:`aioconsole` and then run :code:`$ apython`
-
+Using Client with `async`/`await`
+====================================
+Are you wondering if you can use `homeassistant_api` using Python's `async`/`await` syntax?
+Good news! You can!
 
 Services
 ------------
 .. code-block:: python
 
-    from homeassistant_api._async import AsyncClient
+    import asyncio
+    from homeassistant_api import Client
 
-    client = AsyncClient(url, token)
+    # Initialize client like usual
+    client = Client(url, token)
 
-    domains = await client.get_domains()
-    # {'homeassistant': <Domain homeassistant>, 'notify': <Domain notify>}
+    async def main():
 
-    service = domains.cover.services.close_cover # Works the same as domains['cover'].services['open_cover']
-    # <Service open_cover domain="cover">
+        domains = await client.async_get_domains()
+        print(domains)
+        # {'homeassistant': <Domain homeassistant>, 'notify': <Domain notify>}
 
-    changed_states = client.trigger_service('cover', 'close_cover', entity_id='cover.garage_door')
-    # Alternatively (using fetched service from above)
-    changed_states = service.trigger(entity_id='cover.garage_door')
-    # [<EntityState "closing" entity_id="cover.garage_door">]
+        cover = await client.async_get_domain("cover")
 
+        changed_states = cover.close_cover(entity_id='cover.garage_door')
+        # [<EntityState "closing" entity_id="cover.garage_door">]
+
+    asyncio.get_event_loop().run_until_complete(main())
 
 Entities
 -----------
@@ -140,5 +152,5 @@ Browse below to learn more about what you can do with :code:`homeassistant_api`.
 .. toctree::
    :maxdepth: 2
 
-   processing
    api
+   advanced

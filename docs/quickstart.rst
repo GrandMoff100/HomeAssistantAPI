@@ -9,29 +9,29 @@ Prerequisites
 
 Homeassistant
 ---------------
-Before using this library, you need to have Homeassistant OS running on a device.
-Something like a `Raspberry Pi 3 or 4 <https://www.raspberrypi.com>` or spare laptop.
-If you don't want to do that you can setup a Homeassistant container on your laptop or desktop with docker.
-See `here <https://www.home-assistant.io/installation/>`__ for how to install the installation right for you.
+Before using this library, you need to have Home Assistant OS running on a device.
+Something like a `Raspberry Pi 3 or 4 <https://www.raspberrypi.com>`_ or spare laptop.
+If you don't want to do that you can setup a Home Assistant container on your laptop or desktop with docker.
+See `here <https://www.home-assistant.io/installation/>`_ for how to install the installation right for you.
 
 Configuring the REST API Server in Homeassistant
 =======================================================
 
 Enable the :code:`api` integration in Homeassistant
 ------------------------------------------------------
-This library requires that the :code:`api` integration on your Homeassistant is enabled.
+This library requires that the :code:`api` integration on your Home Assistant is enabled.
 It is enabled by default with the :code:`default_config` integration.
 But if by chance you have disabled :code:`default_config` you need to enable :code:`api`.
 Which requires the :code:`http` integration as well.
-(Again most likely alreayd enabled on most installations.)
+(Again most likely already enabled on most installations of Home Assistant.)
 If you are not sure if it is enabled or not, chances are if your frontend is enabled, so is your API Server.
 
 Access Token
 --------------
-Then once you have done that you need to head over to your profile and set up a "Long Lived Access Token" to input to your script later.
-A good guide on how to do that is `here <https://www.home-assistant.io/docs/authentication/#your-account-profile>`__
+Then once you have done that you need to head over to your profile and set up a "Long Lived Access Token" to use in your code later.
+A good guide on how to do that is `here <https://www.home-assistant.io/docs/authentication/#your-account-profile>`_
 
-Exposing Homeassistant to the Web
+Exposing Home Assistant to the Web
 --------------------------------------
 You may want to setup remote access through a Dynamic DNS server like DuckDNS (a good youtube tutorial on how to do that `here <https://www.youtube.com/watch?v=AK5E2T5tWyM>`_, keep in mind you will need to port forward to set that up.)
 If you do pursue this your api url will be something like :code:`https://yourhomeassistant.duckdns.org:8123/api`.
@@ -48,14 +48,11 @@ Installation with pip is really easy and will install the dependencies this proj
 
 .. code-block:: bash
 
-   # To install the latest stable version from Pypi
+   # To install the latest stable version from PyPI
    $ pip install homeassistant_api
 
-   # To install the latest dev version
-   $ pip install git+https://github.com/GrandMoff100/HomeassistantAPI
-
-   # Example of installing a pre-release
-   $ pip install homeassistant_api==2.0.0a1
+   # To install the latest dev version (you'll need to use poetry because pip, by itself, does not understand poetry dependencies.)
+   $ poetry add git+https://github.com/GrandMoff100/HomeassistantAPI
 
 
 Installing with :code:`git`
@@ -84,7 +81,7 @@ Then you should be all set to start using the project! If run into any problems 
 Example Usages
 ================
 Some examples applications of this project include integrating it into a another library, flask application or just a regular python script.
-Maybe you want to start a project that allows you to use your homeassistant from your command line but some sassy responses.
-Or maybe add it to a discord bot to manage your homeassistant from inside discord (you might want to use AsyncClient if you do, *hint hint wink wink nudge nudge*)
-In any event, the possibilities are endless, so go make some cool stuff and share it with us on the :resource:`repository <repo>`!
+Maybe you want to start a project that allows you to use your Home Assistant from your command line but some sassy responses.
+Or maybe add it to a discord bot to manage your Home Assistant from inside discord.
+In any event, the possibilities are endless, so go make some cool stuff and share it with us on the :resource:`repository <discussions>`!
 We hope to see your project soon!
