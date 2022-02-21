@@ -34,10 +34,6 @@ class AsyncEntity(BaseModel):
     group: AsyncGroup
 
     async def async_get_state(self) -> State:
-        """Returns the state last fetched from the api."""
-        return self.state
-
-    async def async_fetch_state(self) -> State:
         """Asks Home Assistant for the state of the entity and sets it locally"""
         state_data = await self.group.client.async_request(
             join("states", self.entity_id)

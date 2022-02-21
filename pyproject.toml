@@ -45,11 +45,13 @@ disable = [
     "invalid-name",
     "duplicate-code",
     "no-member",
-    "too-few-public-methods"
+    "too-few-public-methods",
+    "too-many-arguments"
 ]
 
 [tool.pylint.master]
 extension-pkg-whitelist = ["pydantic"]
+ignore-paths = ["examples"]
 
 [tool.bandit]
 skips = ["B105"]

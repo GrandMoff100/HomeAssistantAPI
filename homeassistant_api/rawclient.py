@@ -27,7 +27,10 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     _session: Optional[CachedSession] = None
 
     def __enter__(self):
-        self._session = CachedSession(expire_after=30, backend="memory")
+        self._session = CachedSession(
+            expire_after=self.cache_expire_after,
+            backend=self.cache_backend,
+        )
         self._session.__enter__()
         self.check_api_running()
         self.check_api_config()

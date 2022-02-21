@@ -4,12 +4,14 @@ Usage
 
 
 The Basics...
-**************
+#################
 
 This library is centered around the :code:`Client` class.
 Once you have have your api base url and Long Lived Access Token from Home Assistant we can start to do stuff.
 The rest of this guide assumes you have the :code:`Client` saved to a :code:`client` variable.
 Most of these examples require some integrations to be setup inside Home Assistant for the examples to actually work.
+The most commonly used features of this library include triggering services and getting and modifying entity states.
+
 
 .. code-block:: python
     :linenos:
@@ -32,22 +34,27 @@ Most of these examples require some integrations to be setup inside Home Assista
 .. code-block:: python
    :linenos:
 
+    from datetime import datetime
     from homeassistant_api import Client
 
     # You can also initialize Client before you use it.
 
     client = Client("https://myhomeassistant.duckdns.org:8123/api", "mylongtokenpasswordthingyfoobar")
 
+    # If you want to use caching you can use client as a context manager like so
     with client:
-        client.get_state("")
-
-
-Client
-========
-The most commonly used features of this library include triggering services and getting and modifying entity states.
+        while True:
+            sun = client.get_entity(entity_id="sun.sun")
+            state = sun.get_state()  # Because requests are cached we reduce bandwidth usage :D
+            # Cache expires every 30 seconds by default.
+            if state.state == "below_horizon":
+                difference = datetime.now() - state.last_updated
+                print("Sun set", difference.seconds, "seconds ago.")
+                break
 
 Services
----------
+**********
+
 .. code-block:: python
 
     light = client.get_domain("light")
@@ -58,7 +65,7 @@ Services
     changed_states = light.toggle(entity_id="light.light_bulb_1")
 
 Entities
----------
+*************
 
 .. code-block:: python
 
@@ -86,12 +93,12 @@ Entities
 
 
 Using Client with `async`/`await`
-====================================
+************************************
 Are you wondering if you can use `homeassistant_api` using Python's `async`/`await` syntax?
 Good news! You can!
 
 Services
-------------
+************
 .. code-block:: python
 
     import asyncio
@@ -108,29 +115,29 @@ Services
 
         cover = await client.async_get_domain("cover")
 
-        changed_states = cover.close_cover(entity_id='cover.garage_door')
+        changed_states = await cover.close_cover(entity_id='cover.garage_door')
         # [<EntityState "closing" entity_id="cover.garage_door">]
 
     asyncio.get_event_loop().run_until_complete(main())
 
 Entities
------------
+*********
 
 .. code-block:: python
 
-    entity_groups = await client.get_entities()
+    entity_groups = await client.async_get_entities()
     # {'person': <EntityGroup person>, 'zone': <EntityGroup zone>, ...}
 
-    door = await client.get_entity(entity_id='cover.garage_door')
+    door = await client.async_get_entity(entity_id='cover.garage_door')
     # <Entity entity_id="cover.garage_door" state="<EntityState "closed">">
 
-    states = await client.get_states()
+    states = await client.async_get_states()
     # [<EntityState "above_horizon" entity_id="sun.sun">, <EntityState "zoning" entity_id="zone.home">,...]
 
-    state = await client.get_state('sun.sun')
+    state = await client.async_get_state('sun.sun')
     # <EntityState "above_horizon" entity_id="sun.sun">
 
-    new_state = await client.set_state(state='my ToaTallY Whatever vAlUe 12t87932', group_id='my_favorite_colors', entity_slug='number_one')
+    new_state = await client.async_set_state(state='my ToaTallY Whatever vAlUe 12t87932', group_id='my_favorite_colors', entity_slug='number_one')
     # <EntityState "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
 
     # Alternatively you can set state from the entity class itself
@@ -139,12 +146,12 @@ Entities
     # If you are wondering where door came from its about 15 lines up.
     door.state.state = 'My new state'
     door.state.attributes['open_height'] = '23'
-    await door.set_state(door.state)
+    await door.async_set_state(door.state)
     # <EntityState "My new state" entity_id="cover.garage_door">
 
 
 What's Next?
-*************
+#############
 
 Browse below to learn more about what you can do with :code:`homeassistant_api`.
 

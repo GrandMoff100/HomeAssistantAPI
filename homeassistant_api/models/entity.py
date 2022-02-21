@@ -46,11 +46,7 @@ class Entity(BaseModel):
     group: Group
 
     def get_state(self) -> State:
-        """Returns the state last fetched from the api."""
-        return self.state
-
-    def fetch_state(self) -> State:
-        """Asks Home Assistant for the state of the entity and sets it locally"""
+        """Asks Home Assistant for the state of the entity and caches it locally"""
         state_data = self.group.client.request(join("states", self.entity_id))
         self.state = self.group.client.process_state_json(
             cast(Dict[str, Any], state_data)

@@ -8,9 +8,11 @@ token = os.getenv(
 )  # Used to aunthenticate yourself with homeassistant
 # See the documentation on how to obtain a Long Lived Access Token
 
+assert token is not None
 
 with Client(
-    api_url, token
+    api_url,
+    token,
 ) as client:  # Create Client object and check that its running.
     cover = client.get_domain("cover")
 

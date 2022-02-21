@@ -35,7 +35,9 @@ class Processing(BaseModel):
         def register_processor(processor):
             if mimetype not in Processing._processors:
                 Processing._processors[mimetype] = tuple()
-            Processing._processors[mimetype] += (processor,)
+            Processing._processors[mimetype] = (processor,) + Processing._processors[
+                mimetype
+            ]
             return processor
 
         return register_processor
