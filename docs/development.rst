@@ -10,6 +10,9 @@ See below.
 Contribution Ideas
 *********************
 
+If you don't know what you want to contribute yet you should take a look at the TODO.md in the :resource:`repository <repo>`.
+We're always interested in integrating ways to make the library faster, extensible and easier to use.
+
 Setting up your Development Environment
 *****************************************
 
@@ -59,10 +62,12 @@ Then you can test your changes by passing the API URL, and Long Lived Access Tok
 Code Styling Guidelines
 **************************
 
-
-Catching Up With the Real World
-**********************************
-
+In order to make sure that our code is easy to read, and navigate.
+As well as to stop stupid mistakes like typos, undefined variables, etc.
+We enforce code standards.
+Using the tools, :code:`flake8`, :code:`pylint`, :code:`mypy`, :code:`black`, :code:`isort`, we make make sure that our code quality is top notch.
+You can those tools manually your self, or you can run them all at once on your changes by running :code:`pre-commit run`.
+Your code will also be checked again when you open a PR on the original repository.
 
 Merging Your Contributions
 *****************************
