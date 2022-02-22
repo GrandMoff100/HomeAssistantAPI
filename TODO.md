@@ -1,4 +1,4 @@
-#TODOs (A checklist of sorts)
+# TODOs (A checklist of sorts)
 
 ## Code Features
 - [ ] Add Testing Suite/Workflow the runs Home Assistant Core to test library.
