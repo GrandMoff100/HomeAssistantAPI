@@ -1,28 +1,44 @@
 # Changelog
 
-**v2.0.0**
-- Added Data Models
-- Added Documentation
-- Added functions for all endpoints
+## v3.0.0
 
-**v2.1.0**
-- Added Event support
+- Added Rigorous CI/CD tools, i.e. `black`, `isort`, `mypy`, `pre-commit`, `pylint`, `flake8`.
+- Renamed `AsyncClient` methods with `async_<method>` convention.
+- `Client` and `AsyncClient` can be initialized without confirming the API's status.
+- `Client` and `AsyncClient` are now both context managers that function the exact same.
+- Both clients now share previously redundant model conversion methods.
+- Reversed CHANGELOG order (most recent first).
 
-**v2.2.0**
-- Implemented async support with `homeassistant_api._async.AsyncClient`
+## v2.4.0.post2
 
-**v2.3.0**
-- Bug fixes (see closed issues between releases)
-- Added global request kwargs parameter to Client objects (see [docs](https://homeassistantapi.readthedocs.io/en/latest/api.html))
+- Fixed wrong check in malformed_id function
 
-**v2.4.0**
+## v2.4.0.post1
+
+- Replaced `text/plain` with `application/octet-stream` in docs and processing module.
+- Added message content to UnrecognizedStatusCodeError to help with user debugging
+
+## v2.4.0
+
 - Bug fixes (see closed issues between releases)
 - Added a processing framework for hooking into mimetype processing
 - Fixed some issues with some ``AsyncClient`` methods
 
-**v2.4.0.post1**
-- Replaced `text/plain` with `application/octet-stream` in docs and processing module.
-- Added message content to UnrecognizedStatusCodeError to help with user debugging
+## v2.3.0
 
-**v2.4.0.post2**
-- Fixed wrong check in malformed_id function
+- Bug fixes (see closed issues between releases)
+- Added global request kwargs parameter to Client objects (see [docs](homeassistantapi.rtfd.io/en/latest/api.html#homeassistant_api.Client))
+
+## v2.2.0
+
+- Implemented async support with `homeassistant_api._async.AsyncClient`
+
+## v2.1.0
+
+- Added Event support
+
+## v2.0.0
+
+- Added Data Models
+- Added Documentation
+- Added functions for all endpoints

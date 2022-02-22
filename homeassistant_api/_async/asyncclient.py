@@ -1,9 +1,10 @@
-"""Module for interacting with homeassistant asyncronously."""
+"""Module for interacting with Home Assistant asyncronously."""
 import asyncio
 from datetime import datetime
 from os.path import join
 from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
 
+import aiohttp
 from aiohttp_client_cache import CachedSession
 
 from ..const import DATE_FMT
@@ -24,16 +25,16 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    _session: Optional[CachedSession] = None
+    _async_session: Optional[CachedSession] = None
 
     async def __aenter__(self):
-        self._session = CachedSession(expire_after=30)
-        await self._session.__aenter__()
+        self._async_session = CachedSession(expire_after=30)
+        await self._async_session.__aenter__()
         await self.async_check_api_running()
         return self
 
     async def __aexit__(self, cls, obj, traceback):
-        await self._session.__aexit__(cls, obj, traceback)
+        await self._async_session.__aexit__(cls, obj, traceback)
 
     # Very important request function
     async def async_request(
@@ -47,18 +48,26 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         try:
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
-            assert self._session is not None
-            resp = await self._session.request(
+            if self._async_session is not None:
+                return await self.async_response_logic(
+                    await self._async_session.request(
+                        method,
+                        self.endpoint(path),
+                        headers=self.prepare_headers(headers),
+                        **kwargs,
+                    )
+                )
+            async with aiohttp.request(
                 method,
                 self.endpoint(path),
                 headers=self.prepare_headers(headers),
                 **kwargs,
-            )
+            ) as resp:
+                return await self.async_response_logic(resp)
         except asyncio.exceptions.TimeoutError as err:
             raise RequestError(
-                f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
+                f'Home Assistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
             ) from err
-        return await self.async_response_logic(resp)
 
     @staticmethod
     async def async_response_logic(response):
@@ -68,7 +77,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
     # API information methods
     async def async_api_error_log(self) -> str:
         """Returns the server error log as a string"""
-        return cast(str, await self.async_request("error_log", return_text=True))
+        return cast(str, await self.async_request("error_log"))
 
     async def async_api_config(self) -> Dict[str, Any]:
         """Returns the yaml configuration of homeassistant"""
@@ -116,7 +125,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
             yield History.parse_obj({"states": states})
 
     async def async_get_rendered_template(self, template: str):
-        """Renders a given Jinja2 template string with homeassistant context data."""
+        """Renders a given Jinja2 template string with Home Assistant context data."""
         return await self.async_request(
             "template",
             json=dict(template=template),
@@ -130,7 +139,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     # API check methods
     async def async_check_api_config(self) -> bool:
-        """Asks homeassistant to validate its configuration file"""
+        """Asks Home Assistant to validate its configuration file"""
         res = await self.async_request("config/core/check_config", method="POST")
         res = cast(Dict[Any, Any], res)
         valid = {"valid": True, "invalid": False}.get(
@@ -145,7 +154,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         return valid
 
     async def async_check_api_running(self) -> bool:
-        """Asks homeassistant if its running"""
+        """Asks Home Assistant if its running"""
         res = cast(Dict[Any, Any], await self.async_request(""))
         if res.get("message", None) == "API running.":
             return True
@@ -202,7 +211,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         service: str,
         **service_data,
     ) -> List[State]:
-        """Tells homeassistant to trigger a service, returns stats changed while being called"""
+        """Tells Home Assistant to trigger a service, returns stats changed while being called"""
         data = await self.async_request(
             join("services", domain, service),
             method="POST",

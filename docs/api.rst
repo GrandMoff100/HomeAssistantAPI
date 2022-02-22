@@ -1,17 +1,10 @@
 Code Reference
 ***************
 
-.. currentmodule:: homeassistant_api
-
-
 Clients
 --------
 
-.. autoclass:: Client
-   :members:
-   :inherited-members:
-
-.. autoclass:: homeassistant_api._async.AsyncClient
+.. autoclass:: homeassistant_api.Client
    :members:
    :inherited-members:
 
@@ -19,67 +12,48 @@ Clients
 Data Models
 ------------
 
-.. autoclass:: Domain
-   :members:
+.. automodule:: homeassistant_api.models
 
-.. autoclass:: Service
-   :members:
+   .. autoclass:: Domain
 
-.. autoclass:: Group
-   :members:
+   .. autoclass:: Service
 
-.. autoclass:: Entity
-   :members:
+   .. autoclass:: Group
 
-.. autoclass:: State
-   :members:
+   .. autoclass:: Entity
 
-.. autoclass:: Event
-   :members:
+   .. autoclass:: History
+
+   .. autoclass:: State
+
+   .. autoclass:: Event
 
 
-.. autoclass:: homeassistant_api._async.AsyncDomain
-   :members:
 
-.. autoclass:: homeassistant_api._async.AsyncService
-   :members:
+.. automodule:: homeassistant_api._async.models
 
-.. autoclass:: homeassistant_api._async.AsyncGroup
-   :members:
+   .. autoclass:: AsyncDomain
 
-.. autoclass:: homeassistant_api._async.AsyncEntity
-   :members:
+   .. autoclass:: AsyncService
 
-.. autoclass:: homeassistant_api._async.AsyncEvent
-   :members:
+   .. autoclass:: AsyncGroup
+
+   .. autoclass:: AsyncEntity
+
+   .. autoclass:: AsyncEvent
 
 
 Processing
 -----------
 
 
-.. autoclass:: Processing
+.. autoclass:: homeassistant_api.processing.Processing
    :members:
 
 
 Exceptions
 -----------
 
-.. autoclass:: homeassistant_api.errors.RequestError
-
-.. autoclass:: homeassistant_api.errors.MalformedDataError
-
-.. autoclass:: homeassistant_api.errors.MalformedInputError
-
-.. autoclass:: homeassistant_api.errors.APIConfigurationError
-
-.. autoclass:: homeassistant_api.errors.ParameterMissingError
-
-.. autoclass:: homeassistant_api.errors.UnexpectedStatusCodeError
-
-.. autoclass:: homeassistant_api.errors.UnauthorizedError
-
-.. autoclass:: homeassistant_api.errors.EndpointNotFoundError
-
-.. autoclass:: homeassistant_api.errors.MethodNotAllowedError
+.. automodule:: homeassistant_api.errors
+   :members:
 

@@ -27,7 +27,10 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     _session: Optional[CachedSession] = None
 
     def __enter__(self):
-        self._session = CachedSession(expire_after=30, backend="memory")
+        self._session = CachedSession(
+            expire_after=self.cache_expire_after,
+            backend=self.cache_backend,
+        )
         self._session.__enter__()
         self.check_api_running()
         self.check_api_config()
@@ -48,16 +51,23 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         try:
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
-            assert self._session is not None
-            resp = self._session.request(
-                method,
-                self.endpoint(path),
-                headers=self.prepare_headers(headers),
-                **kwargs,
-            )
+            if self._session is not None:
+                resp = self._session.request(
+                    method,
+                    self.endpoint(path),
+                    headers=self.prepare_headers(headers),
+                    **kwargs,
+                )
+            else:
+                resp = requests.request(
+                    method,
+                    self.endpoint(path),
+                    headers=self.prepare_headers(headers),
+                    **kwargs,
+                )
         except requests.exceptions.Timeout as err:
             raise RequestError(
-                f'Homeassistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
+                f'Home Assistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
             ) from err
         return self.response_logic(resp)
 
@@ -113,7 +123,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
 
     def get_rendered_template(self, template: str) -> str:
         """
-        Renders a Jinja2 template with homeassistant context data.
+        Renders a Jinja2 template with Home Assistant context data.
         See https://developers.home-assistant.io/docs/api/rest/.
         """
         return cast(
@@ -133,7 +143,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
 
     # API check methods
     def check_api_config(self) -> bool:
-        """Asks homeassistant to validate its configuration file"""
+        """Asks Home Assistant to validate its configuration file"""
         res = cast(dict, self.request("config/core/check_config", method="POST"))
         valid = {"valid": True, "invalid": False}.get(res["result"], False)
         if valid is False:
@@ -141,7 +151,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         return valid
 
     def check_api_running(self) -> bool:
-        """Asks homeassistant if its running"""
+        """Asks Home Assistant if its running"""
         res = self.request("")
         if cast(dict, res).get("message", None) == "API running.":
             return True
@@ -192,8 +202,13 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         )
         return tuple(services)
 
-    def get_domain(self, domain: str) -> Domain:
+    def get_domain(self, domain_id: str) -> Optional[Domain]:
         """Fetchers all services under a particular domain."""
+        domains = self.get_domains()
+        for domain in domains:
+            if domain.domain_id == domain_id:
+                return domain
+        return None
 
     def trigger_service(
         self,
@@ -201,7 +216,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         service: str,
         **service_data,
     ) -> Tuple[State, ...]:
-        """Tells homeassistant to trigger a service, returns stats changed while being called"""
+        """Tells Home Assistant to trigger a service, returns stats changed while being called"""
         data = self.request(
             join("services", domain, service),
             method="POST",

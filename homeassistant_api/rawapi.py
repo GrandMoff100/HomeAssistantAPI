@@ -21,14 +21,23 @@ class RawWrapper:
         api_url: str,
         token: str,
         global_request_kwargs: Optional[Dict[str, str]] = None,
+        cache_backend=None,
+        cache_expire_after: Optional[int] = None,
     ) -> None:
-        self.api_url = api_url
-        self.token = token
         if global_request_kwargs is None:
             global_request_kwargs = {}
-        self.global_request_kwargs = global_request_kwargs
         if not self.api_url.endswith("/"):
             self.api_url += "/"
+        if cache_backend is None:
+            cache_backend = "memory"
+        if cache_expire_after is None:
+            cache_expire_after = 30
+
+        self.api_url = api_url
+        self.token = token
+        self.global_request_kwargs = global_request_kwargs
+        self.cache_backend = cache_backend
+        self.cache_expire_after = cache_expire_after
 
     def endpoint(self, path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""

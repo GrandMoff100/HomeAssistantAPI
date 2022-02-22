@@ -50,6 +50,7 @@ resource_links = {
     "issues": "https://github.com/GrandMoff100/HomeassistantAPI/issues",
     "discussions": "https://github.com/GrandMoff100/HomeassistantAPI/discussions",
     "examples": f"https://github.com/GrandMoff100/HomeassistantAPI/tree/{branch}/examples",
+    "new_pr": "https://github.com/GrandMoff100/HomeAssistantAPI/compare",
 }
 
 # Add any paths that contain templates here, relative to this directory.

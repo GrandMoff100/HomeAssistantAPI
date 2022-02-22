@@ -7,7 +7,6 @@ from typing import Callable, Dict, Tuple, Union
 import simplejson
 from aiohttp import ClientResponse
 from aiohttp_client_cache.response import CachedResponse as AsyncCachedResponse
-from pydantic import BaseModel
 from requests import Response
 from requests_cache import CachedResponse
 
@@ -20,6 +19,7 @@ from .errors import (
     UnauthorizedError,
     UnexpectedStatusCodeError,
 )
+from .models import BaseModel
 
 
 class Processing(BaseModel):
@@ -28,11 +28,6 @@ class Processing(BaseModel):
     response: Union[Response, CachedResponse, ClientResponse, AsyncCachedResponse]
     _processors: Dict[str, Tuple[Callable, ...]] = {}
 
-    class Config:  # pylint: disable=too-few-public-methods
-        """A pydantic config class."""
-
-        arbitrary_types_allowed: bool = True
-
     @staticmethod
     def processor(mimetype: str):
         """A decorator used to register a response converter function."""
@@ -40,7 +35,9 @@ class Processing(BaseModel):
         def register_processor(processor):
             if mimetype not in Processing._processors:
                 Processing._processors[mimetype] = tuple()
-            Processing._processors[mimetype] += (processor,)
+            Processing._processors[mimetype] = (processor,) + Processing._processors[
+                mimetype
+            ]
             return processor
 
         return register_processor
@@ -101,7 +98,7 @@ def process_json(response):
         return response.json()
     except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError) as err:
         raise MalformedDataError(
-            f"Homeassistant responded with non-json response: {repr(response.text)}"
+            f"Home Assistant responded with non-json response: {repr(response.text)}"
         ) from err
 
 
@@ -118,7 +115,7 @@ async def async_process_json(response):
         return await response.json()
     except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError) as err:
         raise MalformedDataError(
-            f"Homeassistant responded with non-json response: {repr(await response.text())}"
+            f"Home Assistant responded with non-json response: {repr(await response.text())}"
         ) from err
 
 

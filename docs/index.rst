@@ -9,7 +9,8 @@
 Welcome to Homeassistant API!
 =============================
 
-Homeassistant API is a pythonic module that interacts with `Homeassistant's REST API integration <https://developers.home-assistant.io/docs/api/rest>`_
+Homeassistant API is a pythonic module that interacts with `Homeassistant's REST API integration <https://developers.home-assistant.io/docs/api/rest>`_.
+You can use it to remotely control your Home Assistant like getting entity states, triggering services, etc.
 
 Index
 ----------
@@ -20,23 +21,22 @@ Index
    Home <self>
    quickstart
    usage
-   faq
-   credits
+   development
 
 
 Features
 ----------
 
-- Full consumption of the Homeassistant REST API endpoints
-- Convenient classes that represent data from the API
-- Asynchronous support for integration in async applications or libraries
-- Modular design for intuitive readability
+- Full consumption of the Home Assistant REST API endpoints.
+- Convenient Pydantic Models for data validation.
+- Syncrononous and Asynchronous support for integrating with all applications and/or libraries.
+- Modular design for intuitive readability.
+- Request caching for more efficient repeative requests.
 
 Getting Started
 -------------------
 
-Is this your first time using the library? This is the place to get started!
-
+Is this your first time using the library? Start with our :ref:`Quickstart Section <quickstart>`
 
 Example
 ---------
@@ -44,20 +44,30 @@ Example
 .. literalinclude:: ../examples/basic.py
    :language: python
 
-Many more examples are available in the :resource:`repository <examples>`. Feel feel to open a pull request and add your own! See Contributing Guidelines
+Want to look at more?
+Many more examples are available in the :resource:`repository <examples>`.
+We encourage you to open a pull request and add your own after you get to know the library!
+See the :ref:`Contributing Section <contributing_section>`.
 
 
 Code Reference
 ---------------
-View the documentation for each class and function :doc:`here <api>`.
+View the documentation for each class and method :doc:`here <api>`.
 
 
-Contributing
--------------
+.. _contributing_section:
 
-We very warmly welcome contributions.
-If you have an idea or some code you want to add to the project please fork :resource:`the repository <repo>`, make your changes, and open a pull request.
-Most likely your changes will get merged if your code passes flake8 without any errors, and adds some functionality to the project.
-We'd love to incorporate your unique ideas and perspective!
+Contributing Guidelines
+--------------------------
 
-We would love to give a special shoutout to `<FoxNerdSaysMoo> https://github.com/FoxNerdSaysMoo` for contributions to some of the awesome theme styling on these docs!
+We absolutely looooooooooove contributions!
+This library has come a long way since its one-file humble beginning, on a Saturday afternoon with some our programming buddies.
+But while much has been done already there is still much much much more to do!
+Which is exciting!
+If you're a developer that has an idea, suggestion or just wants to be helpful because you're an awesome person.
+See our \*newly minted\* :ref:`Development and Contribution page <development_page>` for contribution ideas, guidelines, procedures and what to expect with your PR.
+Happy developing!
+We hope to see your PRs soon.
+
+..
+   We would love to give a special shoutout to `FoxNerdSaysMoo <https://github.com/FoxNerdSaysMoo>` for contributions to some of the awesome theme styling on these docs!
