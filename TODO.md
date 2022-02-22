@@ -8,7 +8,9 @@
 None yet?
 
 ## Maintainence
-- [ ] Initialize project Milestones and Wiki
+- [ ] Initialize project Milestones and Wiki.
+- [ ] Add Workflow that issues labeled as `bug` to Code Bugs in TODO.md.
 
 ## Documentation
-- [ ] Add runnable Code Examples
+- [ ] Add runnable Code Examples.
+- [ ] Document project scripts.
