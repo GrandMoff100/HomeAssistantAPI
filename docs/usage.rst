@@ -92,9 +92,9 @@ Entities
     # <State "My new state" entity_id="cover.garage_door">
 
 
-Using Client with `async`/`await`
-************************************
-Are you wondering if you can use `homeassistant_api` using Python's `async`/`await` syntax?
+Using Client with :code:`async`/:code:`await`
+*************************************************
+Are you wondering if you can use :code:`homeassistant_api` using Python's :code:`async`/:code:`await` syntax?
 Good news! You can!
 
 Services

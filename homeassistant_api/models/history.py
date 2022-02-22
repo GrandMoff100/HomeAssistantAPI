@@ -6,7 +6,7 @@ from .states import State
 
 
 class History(BaseModel):
-    """Model representing past states of an entity."""
+    """Model representing past :code:`State`'s of an entity."""
 
     states: Tuple[State, ...]
 
@@ -16,7 +16,7 @@ class History(BaseModel):
 
     @property
     def entity_id(self) -> str:
-        """Returns the shared entity_id of states."""
+        """Returns the shared :code:`entity_id` of states."""
         entity_ids = [state.entity_id for state in self.states]
         result, *others = set(entity_ids)
         assert len(others) == 0

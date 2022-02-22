@@ -1,4 +1,4 @@
-"""Imports Model objects for convenience."""
+"""The Model objects for the entire library."""
 from .base import BaseModel
 from .domains import Domain, Service
 from .entity import Entity, Group

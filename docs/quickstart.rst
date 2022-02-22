@@ -9,7 +9,7 @@ Prerequisites
 
 Homeassistant
 ---------------
-Before using this library, you need to have Home Assistant OS running on a device.
+Before using this library, you need to have Home Assistant running on a device.
 Something like a `Raspberry Pi 3 or 4 <https://www.raspberrypi.com>`_ or spare laptop.
 If you don't want to do that you can setup a Home Assistant container on your laptop or desktop with docker.
 See `here <https://www.home-assistant.io/installation/>`_ for how to install the installation right for you.
@@ -25,6 +25,8 @@ But if by chance you have disabled :code:`default_config` you need to enable :co
 Which requires the :code:`http` integration as well.
 (Again most likely already enabled on most installations of Home Assistant.)
 If you are not sure if it is enabled or not, chances are if your frontend is enabled, so is your API Server.
+
+.. _access_token_setup:
 
 Access Token
 --------------

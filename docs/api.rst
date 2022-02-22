@@ -1,13 +1,10 @@
 Code Reference
 ***************
 
-.. currentmodule:: homeassistant_api
-
-
 Clients
 --------
 
-.. autoclass:: Client
+.. autoclass:: homeassistant_api.Client
    :members:
    :inherited-members:
 
@@ -15,67 +12,48 @@ Clients
 Data Models
 ------------
 
-.. autoclass:: Domain
-   :members:
+.. automodule:: homeassistant_api.models
 
-.. autoclass:: Service
-   :members:
+   .. autoclass:: Domain
 
-.. autoclass:: Group
-   :members:
+   .. autoclass:: Service
 
-.. autoclass:: Entity
-   :members:
+   .. autoclass:: Group
 
-.. autoclass:: State
-   :members:
+   .. autoclass:: Entity
 
-.. autoclass:: Event
-   :members:
+   .. autoclass:: History
+
+   .. autoclass:: State
+
+   .. autoclass:: Event
 
 
-.. autoclass:: AsyncDomain
-   :members:
 
-.. autoclass:: AsyncService
-   :members:
+.. automodule:: homeassistant_api._async.models
 
-.. autoclass:: AsyncGroup
-   :members:
+   .. autoclass:: AsyncDomain
 
-.. autoclass:: AsyncEntity
-   :members:
+   .. autoclass:: AsyncService
 
-.. autoclass:: AsyncEvent
-   :members:
+   .. autoclass:: AsyncGroup
+
+   .. autoclass:: AsyncEntity
+
+   .. autoclass:: AsyncEvent
 
 
 Processing
 -----------
 
 
-.. autoclass:: Processing
+.. autoclass:: homeassistant_api.processing.Processing
    :members:
 
 
 Exceptions
 -----------
 
-.. autoclass:: homeassistant_api.errors.RequestError
-
-.. autoclass:: homeassistant_api.errors.MalformedDataError
-
-.. autoclass:: homeassistant_api.errors.MalformedInputError
-
-.. autoclass:: homeassistant_api.errors.APIConfigurationError
-
-.. autoclass:: homeassistant_api.errors.ParameterMissingError
-
-.. autoclass:: homeassistant_api.errors.UnexpectedStatusCodeError
-
-.. autoclass:: homeassistant_api.errors.UnauthorizedError
-
-.. autoclass:: homeassistant_api.errors.EndpointNotFoundError
-
-.. autoclass:: homeassistant_api.errors.MethodNotAllowedError
+.. automodule:: homeassistant_api.errors
+   :members:
 
