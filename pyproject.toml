@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "Home Assistant API"
+name = "HomeAssistantAPI"
 version = "3.0.0"
 description = "Python Wrapper for Homeassistant's REST API"
 authors = ["GrandMoff100 <minecraftcrusher100@gmail.com>"]
