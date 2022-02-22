@@ -27,4 +27,4 @@ jobs:
         run: |
           poetry publish --build \
             --username $TWINE_USERNAME \
-            --password TWINE_PASSWORD
+            --password $TWINE_PASSWORD
