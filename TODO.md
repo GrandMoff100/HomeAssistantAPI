@@ -14,3 +14,4 @@ None yet?
 ## Documentation
 - [ ] Add runnable Code Examples.
 - [ ] Document project scripts.
+- [ ] Document branch naming scheme (i.e. `feature/<some_feature>`, `maintainence/<stuff>`, `bug/<bug-title>`, `docs/<feature/version>`)
