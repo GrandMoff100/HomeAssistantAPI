@@ -21,7 +21,7 @@ So now that you know what you want to contribute it is time to setup a developme
 Step One: Fork the Repository
 ===============================
 
-Click `here <https://github.com/GrandMoff100/HomeAssistantAPI/fork>`_ to fork the repostiory. The click your username.
+Click `here <https://github.com/GrandMoff100/HomeAssistantAPI/fork>`_ to fork the repository. Then click your username.
 
 Step Two: Clone the Repository Locally
 =======================================
@@ -72,7 +72,7 @@ Your code will also be checked again when you open a PR on the original reposito
 Merging Your Contributions
 *****************************
 
-Once you have tested your changes and commited them to your fork you can merge them back into the :resource:`original repository <repo>`.
+Once you have tested your changes and committed them to your fork you can merge them back into the :resource:`original repository <repo>`.
 Head over to the :resource:`Pull Request Page <new_pr>` and select your fork to merge into the `GrandMoff100/dev` branch.
 Then you can hit "Create Pull Request" and we'll review it as soon as possible.
 In order to be merged though, your code needs to follow our :ref:`Styling Guidelines <styling>`.
