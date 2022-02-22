@@ -10,6 +10,7 @@ None yet?
 ## Maintainence
 - [ ] Initialize project Milestones and Wiki.
 - [ ] Add Workflow that issues labeled as `bug` to Code Bugs in TODO.md.
+- [ ] Fix workflows to only run when python paths are modified.
 
 ## Documentation
 - [ ] Add runnable Code Examples.
