@@ -21,7 +21,7 @@ class JsonProcessingMixin:
     @staticmethod
     def process_state_json(json: Dict[str, Any]) -> State:
         """Constructs State model from json data"""
-        return State(**json)
+        return State.parse_obj(json)
 
     def process_event_json(self, json: Dict[str, Any]) -> Event:
         """Constructs Event model from json data"""
@@ -43,11 +43,11 @@ class JsonProcessingMixin:
     @staticmethod
     async def async_process_state_json(json: Dict[str, Any]) -> State:
         """Constructs State model from json data"""
-        return State(**json)
+        return State.parse_obj(json)
 
     async def async_process_event_json(
         self,
         json: Dict[str, Any],
     ) -> AsyncEvent:
-        """Constructs Event model from json data"""
+        """Constructs Event model from json data."""
         return AsyncEvent(**json, client=self)
