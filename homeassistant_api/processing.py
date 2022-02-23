@@ -2,7 +2,7 @@
 
 import inspect
 import json
-from typing import Callable, Dict, Tuple, Union
+from typing import Callable, ClassVar, Dict, Tuple, Union
 
 import simplejson
 from aiohttp import ClientResponse
@@ -26,7 +26,7 @@ class Processing(BaseModel):
     """Uses to processor functions to convert json data into common python data types."""
 
     response: Union[Response, CachedResponse, ClientResponse, AsyncCachedResponse]
-    _processors: Dict[str, Tuple[Callable, ...]] = {}
+    _processors: ClassVar[Dict[str, Tuple[Callable, ...]]] = {}
 
     @staticmethod
     def processor(mimetype: str):

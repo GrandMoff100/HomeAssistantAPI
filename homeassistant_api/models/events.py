@@ -2,6 +2,8 @@
 
 from typing import TYPE_CHECKING, Dict, cast
 
+from pydantic import Field
+
 from .base import BaseModel
 
 if TYPE_CHECKING:
@@ -18,7 +20,7 @@ class Event(BaseModel):
 
     event_type: str
     listener_count: int
-    client: "Client"
+    client: "Client" = Field(exclude=True, repr=False)
 
     def fire(self, **event_data) -> str:
         """Fires the corresponding event in Home Assistant."""
