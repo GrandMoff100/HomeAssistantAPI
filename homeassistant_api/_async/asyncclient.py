@@ -1,16 +1,14 @@
 """Module for interacting with Home Assistant asyncronously."""
 import asyncio
-from datetime import datetime
 from os.path import join
 from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
 
 import aiohttp
 from aiohttp_client_cache import CachedSession
 
-from ..const import DATE_FMT
 from ..errors import APIConfigurationError, MalformedDataError, RequestError
 from ..mixins import JsonProcessingMixin
-from ..models import Domain, Event, History, State
+from ..models import Domain, Event, History, LogbookEntry, State
 from ..processing import Processing
 from ..rawapi import RawWrapper
 from .models import AsyncEntity, AsyncGroup
@@ -85,28 +83,14 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def async_logbook_entries(
         self,
-        filter_entity: AsyncEntity = None,
-        start_timestamp: Union[str, datetime] = None,  # Defaults to 1 day before
-        end_timestamp: Union[str, datetime] = None,
-    ) -> Tuple[Dict[str, Any], ...]:
+        *args,
+        **kwargs,
+    ) -> AsyncGenerator[LogbookEntry, None]:
         """Returns a list of logbook entries from homeassistant."""
-        params: Dict[str, str] = {}
-        if filter_entity is not None:
-            params.update(entity=filter_entity.entity_id)
-        if end_timestamp is not None:
-            if isinstance(end_timestamp, datetime):
-                end_timestamp = end_timestamp.strftime(DATE_FMT)
-            params.update(end_time=end_timestamp)
-        if start_timestamp is not None:
-            if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-            url = join("logbook", formatted_timestamp)
-        else:
-            url = "logbook"
-        return cast(
-            Tuple[Dict[str, Any], ...],
-            await self.async_request(url, params=params),
-        )
+        params, url = self.prepare_get_logbook_entry_params(*args, **kwargs)
+        data = await self.async_request(url, params=params)
+        for entry in data:
+            yield LogbookEntry.parse_obj(entry)
 
     async def async_get_entity_histories(
         self,
