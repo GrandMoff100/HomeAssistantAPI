@@ -5,6 +5,8 @@ APPLY_FIXES: all # all, none, or list of linter keys
 DISABLE:
   - PYTHON
   - COPYPASTE
+DISABLE_LINTERS:
+  - SPELL_CSPELL
 SHOW_ELAPSED_TIME: true
 FILEIO_REPORTER: true
 RST_FILTER_REGEX_EXCLUDE: "(:resource:`.+`)"
