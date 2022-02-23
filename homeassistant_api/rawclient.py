@@ -1,16 +1,14 @@
 """Module for all interaction with homeassistant."""
 
-from datetime import datetime
 from os.path import join
 from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
 
 import requests
 from requests_cache import CachedSession
 
-from .const import DATE_FMT
 from .errors import APIConfigurationError, RequestError
 from .mixins import JsonProcessingMixin
-from .models import Domain, Entity, Event, Group, History, State
+from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
 from .processing import Processing
 from .rawapi import RawWrapper
 
@@ -87,27 +85,14 @@ class RawClient(RawWrapper, JsonProcessingMixin):
 
     def logbook_entries(
         self,
-        filter_entity: Optional[Entity] = None,
-        start_timestamp: Optional[
-            Union[str, datetime]
-        ] = None,  # Defaults to 1 day before
-        end_timestamp: Optional[Union[str, datetime]] = None,
-    ) -> List[Dict[str, Any]]:
+        *args,
+        **kwargs,
+    ) -> Generator[LogbookEntry, None, None]:
         """Returns a list of logbook entries from homeassistant."""
-        params: Dict[str, str] = {}
-        if filter_entity is not None:
-            params.update(entity=filter_entity.entity_id)
-        if end_timestamp is not None:
-            if isinstance(end_timestamp, datetime):
-                end_timestamp = end_timestamp.strftime(DATE_FMT)
-            params.update(end_time=end_timestamp)
-        if start_timestamp is not None:
-            if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-            url = join("logbook", formatted_timestamp)
-        else:
-            url = "logbook"
-        return cast(List[Dict[str, Any]], self.request(url, params=params))
+        params, url = self.prepare_get_logbook_entry_params(*args, **kwargs)
+        data = self.request(url, params=params)
+        for entry in data:
+            yield LogbookEntry.parse_obj(entry)
 
     def get_entity_histories(self, *args, **kwargs) -> Generator[History, None, None]:
         """

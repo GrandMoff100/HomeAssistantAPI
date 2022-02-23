@@ -2,7 +2,7 @@
 
 import os
 from datetime import datetime
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Union
 
 from .const import DATE_FMT
 from .errors import MalformedInputError
@@ -132,4 +132,28 @@ class RawWrapper:
                 raise TypeError(f"timestamp needs to be of type {datetime!r}")
         else:
             url = "history/period"
+        return params, url
+
+    @staticmethod
+    def prepare_get_logbook_entry_params(
+        filter_entity: Optional[Entity] = None,
+        start_timestamp: Optional[
+            Union[str, datetime]
+        ] = None,  # Defaults to 1 day before
+        end_timestamp: Optional[Union[str, datetime]] = None,
+    ) -> Tuple[Dict[str, str], str]:
+        """Prepares the query string and url path for retrieving logbook entries."""
+        params: Dict[str, str] = {}
+        if filter_entity is not None:
+            params.update(entity=filter_entity.entity_id)
+        if end_timestamp is not None:
+            if isinstance(end_timestamp, datetime):
+                end_timestamp = end_timestamp.strftime(DATE_FMT)
+            params.update(end_time=end_timestamp)
+        if start_timestamp is not None:
+            if isinstance(start_timestamp, datetime):
+                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
+            url = os.path.join("logbook", formatted_timestamp)
+        else:
+            url = "logbook"
         return params, url
