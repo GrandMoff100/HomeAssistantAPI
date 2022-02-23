@@ -26,8 +26,6 @@ class RawWrapper:
     ) -> None:
         if global_request_kwargs is None:
             global_request_kwargs = {}
-        if not self.api_url.endswith("/"):
-            self.api_url += "/"
         if cache_backend is None:
             cache_backend = "memory"
         if cache_expire_after is None:
@@ -38,6 +36,9 @@ class RawWrapper:
         self.global_request_kwargs = global_request_kwargs
         self.cache_backend = cache_backend
         self.cache_expire_after = cache_expire_after
+
+        if not api_url.endswith("/"):
+            self.api_url += "/"
 
     def endpoint(self, path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""

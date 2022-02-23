@@ -2,6 +2,8 @@
 from os.path import join
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
+from pydantic import Field
+
 from ...models import BaseModel, History, State
 
 if TYPE_CHECKING:
@@ -12,7 +14,7 @@ class AsyncGroup(BaseModel):
     """Represents the groups that entities belong to"""
 
     group_id: str
-    client: "Client"
+    client: "Client" = Field(exclude=True, repr=False)
     entities: Dict[str, "AsyncEntity"] = {}
 
     def add_entity(self, entity_slug: str, state: State) -> None:
