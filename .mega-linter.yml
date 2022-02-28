@@ -5,6 +5,7 @@ APPLY_FIXES: all # all, none, or list of linter keys
 DISABLE:
   - PYTHON
   - COPYPASTE
+  - CSS
 DISABLE_LINTERS:
   - SPELL_CSPELL
 SHOW_ELAPSED_TIME: true
