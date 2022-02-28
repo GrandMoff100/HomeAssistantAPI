@@ -1,6 +1,8 @@
 """Event Model File"""
 from typing import TYPE_CHECKING, Dict, cast
 
+from pydantic import Field
+
 from ...models import BaseModel
 
 if TYPE_CHECKING:
@@ -17,7 +19,7 @@ class AsyncEvent(BaseModel):
 
     event_type: str
     listener_count: int
-    client: "Client"
+    client: "Client" = Field(exclude=True, repr=False)
 
     async def async_fire(self, **event_data) -> str:
         """Fires the event type in homeassistant. Ex. `on_startup`"""

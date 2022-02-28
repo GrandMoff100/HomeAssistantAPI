@@ -1,7 +1,7 @@
 .. _development_page:
 
 *****************
-Development
+Contributing
 *****************
 
 This page is where development related things are.

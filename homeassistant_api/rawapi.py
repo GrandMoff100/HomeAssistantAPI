@@ -2,7 +2,7 @@
 
 import os
 from datetime import datetime
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Union
 
 from .const import DATE_FMT
 from .errors import MalformedInputError
@@ -26,8 +26,6 @@ class RawWrapper:
     ) -> None:
         if global_request_kwargs is None:
             global_request_kwargs = {}
-        if not self.api_url.endswith("/"):
-            self.api_url += "/"
         if cache_backend is None:
             cache_backend = "memory"
         if cache_expire_after is None:
@@ -38,6 +36,9 @@ class RawWrapper:
         self.global_request_kwargs = global_request_kwargs
         self.cache_backend = cache_backend
         self.cache_expire_after = cache_expire_after
+
+        if not api_url.endswith("/"):
+            self.api_url += "/"
 
     def endpoint(self, path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""
@@ -131,4 +132,28 @@ class RawWrapper:
                 raise TypeError(f"timestamp needs to be of type {datetime!r}")
         else:
             url = "history/period"
+        return params, url
+
+    @staticmethod
+    def prepare_get_logbook_entry_params(
+        filter_entity: Optional[Entity] = None,
+        start_timestamp: Optional[
+            Union[str, datetime]
+        ] = None,  # Defaults to 1 day before
+        end_timestamp: Optional[Union[str, datetime]] = None,
+    ) -> Tuple[Dict[str, str], str]:
+        """Prepares the query string and url path for retrieving logbook entries."""
+        params: Dict[str, str] = {}
+        if filter_entity is not None:
+            params.update(entity=filter_entity.entity_id)
+        if end_timestamp is not None:
+            if isinstance(end_timestamp, datetime):
+                end_timestamp = end_timestamp.strftime(DATE_FMT)
+            params.update(end_time=end_timestamp)
+        if start_timestamp is not None:
+            if isinstance(start_timestamp, datetime):
+                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
+            url = os.path.join("logbook", formatted_timestamp)
+        else:
+            url = "logbook"
         return params, url

@@ -1,10 +1,20 @@
-# Todo
+# TODOs (A checklist of sorts)
 
-## Features
-- [ ] Add caching to Entity.get_state (to make it fetch state automatically)
+## Code Features
 
-- [X] Create AsyncClient for integration in async applications and libraries
+- [ ] Add Testing Suite/Workflow the runs Home Assistant Core to test library.
+- [X] Clean up Model `repr` methods with disabling model field `repr`s.
 
-- [X] Add if statements to all Client methods that call malformed_id and raise MalformedInputError if true.
+## Code Bugs
+
+None yet?
+
+## Maintenance
+
+- [ ] Fix workflows to only run when python paths are modified.
 
 ## Documentation
+
+- [ ] Add runnable Code Examples.
+- [ ] Document project scripts.
+- [ ] Document branch naming scheme (i.e. `feature/<some_feature>`, `maintenance/<stuff>`, `bug/<bug-title>`, `docs/<feature/version>`)

@@ -1,6 +1,8 @@
 """File for Service and Domain data models"""
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
 
+from pydantic import Field
+
 from .base import BaseModel
 from .states import State
 
@@ -12,7 +14,7 @@ class Domain(BaseModel):
     """Model representing the domain that services belong to."""
 
     domain_id: str
-    client: "Client"
+    client: "Client" = Field(exclude=True, repr=False)
     services: Dict[str, "Service"] = {}
 
     def add_service(self, service_id: str, **data) -> None:

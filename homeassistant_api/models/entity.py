@@ -3,6 +3,8 @@
 from os.path import join
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
+from pydantic import Field
+
 from .base import BaseModel
 from .history import History
 from .states import State
@@ -15,7 +17,7 @@ class Group(BaseModel):
     """Represents the groups that entities belong to."""
 
     group_id: str
-    client: "Client"
+    client: "Client" = Field(exclude=True, repr=False)
     entities: Dict[str, "Entity"] = {}
 
     def add_entity(self, entity_slug: str, state: State) -> None:
