@@ -33,8 +33,8 @@ you'd want to know is on our readthedocs site [here](https://homeassistantapi.re
 
 If there is something missing, open an issue and let us know! Thanks!
 
-Go make some cool stuff! Maybe come back and tell us about it in a 
-[discussion](https://github.com/GrandMoff100/HomeAssistantAPI/discussions)? 
+Go make some cool stuff! Maybe come back and tell us about it in a
+[discussion](https://github.com/GrandMoff100/HomeAssistantAPI/discussions)?
 We'd love to hear about how you use our library!!
 
 ## License
