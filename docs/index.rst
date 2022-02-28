@@ -21,7 +21,9 @@ Index
    Home <self>
    quickstart
    usage
-   development
+   api
+   CONTRIBUTING
+   Advanced <advanced>
 
 
 Features
