@@ -1,7 +1,7 @@
 .. _development_page:
 
 *****************
-Development
+Contributing
 *****************
 
 This page is where development related things are.
@@ -35,7 +35,8 @@ Next run in your terminal.
 Step Three: Installing Dependencies
 ======================================
 
-Firstly, you need to have Python 3.7 or newer with Pip installed. Download the latest Python Version from `here <https://www.python.org/>`_.
+Firstly, you need to have Python 3.7 or newer with Pip installed.
+Download the latest Python Version from `here <https://www.python.org/>`__.
 Then you need to install the very popular Python Package Manager, :code:`poetry`.
 Checkout the `Poetry docs <https://python-poetry.org/docs/>`_.
 You can install that with :code:`pip` by running :code:`pip install poetry`.
@@ -46,8 +47,9 @@ Step Four: [Optional] Setting Up a Home Assistant Development Environment.
 
 If you do not have a Home Assistant installation running already, you can setup a Home Assistant Development environment.
 Which is basically a local, unpackaged, Home Assistant Core installation, that runs with just Python (no Docker or Operating System).
-You can start and stop the server really easily as it runs just in your terminal and gives you lots of control over it, making it ideal for testing your changes to Home Assistant API.
-Follow this great guide `here <https://developers.home-assistant.io/docs/development_environment>`_ to do that.
+You can start and stop the server really easily as it runs just in your
+terminal and gives you lots of control over it, making it ideal for testing your changes to Home Assistant API.
+Follow this great guide `here <https://developers.home-assistant.io/docs/development_environment>`__ to do that.
 After that you are now ready to make your changes to the codebase!
 
 Testing

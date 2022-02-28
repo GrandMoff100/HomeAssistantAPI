@@ -2,3 +2,6 @@
 # Unless a later match takes precedence,
 # These owners will be requested for review when someone opens a pull request.
 * @GrandMoff100
+
+# Custom CSS Styling
+docs/static/css/custom.css @FoxNerdSaysMoo

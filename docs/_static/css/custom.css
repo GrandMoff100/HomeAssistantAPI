@@ -89,3 +89,26 @@ body {
 .version {
   color: #d9d9d9;
 }
+
+
+dt {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.sig {
+    border-radius: 0.3142em;
+}
+
+html.writer-html4 .rst-content dl:not(.docutils) > dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) > dt {
+    border: 1px solid #72cdf7;
+}
+
+html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list) > dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list) > dt {
+    border: 1px solid #adadad;
+}
+
+.py > .headerlink {
+    visibility: hidden !important;
+    position: absolute !important;
+}
