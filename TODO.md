@@ -11,10 +11,10 @@ None yet?
 
 ## Maintenance
 
-- [ ] Fix workflows to only run when python paths are modified.
+- [X] Fix workflows to only run when python paths are modified.
 
 ## Documentation
 
-- [ ] Add runnable Code Examples.
+- [ ] Document Persistent Caching.
 - [ ] Document project scripts.
 - [ ] Document branch naming scheme (i.e. `feature/<some_feature>`, `maintenance/<stuff>`, `bug/<bug-title>`, `docs/<feature/version>`)
