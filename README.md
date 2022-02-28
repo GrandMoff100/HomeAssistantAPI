@@ -8,8 +8,7 @@
 
 [![Home Assistant Logo](https://github.com/GrandMoff100/HomeAssistantAPI/blob/7edb4e6298d37bda19c08b807613c6d351788491/docs/images/homeassistant-logo.png?raw=true)](https://home-assistant.io)
 
-Python Wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
-
+### Python wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
 
 Please ⭐️ the repo if you find this project useful or cool!
 
@@ -26,10 +25,18 @@ with Client(
 
     light.turn_on(entity_id='light.living_room_lamp')
 ```
+All the methods also support async!
 
 ## Documentation
-All documentation, API reference, Contribution guidelines and pretty much everything else you'd want to know is on our readthedocs site [here](https://homeassistantapi.readthedocs.io)
+All documentation, API reference, contribution guidelines and pretty much everything else
+you'd want to know is on our readthedocs site [here](https://homeassistantapi.readthedocs.io)
 
-If theres something missing open an issue and let us know! Thanks!
+If there's something missing open an issue and let us know! Thanks!
 
-Go make some cool stuff! Maybe come back and tell us about it in a [discussion](https://github.com/GrandMoff100/HomeAssistantAPI/discussions)? We'd love to hear about how you use our library!!
+Go make some cool stuff! Maybe come back and tell us about it in a 
+[discussion](https://github.com/GrandMoff100/HomeAssistantAPI/discussions)? 
+We'd love to hear about how you use our library!!
+
+## License
+
+This project is under the GNU GPLv3 license, as defined by the Free Software Foundation.

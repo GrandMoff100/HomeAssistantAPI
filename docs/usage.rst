@@ -155,9 +155,5 @@ What's Next?
 
 Browse below to learn more about what you can do with :code:`homeassistant_api`.
 
-
-.. toctree::
-   :maxdepth: 2
-
-   api
-   advanced
+* `API Reference <api.html>`_
+* `Advanced Section <advanced.html>`_

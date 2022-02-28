@@ -12,7 +12,7 @@ Homeassistant
 Before using this library, you need to have Home Assistant running on a device.
 Something like a `Raspberry Pi 3 or 4 <https://www.raspberrypi.com>`_ or spare laptop.
 If you don't want to do that you can setup a Home Assistant container on your laptop or desktop with docker.
-See `here <https://www.home-assistant.io/installation/>`_ for how to install the installation right for you.
+See `here <https://www.home-assistant.io/installation/>`__ for how to install the installation right for you.
 
 Configuring the REST API Server in Homeassistant
 =======================================================
@@ -31,11 +31,12 @@ If you are not sure if it is enabled or not, chances are if your frontend is ena
 Access Token
 --------------
 Then once you have done that you need to head over to your profile and set up a "Long Lived Access Token" to use in your code later.
-A good guide on how to do that is `here <https://www.home-assistant.io/docs/authentication/#your-account-profile>`_
+A good guide on how to do that is `here <https://www.home-assistant.io/docs/authentication/#your-account-profile>`__
 
 Exposing Home Assistant to the Web
 --------------------------------------
-You may want to setup remote access through a Dynamic DNS server like DuckDNS (a good youtube tutorial on how to do that `here <https://www.youtube.com/watch?v=AK5E2T5tWyM>`_, keep in mind you will need to port forward to set that up.)
+You may want to setup remote access through a Dynamic DNS server like DuckDNS (a good youtube tutorial on how to do that
+`here <https://www.youtube.com/watch?v=AK5E2T5tWyM>`__, keep in mind you will need to port forward to set that up.)
 If you do pursue this your api url will be something like :code:`https://yourhomeassistant.duckdns.org:8123/api`.
 Which is different than what it could have looked like before.
 Which might have been something like :code:`http://homeassistant.local:8123/api` or :code:`http://localhost:8123/api`
