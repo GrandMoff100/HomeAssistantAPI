@@ -8,7 +8,7 @@
 
 [![Home Assistant Logo](https://github.com/GrandMoff100/HomeAssistantAPI/blob/7edb4e6298d37bda19c08b807613c6d351788491/docs/images/homeassistant-logo.png?raw=true)](https://home-assistant.io)
 
-### Python wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
+## Python wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
 
 Please ⭐️ the repo if you find this project useful or cool!
 
