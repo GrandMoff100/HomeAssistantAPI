@@ -31,7 +31,7 @@ All the methods also support async!
 All documentation, API reference, contribution guidelines and pretty much everything else
 you'd want to know is on our readthedocs site [here](https://homeassistantapi.readthedocs.io)
 
-If there's something missing open an issue and let us know! Thanks!
+If there is something missing, open an issue and let us know! Thanks!
 
 Go make some cool stuff! Maybe come back and tell us about it in a 
 [discussion](https://github.com/GrandMoff100/HomeAssistantAPI/discussions)? 
