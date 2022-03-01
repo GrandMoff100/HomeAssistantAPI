@@ -43,7 +43,12 @@ branch = (
     else "v" + version
 )
 
-extensions = ["sphinx.ext.autodoc", "resourcelinks", "sphinx_autodoc_typehints"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "resourcelinks",
+    "sphinx_autodoc_typehints",
+    "sphinxcontrib.autodoc_pydantic",
+]
 
 resource_links = {
     "repo": "https://github.com/GrandMoff100/HomeassistantAPI/",

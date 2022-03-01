@@ -10,8 +10,6 @@
 
 ## Python wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
 
-Please ⭐️ the repo if you find this project useful or cool!
-
 Here is a quick example.
 ```py
 from homeassistant_api import Client
