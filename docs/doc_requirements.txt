@@ -7,6 +7,7 @@ appdirs
 astroid                      
 async-timeout                
 attrs                        
+autodoc-pydantic             
 babel                        
 black                        
 brotli                       
@@ -25,6 +26,7 @@ frozenlist
 identify                     
 idna                         
 imagesize                    
+importlib-metadata           
 iniconfig                    
 isort                        
 itsdangerous                 
@@ -80,4 +82,5 @@ url-normalize
 urllib3                      
 virtualenv                   
 wrapt                        
-yarl
+yarl                         
+zipp                         

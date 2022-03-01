@@ -1,13 +1,25 @@
 """File for Service and Domain data models"""
 
-from typing import Any, Dict, Tuple, cast
+from typing import Any, Dict, Tuple, cast, TYPE_CHECKING, Optional
 
-from ...models import Domain, Service, State
+from ...models import State
+from ...models.domains import Service, Domain, ServiceField
+
+from pydantic import Field
+
+
+if TYPE_CHECKING:
+    from homeassistant_api import Client
 
 
 class AsyncDomain(Domain):
     """A class representing the domain that services belong to."""
 
+    domain_id: str
+    client: "Client" = Field(exclude=True, repr=False)
+    services: Dict[str, "AsyncService"] = {}
+
+    
     def add_service(self, service_id: str, **data) -> None:
         """Registers services into a domain to be used or accessed"""
         self.services.update(
@@ -27,6 +39,13 @@ class AsyncDomain(Domain):
 
 class AsyncService(Service):
     """Class representing services from homeassistant"""
+
+    service_id: str
+    domain: AsyncDomain
+    name: Optional[str] = None
+    description: Optional[str] = None
+    fields: Optional[Dict[str, ServiceField]] = None
+    target: Optional[Dict[str, dict]] = None
 
     async def async_trigger(self, **service_data) -> Tuple[State, ...]:
         """Triggers the service associated with this object."""

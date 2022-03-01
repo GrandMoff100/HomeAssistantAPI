@@ -1,61 +1,53 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+
+[tool]
+[tool.bandit]
+skips = ["B105"]
+[tool.isort]
+profile = "black"
 [tool.poetry]
-name = "HomeAssistant-API"
-version = "3.0.2"
-description = "Python Wrapper for Homeassistant's REST API"
 authors = ["GrandMoff100 <minecraftcrusher100@gmail.com>"]
-license = "GPL-3.0-or-later"
-readme = "README.md"
-homepage = "https://github.com/GrandMoff100/HomeAssistantAPI"
-repository = "https://github.com/GrandMoff100/HomeAssistantAPI"
+description = "Python Wrapper for Homeassistant's REST API"
 documentation = "https://homeassistantapi.readthedocs.io"
-packages = [
-    { include = "homeassistant_api" },
-]
-
+homepage = "https://github.com/GrandMoff100/HomeAssistantAPI"
+license = "GPL-3.0-or-later"
+name = "HomeAssistant-API"
+readme = "README.md"
+repository = "https://github.com/GrandMoff100/HomeAssistantAPI"
+version = "3.0.1.post1"
 [tool.poetry.dependencies]
-python = "^3.7"
-requests = "^2.26.0"
-simplejson = "^3.17.6"
-pydantic = "^1.9.0"
-requests-cache = "^0.9.2"
-aiohttp-client-cache = "^0.6.1"
 aiohttp = "^3.8.1"
-
+aiohttp-client-cache = "^0.6.1"
+autodoc-pydantic = "^1.6.1"
+pydantic = "^1.9.0"
+python = "^3.8"
+requests = "^2.26.0"
+requests-cache = "^0.9.2"
+simplejson = "^3.17.6"
 [tool.poetry.dev-dependencies]
-mypy = {git = "https://github.com/python/mypy"}
+black = "^21.12b0"
 flake8 = "^4.0.1"
 isort = "^5.10.1"
-black = "^21.12b0"
+pre-commit = "^2.17.0"
+pylint = "^2.12.2"
 pytest = "^6.2.5"
+sphinx-autodoc-typehints = "^1.17.0"
+sphinx-rtd-theme = "^1.0.0"
+toml = "^0.10.2"
 types-docutils = "^0.17.5"
 types-requests = "^2.27.9"
 types-simplejson = "^3.17.3"
-pylint = "^2.12.2"
-sphinx-rtd-theme = "^1.0.0"
-toml = "^0.10.2"
 types-toml = "^0.10.4"
-sphinx-autodoc-typehints = "^1.17.0"
-pre-commit = "^2.17.0"
+[tool.poetry.dev-dependencies.mypy]
+git = "https://github.com/python/mypy"
 
-[tool.isort]
-profile = "black"
-
-[tool.pylint.messages_control]
-disable = [
-    "invalid-name",
-    "duplicate-code",
-    "no-member",
-    "too-few-public-methods",
-    "too-many-arguments"
-]
-
+[[tool.poetry.packages]]
+include = "homeassistant_api"
+[tool.pylint]
 [tool.pylint.master]
 extension-pkg-whitelist = ["pydantic"]
 ignore-paths = ["examples"]
-
-[tool.bandit]
-skips = ["B105"]
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.pylint.messages_control]
+disable = ["invalid-name", "duplicate-code", "no-member", "too-few-public-methods", "too-many-arguments"]

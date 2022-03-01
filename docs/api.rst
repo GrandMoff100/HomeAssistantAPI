@@ -1,7 +1,7 @@
 Code Reference
 ***************
 
-Clients
+Client
 --------
 
 .. autoclass:: homeassistant_api.Client
@@ -14,33 +14,35 @@ Data Models
 
 .. automodule:: homeassistant_api.models
 
-   .. autoclass:: Domain
+   .. autopydantic_model:: Domain
 
-   .. autoclass:: Service
+   .. autopydantic_model:: Service
 
-   .. autoclass:: Group
+   .. autopydantic_model:: Group
 
-   .. autoclass:: Entity
+   .. autopydantic_model:: Entity
 
-   .. autoclass:: History
+   .. autopydantic_model:: History
 
-   .. autoclass:: State
+   .. autopydantic_model:: LogbookEntry
 
-   .. autoclass:: Event
+   .. autopydantic_model:: State
+
+   .. autopydantic_model:: Event
 
 
 
 .. automodule:: homeassistant_api._async.models
 
-   .. autoclass:: AsyncDomain
+   .. autopydantic_model:: AsyncDomain
 
-   .. autoclass:: AsyncService
+   .. autopydantic_model:: AsyncService
 
-   .. autoclass:: AsyncGroup
+   .. autopydantic_model:: AsyncGroup
 
-   .. autoclass:: AsyncEntity
+   .. autopydantic_model:: AsyncEntity
 
-   .. autoclass:: AsyncEvent
+   .. autopydantic_model:: AsyncEvent
 
 
 Processing
