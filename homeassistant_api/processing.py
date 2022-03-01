@@ -59,11 +59,10 @@ class Processing(BaseModel):
 
     def process(self):
         """Validates the http status code before starting to process the repsonse content"""
-        if _async := isinstance(self.response, ClientResponse):
+        _async = isinstance(self.response, (ClientResponse, AsyncCachedResponse))
+        if _async:
             status_code = self.response.status
-        elif _async := isinstance(self.response, AsyncCachedResponse):
-            status_code = self.response.status
-        elif (_async := not isinstance(self.response, Response)) is False:
+        elif isinstance(self.response, Response):
             status_code = self.response.status_code
         else:
             raise ValueError(
