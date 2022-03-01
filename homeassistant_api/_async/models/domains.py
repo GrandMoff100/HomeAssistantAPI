@@ -2,16 +2,16 @@
 
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, cast
 
-from pydantic import Field
+from pydantic import Field, BaseModel
 
 from ...models import State
-from ...models.domains import Domain, Service, ServiceField
+from ...models.domains import ServiceField
 
 if TYPE_CHECKING:
     from homeassistant_api import Client
 
 
-class AsyncDomain(Domain):
+class AsyncDomain(BaseModel):
     """A class representing the domain that services belong to."""
 
     domain_id: str
@@ -34,8 +34,16 @@ class AsyncDomain(Domain):
         """Return a Service with the given service_id, returns None if no such service exists"""
         return self.services.get(service_id, None)
 
+    def __getattr__(self, attr: str):
+        """Allows services accessible as attributes"""
+        if attr in self.__dict__:
+            return super().__getattribute__(attr)
+        if attr in self.services:
+            return self.get_service(attr)
+        return super().__getattribute__(attr)
 
-class AsyncService(Service):
+
+class AsyncService(BaseModel):
     """Class representing services from homeassistant"""
 
     service_id: str
