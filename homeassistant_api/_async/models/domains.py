@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, cast
 
-from pydantic import Field, BaseModel
+from pydantic import BaseModel, Field
 
 from ...models import State
 from ...models.domains import ServiceField
