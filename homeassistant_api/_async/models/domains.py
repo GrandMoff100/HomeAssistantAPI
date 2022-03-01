@@ -1,12 +1,11 @@
 """File for Service and Domain data models"""
 
-from typing import Any, Dict, Tuple, cast, TYPE_CHECKING, Optional
-
-from ...models import State
-from ...models.domains import Service, Domain, ServiceField
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, cast
 
 from pydantic import Field
 
+from ...models import State
+from ...models.domains import Domain, Service, ServiceField
 
 if TYPE_CHECKING:
     from homeassistant_api import Client
@@ -19,7 +18,6 @@ class AsyncDomain(Domain):
     client: "Client" = Field(exclude=True, repr=False)
     services: Dict[str, "AsyncService"] = {}
 
-    
     def add_service(self, service_id: str, **data) -> None:
         """Registers services into a domain to be used or accessed"""
         self.services.update(
