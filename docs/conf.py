@@ -48,6 +48,7 @@ extensions = [
     "resourcelinks",
     "sphinx_autodoc_typehints",
     "sphinxcontrib.autodoc_pydantic",
+    "sphinx.ext.intersphinx",
 ]
 
 resource_links = {
@@ -79,3 +80,18 @@ html_static_path = ["_static"]
 html_css_files = ["css/custom.css"]
 
 html_favicon = "./images/favicon.png"
+autodoc_typehints = "signature"
+autodoc_default_options = {
+    "members": True,
+    "member-order": "bysource",
+}
+intersphinx_mapping = {
+    "python": (
+        "https://docs.python.org/3",
+        None,
+    ),
+    "homeassistant_api": (
+        "https://homeassistantapi.readthedocs.io/en/latest",
+        None
+    )
+}

@@ -237,8 +237,8 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         **payload,
     ) -> State:
         """
-        Sets the state of an entity and it does not have to be backed by a real entity.
-        Returns the new state afterwards.
+        This method sets the representation of a device within Home Assistant and will not communicate with the actual device.
+        To communicate with the device, use :py:meth:`homeassistant_api.Service.trigger` or :py:meth:`homeassistant_api.AsyncService.trigger`
         """
         entity_id = self.prepare_entity_id(
             group=group,
