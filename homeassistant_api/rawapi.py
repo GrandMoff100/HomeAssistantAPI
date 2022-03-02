@@ -1,11 +1,11 @@
 """Module for parent RawWrapper class"""
 
 import os
+import re
 from datetime import datetime
 from typing import Dict, Optional, Tuple, Union
 
 from .const import DATE_FMT
-from .errors import MalformedInputError
 from .models import Entity
 
 
@@ -72,16 +72,13 @@ class RawWrapper:
         """Custom method for constructing non-standard query strings"""
         return "&".join([k if v is None else f"{k}={v}" for k, v in params.items()])
 
-    @classmethod
-    def malformed_id(cls, entity_id: str) -> bool:
-        """Checks whether or not a given entity_id is formatted correctly"""
-        checks = [
-            " " in entity_id,
-            "." not in entity_id,
-            "-" in entity_id,
-            entity_id.lower() == entity_id,
-        ]
-        return True in checks
+    @staticmethod
+    def format_entity_id(entity_id: str) -> str:
+        """Takes in a string and formats it into valid snake_case."""
+        entity_id = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", entity_id)
+        entity_id = re.sub(r"([a-z\d])([A-Z])", r"\1_\2", entity_id)
+        entity_id = entity_id.replace("-", "_")
+        return entity_id.lower()
 
     def prepare_entity_id(
         self,
@@ -100,9 +97,7 @@ class RawWrapper:
             entity_id = group + "." + slug
         elif entity_id is None:
             raise ValueError("Neither group and slug or entity_id provided.")
-        if self.malformed_id(entity_id):
-            raise MalformedInputError(f"The entity_id, {entity_id!r}, is malformed")
-        return entity_id
+        return self.format_entity_id(entity_id)
 
     @staticmethod
     def prepare_get_entity_histories_params(
