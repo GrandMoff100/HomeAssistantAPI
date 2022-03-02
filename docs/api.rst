@@ -5,8 +5,8 @@ Client
 --------
 
 .. autoclass:: homeassistant_api.Client
-   :members:
    :inherited-members:
+   :show-inheritance:
 
 
 Data Models
@@ -50,12 +50,10 @@ Processing
 
 
 .. autoclass:: homeassistant_api.processing.Processing
-   :members:
 
 
 Exceptions
 -----------
 
 .. automodule:: homeassistant_api.errors
-   :members:
 

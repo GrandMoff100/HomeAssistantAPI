@@ -6,7 +6,7 @@ Usage
 The Basics...
 #################
 
-This library is centered around the :code:`Client` class.
+This library is centered around the :class:`Client` class.
 Once you have have your api base url and Long Lived Access Token from Home Assistant we can start to do stuff.
 The rest of this guide assumes you have the :code:`Client` saved to a :code:`client` variable.
 Most of these examples require some integrations to be setup inside Home Assistant for the examples to actually work.
