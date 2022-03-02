@@ -8,7 +8,7 @@ The Basics...
 
 This library is centered around the :class:`Client` class.
 Once you have have your api base url and Long Lived Access Token from Home Assistant we can start to do stuff.
-The rest of this guide assumes you have the :code:`Client` saved to a :code:`client` variable.
+The rest of this guide assumes you have the :class:`Client` saved to a :code:`client` variable.
 Most of these examples require some integrations to be setup inside Home Assistant for the examples to actually work.
 The most commonly used features of this library include triggering services and getting and modifying entity states.
 
@@ -153,7 +153,7 @@ Entities
 What's Next?
 #############
 
-Browse below to learn more about what you can do with :code:`homeassistant_api`.
+Browse below to learn more about what you can do with :mod:`homeassistant_api`.
 
 * `API Reference <api.html>`_
 * `Advanced Section <advanced.html>`_

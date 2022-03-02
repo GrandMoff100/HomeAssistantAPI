@@ -57,7 +57,7 @@ Testing
 In order to test your changes you need to have an API URL, and a Long Lived Access Token.
 Follow the :ref:`Quickstart Section <access_token_setup>` for getting those.
 If you setup the Development Environment then your API URL will most likely be something along the lines of :code:`https://localhost:8123/api`.
-Then you can test your changes by passing the API URL, and Long Lived Access Token to the :code:`Client` object.
+Then you can test your changes by passing the API URL, and Long Lived Access Token to the :class:`homeassistant_api.Client` object.
 
 .. _styling:
 
