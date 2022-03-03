@@ -94,5 +94,13 @@ intersphinx_mapping = {
     "homeassistant_api": (
         "https://homeassistantapi.readthedocs.io/en/latest",
         None
+    ),
+    "requests_cache": (
+        "https://requests-cache.readthedocs.io/en/stable/",
+        None
+    ),
+    "aiohttp_client_cache": (
+        "https://aiohttp-client-cache.readthedocs.io/en/latest/",
+        None
     )
 }

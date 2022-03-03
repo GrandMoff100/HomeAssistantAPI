@@ -5,6 +5,41 @@ Advanced Section
 Persistent Caching
 ********************
 
+Persistent caching is exactly what it means. It's making your requests cache between :ref:`Client` objects, and between runs, and contexts (:code:`with client:` statements), well... persist.
+Rather than the default behavior, which is saving the cache to memory and erasing it after each context and run.
+
+
+If you want to persist your requests cache you can pass your own caching backend and expire after amount to :ref:`Client`'s init method.
+The most frequently used backends are filesystem backends or sqlite backends.
+You can use :py:class:`aiohttp_client_cache.backends.filesystem.FileBackend` or :py:class:`requests_cache.backends.filesystem.FileCache` depending on whether your program is async or not.
+See the docs for `requests_cache <https://requests-cache.readthedocs.io/en/latest/>`__ and `aiohttp_client_cache <https://aiohttp-client-cache.readthedocs.io/en/latest/>`__ for how to implement these backends and much more.
+
+You can simply pass them to your client like so.
+
+.. code-block:: python
+
+    from homeassistant_api import Client
+    from requests_cache import FileCache
+
+    client = Client("<URL>", "<TOKEN>", cache_backend=FileCache(cache_name="<whatever_you_want>", cache_dir="foobar-cache"))
+
+    # CachedSession is activated by the `with` statement.
+    with client:
+        # Grab and update some cool entities and services inside your installation.
+        ...
+
+    # Or an example for async
+
+    from homeassistant_api import Client
+    from aiohttp_client_cache import SQLiteCache
+
+    client = Client("<URL>", "<TOKEN>", cache_backend=SQLiteCache('my_app_cache', timeout=60))
+    # CachedSession is activated by the `async with` statement.
+    async def main():
+        async with client:
+            # Grab and update some cool entities and services inside your installation.
+            ...
+
 
 Response Processing
 **********************
