@@ -5,8 +5,8 @@ Advanced Section
 Persistent Caching
 ********************
 
-Persistent caching is making your requests cache between :ref:`Client` objects, and between runs, and contexts (:code:`with client:` statements) persist.
-Rather than the default which is saving the cache to memory and erasing it after each context and run.
+Persistent caching is exactly what it means. It's making your requests cache between :ref:`Client` objects, and between runs, and contexts (:code:`with client:` statements), well... persist.
+Rather than the default behavior, which is saving the cache to memory and erasing it after each context and run.
 
 
 If you want to persist your requests cache you can pass your own caching backend and expire after amount to :ref:`Client`'s init method.
@@ -23,12 +23,23 @@ You can simply pass them to your client like so.
 
     client = Client("<URL>", "<TOKEN>", cache_backend=FileCache(cache_name="<whatever_you_want>", cache_dir="foobar-cache"))
 
+    # CachedSession is activated by the `with` statement.
+    with client:
+        # Grab and update some cool entities and services inside your installation.
+        ...
+
     # Or an example for async
 
     from homeassistant_api import Client
     from aiohttp_client_cache import SQLiteCache
 
     client = Client("<URL>", "<TOKEN>", cache_backend=SQLiteCache('my_app_cache', timeout=60))
+    # CachedSession is activated by the `async with` statement.
+    async def main():
+        async with client:
+            # Grab and update some cool entities and services inside your installation.
+            ...
+
 
 Response Processing
 **********************
