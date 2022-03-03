@@ -6,6 +6,7 @@ Client
 
 .. autoclass:: homeassistant_api.Client
    :inherited-members:
+   :show-inheritance:
 
 
 Data Models
