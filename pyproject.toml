@@ -41,8 +41,7 @@ types-docutils = "^0.17.5"
 types-requests = "^2.27.9"
 types-simplejson = "^3.17.3"
 types-toml = "^0.10.4"
-[tool.poetry.dev-dependencies.mypy]
-git = "https://github.com/python/mypy"
+mypy = "^0.931"
 
 [[tool.poetry.packages]]
 include = "homeassistant_api"
