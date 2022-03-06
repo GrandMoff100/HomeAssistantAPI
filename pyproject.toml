@@ -15,6 +15,7 @@ homepage = "https://github.com/GrandMoff100/HomeAssistantAPI"
 license = "GPL-3.0-or-later"
 name = "HomeAssistant-API"
 readme = "README.md"
+include = ["homeassistant_api/py.typed"]
 repository = "https://github.com/GrandMoff100/HomeAssistantAPI"
 version = "3.0.1.post1"
 [tool.poetry.dependencies]
