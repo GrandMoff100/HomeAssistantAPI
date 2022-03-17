@@ -17,11 +17,10 @@ name = "HomeAssistant-API"
 readme = "README.md"
 include = ["homeassistant_api/py.typed"]
 repository = "https://github.com/GrandMoff100/HomeAssistantAPI"
-version = "3.0.3"
+version = "3.0.3.post1"
 [tool.poetry.dependencies]
 aiohttp = "^3.8.1"
 aiohttp-client-cache = "^0.6.1"
-autodoc-pydantic = "^1.6.1"
 pydantic = "^1.9.0"
 python = "^3.8"
 requests = "^2.26.0"
@@ -42,6 +41,7 @@ types-requests = "^2.27.9"
 types-simplejson = "^3.17.3"
 types-toml = "^0.10.4"
 mypy = "^0.931"
+autodoc-pydantic = "^1.6.1"
 
 [[tool.poetry.packages]]
 include = "homeassistant_api"
