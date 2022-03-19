@@ -97,8 +97,8 @@ Using Client with :code:`async`/:code:`await`
 Are you wondering if you can use :code:`homeassistant_api` using Python's :code:`async`/:code:`await` syntax?
 Good news! You can!
 
-Services
-************
+Async Services
+********************
 .. code-block:: python
 
     import asyncio
@@ -120,8 +120,8 @@ Services
 
     asyncio.get_event_loop().run_until_complete(main())
 
-Entities
-*********
+Async Entities
+*****************
 
 .. code-block:: python
 
