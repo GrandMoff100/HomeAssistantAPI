@@ -32,7 +32,7 @@ class AsyncDomain(BaseModel):
 
     def get_service(self, service_id: str):
         """Return a Service with the given service_id, returns None if no such service exists"""
-        return self.services.get(service_id, None)
+        return self.services.get(service_id)
 
     def __getattr__(self, attr: str):
         """Allows services accessible as attributes"""
