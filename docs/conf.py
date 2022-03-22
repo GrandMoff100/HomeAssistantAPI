@@ -49,7 +49,7 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinxcontrib.autodoc_pydantic",
     "sphinx.ext.intersphinx",
-    "sphinx.ext.autosectionlabel"
+    "sphinx.ext.autosectionlabel",
 ]
 
 resource_links = {
@@ -91,16 +91,10 @@ intersphinx_mapping = {
         "https://docs.python.org/3",
         None,
     ),
-    "homeassistant_api": (
-        "https://homeassistantapi.readthedocs.io/en/latest",
-        None
-    ),
-    "requests_cache": (
-        "https://requests-cache.readthedocs.io/en/stable/",
-        None
-    ),
+    "homeassistant_api": ("https://homeassistantapi.readthedocs.io/en/latest", None),
+    "requests_cache": ("https://requests-cache.readthedocs.io/en/stable/", None),
     "aiohttp_client_cache": (
         "https://aiohttp-client-cache.readthedocs.io/en/latest/",
-        None
-    )
+        None,
+    ),
 }

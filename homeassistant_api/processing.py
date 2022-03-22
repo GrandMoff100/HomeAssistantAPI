@@ -83,7 +83,7 @@ class Processing(BaseModel):
             "If this happened, "
             "please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues "
             "with the request status code and the request content",
-            file=sys.stderr
+            file=sys.stderr,
         )
         raise UnexpectedStatusCodeError(
             self.response.status_code,
