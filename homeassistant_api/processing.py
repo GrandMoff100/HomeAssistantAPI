@@ -2,6 +2,7 @@
 
 import inspect
 import json
+import sys
 from typing import Callable, ClassVar, Dict, Tuple, Union
 
 import simplejson
@@ -81,7 +82,8 @@ class Processing(BaseModel):
         print(
             "If this happened, "
             "please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues "
-            "with the request status code and the request content"
+            "with the request status code and the request content",
+            file=sys.stderr
         )
         raise UnexpectedStatusCodeError(
             self.response.status_code,
