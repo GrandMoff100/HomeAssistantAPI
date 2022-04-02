@@ -25,7 +25,7 @@ class Group(BaseModel):
         self.entities[entity_slug] = Entity(
             slug=entity_slug,
             state=state,
-            client=self,
+            client=self.client,
         )
 
     def get_entity(self, entity_slug: str) -> Optional["Entity"]:
@@ -71,9 +71,9 @@ class Entity(BaseModel):
         return self.state
 
     @property
-    def entity_id(self):
+    def entity_id(self) -> str:
         """Constructs the entity_id string from its group and slug"""
-        return self.group.group_id + "." + self.slug
+        return (self.group.group_id + "." + self.slug).strip()
 
     def get_history(self, *args, **kwargs) -> History:
         """Gets the previous `State`'s of the `Entity`"""

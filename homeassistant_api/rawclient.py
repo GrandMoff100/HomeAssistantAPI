@@ -44,7 +44,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         method="GET",
         headers: Dict[str, str] = None,
         **kwargs,
-    ) -> Union[dict, list, str]:
+    ) -> Union[Dict[str, Any], list, str]:
         """Base method for making requests to the api"""
         try:
             if self.global_request_kwargs is not None:

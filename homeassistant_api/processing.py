@@ -3,13 +3,13 @@
 import inspect
 import json
 import sys
-from typing import Callable, ClassVar, Dict, Tuple, Union
+from typing import Any, Callable, ClassVar, Dict, Tuple, Union, cast
 
 import simplejson
 from aiohttp import ClientResponse
 from aiohttp_client_cache.response import CachedResponse as AsyncCachedResponse
 from requests import Response
-from requests_cache import CachedResponse
+from requests_cache.models.response import CachedResponse
 
 from .errors import (
     EndpointNotFoundError,
@@ -58,10 +58,9 @@ class Processing(BaseModel):
             f"No non-async response processor found for mimetype {mimetype!r}"
         )
 
-    def process(self):
+    def process(self) -> Any:
         """Validates the http status code before starting to process the repsonse content"""
-        _async = isinstance(self.response, (ClientResponse, AsyncCachedResponse))
-        if _async:
+        if _async := isinstance(self.response, (ClientResponse, AsyncCachedResponse)):
             status_code = self.response.status
         elif isinstance(self.response, Response):
             status_code = self.response.status_code
@@ -78,7 +77,9 @@ class Processing(BaseModel):
         if status_code == 404:
             raise EndpointNotFoundError(self.response.url)
         if status_code == 405:
-            raise MethodNotAllowedError(self.response.request.method)
+            raise MethodNotAllowedError(
+                cast(str, self.response.request.method),
+            )  # type: ignore[union-attr]
         print(
             "If this happened, "
             "please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues "
@@ -86,7 +87,7 @@ class Processing(BaseModel):
             file=sys.stderr,
         )
         raise UnexpectedStatusCodeError(
-            self.response.status_code,
+            status_code,
             self.response.content,
         )
 
