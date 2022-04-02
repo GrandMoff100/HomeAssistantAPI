@@ -68,7 +68,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
             ) from err
 
     @staticmethod
-    async def async_response_logic(response):
+    async def async_response_logic(response) -> Any:
         """Processes custom mimetype content asyncronously."""
         return await Processing(response=response).process()
 
@@ -175,9 +175,9 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
                 f"Neither group and slug or entity_id provided. {help_msg}"
             )
         group_id, entity_slug = state.entity_id.split(".")
-        group = AsyncGroup(group_id=cast(str, group_id), client=self)
-        group.add_entity(cast(str, entity_slug), state)
-        return group.get_entity(cast(str, entity_slug))
+        group = AsyncGroup(group_id=group_id, client=self)
+        group.add_entity(entity_slug, state)
+        return group.get_entity(entity_slug)
 
     # Services and domain methods
     async def async_get_domains(self) -> Tuple[Domain, ...]:
@@ -193,7 +193,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         self,
         domain: str,
         service: str,
-        **service_data,
+        **service_data: Union[Dict[str, Any], List[Any], str],
     ) -> List[State]:
         """Tells Home Assistant to trigger a service, returns stats changed while being called"""
         data = await self.async_request(

@@ -8,7 +8,7 @@ class HomeassistantAPIError(BaseException):
 class RequestError(HomeassistantAPIError):
     """Error raised when an issue occurs when requesting to Homeassistant."""
 
-    def __init__(self, body: str):
+    def __init__(self, body: str) -> None:
         super().__init__(f"Bad Request: {body}")
 
 
@@ -31,7 +31,7 @@ class ParameterMissingError(HomeassistantAPIError):
 class UnexpectedStatusCodeError(HomeassistantAPIError):
     """Error raised when Home Assistant returns a response with status code that was unexpected."""
 
-    def __init__(self, code: int, content):
+    def __init__(self, code: int, content) -> None:
         super().__init__(
             f"Home Assistant return response with an unrecognized status code {code!r}.\n{content}"
         )
@@ -54,7 +54,7 @@ class EndpointNotFoundError(HomeassistantAPIError):
 class MethodNotAllowedError(HomeassistantAPIError):
     """Error raised when a request is made to an endpoint with a non-allowed method."""
 
-    def __init__(self, method: str):
+    def __init__(self, method: str) -> None:
         super().__init__(f"Request made with invalid method {method!r}")
 
 

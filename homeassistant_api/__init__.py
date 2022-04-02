@@ -1,4 +1,22 @@
 """Imports all library stuff for convenience."""
+
+
+__all__ = (
+    "State",
+    "Service",
+    "History",
+    "Group",
+    "Event",
+    "Entity",
+    "Domain",
+    "AsyncService",
+    "AsyncGroup",
+    "AsyncEvent",
+    "AsyncEntity",
+    "AsyncDomain",
+    "LogbookEntry",
+)
+
 from ._async import AsyncDomain, AsyncEntity, AsyncEvent, AsyncGroup, AsyncService
 from .client import Client
 from .errors import (
@@ -13,7 +31,7 @@ from .errors import (
     UnauthorizedError,
     UnexpectedStatusCodeError,
 )
-from .models import Domain, Entity, Event, Group, History, Service, State
+from .models import Domain, Entity, Event, Group, History, LogbookEntry, Service, State
 from .processing import Processing
 
 Domain.update_forward_refs(**locals())
