@@ -31,7 +31,7 @@ from .errors import (
     UnauthorizedError,
     UnexpectedStatusCodeError,
 )
-from .models import Domain, Entity, Event, Group, History, Service, State, LogbookEntry
+from .models import Domain, Entity, Event, Group, History, LogbookEntry, Service, State
 from .processing import Processing
 
 Domain.update_forward_refs(**locals())
