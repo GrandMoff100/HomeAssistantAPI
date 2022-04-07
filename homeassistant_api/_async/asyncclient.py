@@ -1,7 +1,7 @@
 """Module for interacting with Home Assistant asyncronously."""
 import asyncio
-from urllib.parse import urljoin as join import join
 from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
+from urllib.parse import urljoin as join
 
 import aiohttp
 from aiohttp_client_cache import CachedSession
@@ -197,7 +197,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
     ) -> List[State]:
         """Tells Home Assistant to trigger a service, returns stats changed while being called"""
         data = await self.async_request(
-            join("services", domain, service),
+            join("services", domain + "/" + service),
             method="POST",
             json=service_data,
         )
