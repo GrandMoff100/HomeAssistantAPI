@@ -1,6 +1,6 @@
 """Module for interacting with Home Assistant asyncronously."""
 import asyncio
-from os.path import join
+from urllib.parse import urljoin as join import join
 from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
 
 import aiohttp
