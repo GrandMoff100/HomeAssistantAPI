@@ -1,7 +1,7 @@
 """Module for all interaction with homeassistant."""
 
-from urllib.parse import urljoin as join
 from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
+from urllib.parse import urljoin as join
 
 import requests
 from requests_cache import CachedSession
