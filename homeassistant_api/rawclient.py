@@ -203,7 +203,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     ) -> Tuple[State, ...]:
         """Tells Home Assistant to trigger a service, returns stats changed while being called"""
         data = self.request(
-            join("services", domain, service),
+            join("services", domain + "/" + service),
             method="POST",
             json=service_data,
         )
