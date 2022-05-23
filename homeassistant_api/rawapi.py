@@ -1,9 +1,9 @@
 """Module for parent RawWrapper class"""
 
-import os
 import re
 from datetime import datetime
 from typing import Dict, Optional, Tuple, Union
+from urllib.parse import urljoin as join
 
 from .const import DATE_FMT
 from .models import Entity
@@ -42,7 +42,7 @@ class RawWrapper:
 
     def endpoint(self, path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""
-        return os.path.join(self.api_url, path)
+        return join(self.api_url, path)
 
     @property
     def _headers(self) -> Dict[str, str]:
@@ -122,7 +122,7 @@ class RawWrapper:
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
                 formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-                url = os.path.join("history/period", formatted_timestamp)
+                url = join("history/period", formatted_timestamp)
             else:
                 raise TypeError(f"timestamp needs to be of type {datetime!r}")
         else:
@@ -148,7 +148,7 @@ class RawWrapper:
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
                 formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-            url = os.path.join("logbook", formatted_timestamp)
+            url = join("logbook", formatted_timestamp)
         else:
             url = "logbook"
         return params, url
