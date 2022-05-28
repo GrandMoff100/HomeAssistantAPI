@@ -2,6 +2,7 @@
 
 import inspect
 import json
+import logging
 import sys
 from typing import Any, Callable, ClassVar, Dict, Tuple, Union, cast
 
@@ -21,6 +22,8 @@ from .errors import (
     UnexpectedStatusCodeError,
 )
 from .models import BaseModel
+
+logger = logging.getLogger(__name__)
 
 
 class Processing(BaseModel):
@@ -49,6 +52,7 @@ class Processing(BaseModel):
         mimetype = self.response.headers.get("content-type", "text/plain")  # type: ignore[arg-type]
         for processor in self._processors.get(mimetype, ()):
             if not _async ^ inspect.iscoroutinefunction(processor):
+                logger.debug(f"Using processor {processor!r} on {self.response!r}")
                 return processor(self.response)
         if _async:
             raise ProcessorNotFoundError(
