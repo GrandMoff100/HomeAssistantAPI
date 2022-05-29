@@ -1,5 +1,6 @@
 """Module for all interaction with homeassistant."""
 
+import logging
 from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
 from urllib.parse import urljoin as join
 
@@ -11,6 +12,8 @@ from .mixins import JsonProcessingMixin
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
 from .processing import Processing
 from .rawapi import RawWrapper
+
+logger = logging.getLogger(__name__)
 
 
 class RawClient(RawWrapper, JsonProcessingMixin):
@@ -29,12 +32,14 @@ class RawClient(RawWrapper, JsonProcessingMixin):
             expire_after=self.cache_expire_after,
             backend=self.cache_backend,
         )
+        logger.debug(f"Entering cached requests session {self._session!r}")
         self._session.__enter__()
         self.check_api_running()
         self.check_api_config()
         return self
 
     def __exit__(self, *args):
+        logger.debug(f"Exiting requests session {self._session!r}")
         self._session.__exit__()
         self._session = None
 
@@ -49,6 +54,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         try:
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
+            logger.debug(f"{method} request to {self.endpoint(path)}")
             if self._session is not None:
                 resp = self._session.request(
                     method,

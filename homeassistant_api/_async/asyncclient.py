@@ -1,5 +1,6 @@
 """Module for interacting with Home Assistant asyncronously."""
 import asyncio
+import logging
 from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import urljoin as join
 
@@ -12,6 +13,8 @@ from ..models import Domain, Event, History, LogbookEntry, State
 from ..processing import Processing
 from ..rawapi import RawWrapper
 from .models import AsyncEntity, AsyncGroup
+
+logger = logging.getLogger(__name__)
 
 
 class RawAsyncClient(RawWrapper, JsonProcessingMixin):
@@ -26,7 +29,10 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
     _async_session: Optional[CachedSession] = None
 
     async def __aenter__(self):
-        self._async_session = CachedSession(expire_after=30)
+        self._async_session = CachedSession(
+            expire_after=self.cache_expire_after, cache=self.cache_backend
+        )
+        logger.debug(f"Entering cached requests session {self._async_session!r}")
         await self._async_session.__aenter__()
         await self.async_check_api_running()
         return self
