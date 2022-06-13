@@ -2,8 +2,8 @@
 
 import re
 from datetime import datetime
+from posixpath import join
 from typing import Dict, Optional, Tuple, Union
-from urllib.parse import urljoin as join
 
 from .const import DATE_FMT
 from .models import Entity

@@ -1,7 +1,7 @@
 """Module for Entity and entity Group data models"""
 
+from posixpath import join
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
-from urllib.parse import urljoin as join
 
 from pydantic import Field
 
