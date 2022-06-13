@@ -2,8 +2,8 @@
 
 import re
 from datetime import datetime
-from typing import Dict, Optional, Tuple, Union
 from posixpath import join
+from typing import Dict, Optional, Tuple, Union
 
 from .const import DATE_FMT
 from .models import Entity

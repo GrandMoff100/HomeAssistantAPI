@@ -1,6 +1,6 @@
 """Module for Entity and entity Group data models"""
-from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 from posixpath import join
+from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
 from pydantic import Field
 

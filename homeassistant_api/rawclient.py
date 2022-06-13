@@ -1,8 +1,8 @@
 """Module for all interaction with homeassistant."""
 
 import logging
-from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
 from posixpath import join
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
 
 import requests
 from requests_cache import CachedSession
