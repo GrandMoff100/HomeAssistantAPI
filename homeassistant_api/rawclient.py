@@ -2,7 +2,7 @@
 
 import logging
 from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
-from urllib.parse import urljoin as join
+from posixpath import join
 
 import requests
 from requests_cache import CachedSession

@@ -2,7 +2,7 @@
 import asyncio
 import logging
 from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
-from urllib.parse import urljoin as join
+from posixpath import join
 
 import aiohttp
 from aiohttp_client_cache import CachedSession
