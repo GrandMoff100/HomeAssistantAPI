@@ -122,7 +122,7 @@ class RawWrapper:
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
                 formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-                url = join("history/period", formatted_timestamp)
+                url = join("history/period/", formatted_timestamp)
             else:
                 raise TypeError(f"timestamp needs to be of type {datetime!r}")
         else:
@@ -148,7 +148,7 @@ class RawWrapper:
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
                 formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-            url = join("logbook", formatted_timestamp)
+            url = join("logbook/", formatted_timestamp)
         else:
             url = "logbook"
         return params, url

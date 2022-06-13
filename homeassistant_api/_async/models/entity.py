@@ -1,4 +1,5 @@
 """Module for Entity and entity Group data models"""
+from datetime import datetime
 from posixpath import join
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
@@ -59,13 +60,22 @@ class AsyncEntity(BaseModel):
         """Constructs the entity_id string from its group and slug"""
         return self.group.group_id + "." + self.slug
 
-    async def async_get_history(self, *args, **kwargs) -> Optional[History]:
+    async def async_get_history(
+        self,
+        start_timestamp: Optional[datetime] = None,
+        # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
+        end_timestamp: Optional[datetime] = None,
+        minimal_state_data: bool = False,
+        significant_changes_only: bool = False,
+    ) -> Optional[History]:
         """Gets the previous `State`'s of the `Entity`."""
         history: Optional[History] = None
         async for history in self.group.client.async_get_entity_histories(
             entities=(self,),
-            *args,
-            **kwargs,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            minimal_state_data=minimal_state_data,
+            significant_changes_only=significant_changes_only,
         ):
             break
         return history

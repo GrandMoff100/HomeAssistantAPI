@@ -1,5 +1,6 @@
 """Module for all interaction with homeassistant."""
 
+from datetime import datetime
 import logging
 from posixpath import join
 from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
@@ -100,11 +101,25 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         for entry in data:
             yield LogbookEntry.parse_obj(entry)
 
-    def get_entity_histories(self, *args, **kwargs) -> Generator[History, None, None]:
+    def get_entity_histories(
+        self,
+        entities: Optional[Tuple[Entity, ...]] = None,
+        start_timestamp: Optional[datetime] = None,
+        # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
+        end_timestamp: Optional[datetime] = None,
+        minimal_state_data: bool = False,
+        significant_changes_only: bool = False,
+    ) -> Generator[History, None, None]:
         """
         Yields entity state histories. See docs on the `History` model.
         """
-        params, url = self.prepare_get_entity_histories_params(*args, **kwargs)
+        params, url = self.prepare_get_entity_histories_params(
+            entities=entities,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            minimal_state_data=minimal_state_data,
+            significant_changes_only=significant_changes_only,
+        )
         data = self.request(
             url,
             params=self.construct_params(params),
