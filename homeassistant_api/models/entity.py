@@ -26,7 +26,7 @@ class Group(BaseModel):
         self.entities[entity_slug] = Entity(
             slug=entity_slug,
             state=state,
-            client=self.client,
+            group=self,
         )
 
     def get_entity(self, entity_slug: str) -> Optional["Entity"]:
