@@ -1,7 +1,7 @@
 """Module for interacting with Home Assistant asyncronously."""
 import asyncio
-from datetime import datetime
 import logging
+from datetime import datetime
 from posixpath import join
 from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
 
