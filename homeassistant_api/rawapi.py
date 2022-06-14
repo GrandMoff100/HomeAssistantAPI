@@ -3,7 +3,7 @@
 import re
 from datetime import datetime
 from posixpath import join
-from typing import Dict, Optional, Tuple, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 
 from .const import DATE_FMT
 from .models import Entity
@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from ._async.models.entity import AsyncEntity
 else:
     AsyncEntity = None  # pylint: disable=invalid-name
+
 
 class RawWrapper:
     """Builds, and makes requests to the API"""
