@@ -10,7 +10,7 @@ from aiohttp_client_cache import CachedSession
 
 from ..errors import APIConfigurationError, MalformedDataError, RequestError
 from ..mixins import JsonProcessingMixin
-from ..models import Domain, Entity, Event, History, LogbookEntry, State
+from ..models import Domain, Event, History, LogbookEntry, State
 from ..processing import Processing
 from ..rawapi import RawWrapper
 from .models import AsyncEntity, AsyncGroup
@@ -101,7 +101,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def async_get_entity_histories(
         self,
-        entities: Optional[Tuple[Entity, ...]] = None,
+        entities: Optional[Tuple[AsyncEntity, ...]] = None,
         start_timestamp: Optional[datetime] = None,
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
         end_timestamp: Optional[datetime] = None,
