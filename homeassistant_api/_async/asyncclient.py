@@ -237,7 +237,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
             slug=slug,
             entity_id=entity_id,
         )
-        data = await self.async_request(join("states/", target_entity_id))
+        data = await self.async_request(join("states", target_entity_id))
         return self.process_state_json(cast(Dict[Any, Any], data))
 
     async def async_set_state(  # pylint: disable=duplicate-code
@@ -257,7 +257,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         )
         payload.update(state=state)
         data = await self.async_request(
-            join("states/", target_entity_id),
+            join("states", target_entity_id),
             method="POST",
             json=payload,
         )
@@ -286,7 +286,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
     async def async_fire_event(self, event_type: str, **event_data) -> str:
         """Fires a given event_type within homeassistant. Must be an existing event_type."""
         data = await self.async_request(
-            join("events/", event_type),
+            join("events", event_type),
             method="POST",
             json=event_data,
         )
