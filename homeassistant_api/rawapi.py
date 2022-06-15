@@ -4,6 +4,7 @@ import re
 from datetime import datetime
 from posixpath import join
 from typing import Dict, Optional, Tuple, Union
+from urllib.parse import quote as url_quote
 
 from .const import DATE_FMT
 from .models import Entity
@@ -114,7 +115,7 @@ class RawWrapper:
         if entities is not None:
             params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
         if end_timestamp is not None:
-            params["end_time"] = end_timestamp.strftime(DATE_FMT)
+            params["end_time"] = url_quote(end_timestamp.strftime(DATE_FMT))
         if minimal_state_data:
             params["minimal_response"] = None
         if significant_changes_only:
@@ -143,7 +144,7 @@ class RawWrapper:
             params.update(entity=filter_entity.entity_id)
         if end_timestamp is not None:
             if isinstance(end_timestamp, datetime):
-                end_timestamp = end_timestamp.strftime(DATE_FMT)
+                end_timestamp = url_quote(end_timestamp.strftime(DATE_FMT))
             params.update(end_time=end_timestamp)
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
