@@ -17,7 +17,7 @@ name = "HomeAssistant-API"
 readme = "README.md"
 include = ["homeassistant_api/py.typed"]
 repository = "https://github.com/GrandMoff100/HomeAssistantAPI"
-version = "3.0.3.post4"
+version = "3.0.3.post5"
 [tool.poetry.dependencies]
 aiohttp = "^3.8.1"
 aiohttp-client-cache = "^0.6.1"
