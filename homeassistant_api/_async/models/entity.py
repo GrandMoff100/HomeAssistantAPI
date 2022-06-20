@@ -34,7 +34,7 @@ class AsyncEntity(BaseModel):
 
     slug: str
     state: State
-    group: AsyncGroup
+    group: AsyncGroup = Field(exclude=True, repr=False)
 
     async def async_get_state(self) -> State:
         """Asks Home Assistant for the state of the entity and sets it locally"""

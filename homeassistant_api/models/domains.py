@@ -1,7 +1,7 @@
 """File for Service and Domain data models"""
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
 
-from pydantic import Field
+from pydantic import Field, validator
 
 from .base import BaseModel
 from .states import State
@@ -29,7 +29,7 @@ class Domain(BaseModel):
             }
         )
 
-    def get_service(self, service_id: str):
+    def get_service(self, service_id: str) -> Optional["Service"]:
         """Return a Service with the given service_id, returns None if no such service exists"""
         return self.services.get(service_id)
 
@@ -56,11 +56,20 @@ class Service(BaseModel):
     """Model representing services from homeassistant"""
 
     service_id: str
-    domain: Domain
+    domain: Domain = Field(exlucde=True, repr=False)
     name: Optional[str] = None
     description: Optional[str] = None
     fields: Optional[Dict[str, ServiceField]] = None
     target: Optional[Dict[str, dict]] = None
+
+    @classmethod
+    @validator("domain")
+    def validate_domain(cls, domain: Domain) -> Domain:
+        """
+        Explicitly do nothing to validate the parent domain.
+        Elimintates recursive validation errors.
+        """
+        return domain
 
     def trigger(self, **service_data) -> Tuple[State, ...]:
         """Triggers the service associated with this object."""

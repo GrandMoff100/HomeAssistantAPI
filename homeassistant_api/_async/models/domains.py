@@ -2,16 +2,18 @@
 
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, cast
 
-from pydantic import BaseModel, Field
 
-from ...models import State
-from ...models.domains import ServiceField
+from pydantic import Field, validator
+
+from ...models import ServiceField, State, base
+
 
 if TYPE_CHECKING:
     from homeassistant_api import Client
 
 
-class AsyncDomain(BaseModel):
+
+class AsyncDomain(base.BaseModel):
     """A class representing the domain that services belong to."""
 
     domain_id: str
@@ -30,7 +32,7 @@ class AsyncDomain(BaseModel):
             }
         )
 
-    def get_service(self, service_id: str):
+    def get_service(self, service_id: str) -> Optional["AsyncService"]:
         """Return a Service with the given service_id, returns None if no such service exists"""
         return self.services.get(service_id)
 
@@ -42,16 +44,24 @@ class AsyncDomain(BaseModel):
             return self.get_service(attr)
         return super().__getattribute__(attr)
 
-
-class AsyncService(BaseModel):
+class AsyncService(base.BaseModel):
     """Class representing services from homeassistant"""
 
     service_id: str
-    domain: AsyncDomain
+    domain: AsyncDomain = Field(exlude=True, repr=False)
     name: Optional[str] = None
     description: Optional[str] = None
     fields: Optional[Dict[str, ServiceField]] = None
     target: Optional[Dict[str, dict]] = None
+
+    @classmethod
+    @validator("domain")
+    def validate_domain(cls, domain: AsyncDomain) -> AsyncDomain:
+        """
+        Explicitly do nothing to validate the parent domain.
+        Elimintates recursive validation errors.
+        """
+        return domain
 
     async def async_trigger(self, **service_data) -> Tuple[State, ...]:
         """Triggers the service associated with this object."""
