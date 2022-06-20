@@ -206,6 +206,14 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         )
         return tuple(services)
 
+    async def async_get_domain(self, domain_id: str) -> Optional[Domain]:
+        """Fetchers all services under a particular domain."""
+        domains = await self.async_get_domains()
+        for domain in domains:
+            if domain.domain_id == domain_id:
+                return domain
+        return None
+
     async def async_trigger_service(
         self,
         domain: str,
