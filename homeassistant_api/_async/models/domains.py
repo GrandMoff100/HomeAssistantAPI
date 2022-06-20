@@ -2,15 +2,12 @@
 
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, cast
 
-
 from pydantic import Field, validator
 
 from ...models import ServiceField, State, base
 
-
 if TYPE_CHECKING:
     from homeassistant_api import Client
-
 
 
 class AsyncDomain(base.BaseModel):
@@ -43,6 +40,7 @@ class AsyncDomain(base.BaseModel):
         if attr in self.services:
             return self.get_service(attr)
         return super().__getattribute__(attr)
+
 
 class AsyncService(base.BaseModel):
     """Class representing services from homeassistant"""
