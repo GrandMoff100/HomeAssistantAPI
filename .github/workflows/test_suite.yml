@@ -1,0 +1,70 @@
+name: Code Standards
+
+on:
+  push: # Comment this line to trigger action only on pull-requests (not recommended if you don't pay for GH Actions)
+    paths:
+      - "**.py"
+  pull_request:
+    branches:
+      - master
+      - dev
+    paths:
+      - "**.py"
+  workflow_dispatch:
+
+jobs:
+  code_styling:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Install Dependencies
+        run: |
+          pip install poetry
+          poetry config virtualenvs.create false
+          poetry install
+      - name: Run Black
+        run: black homeassistant_api --check
+      - name: Run iSort
+        run: isort homeassistant_api --check-only
+      - name: Run Flake8
+        run: flake8 homeassistant_api
+      - name: Run MyPy
+        run: mypy homeassistant_api --show-error-codes
+      - name: Run PyLint
+        run: pylint homeassistant_api
+  code_functionality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+          uses: actions/setup-python@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Install Dependencies
+        run: |
+          pip install poetry homeassistant
+          poetry config virtualenvs.create false
+          poetry install --no-dev --no-root
+          sudo apt-get -qq install -y python3 \
+            python3-dev python3-venv python3-pip \
+            libffi-dev libssl-dev libjpeg-dev zlib1g-dev \
+            autoconf build-essential libopenjp2-7 libtiff5 \
+            libturbojpeg0-dev tzdata
+      - name: Start Server
+        run: |
+          unzip tests/homeassistant_$SERVER_VERSION
+          echo "HOMEASSISTANTAPI_TOKEN=$(cat test_server/config/token.txt)" >> $GITHUB_ENV
+          hass -c test_server/config &
+          sleep 10
+          deactivate
+        env:
+          SERVER_VERSION: ${{ secrets.SERVER_VERSION }}
+      - name: Run Test Suite
+        run: pytest -vvv tests
+
