@@ -6,11 +6,12 @@ from .base import BaseModel
 
 
 class LogbookEntry(BaseModel):
-    """Model representing"""
+    """Model representing entries in the Logbook."""
 
     when: datetime
     name: str
-    entity_id: str
+    message: Optional[str] = None
+    entity_id: Optional[str] = None
     state: Optional[str] = None
     domain: Optional[str] = None
     context_id: Optional[str] = None
