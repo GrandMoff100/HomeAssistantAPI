@@ -66,4 +66,6 @@ jobs:
           hass -c test_server/config &
           sleep 10
       - name: Run Test Suite
-        run: poetry run pytest -vvv tests --disable-warnings
+        run: |
+          export PYTHONPATH=$PWD
+          poetry run pytest -vvv tests --disable-warnings
