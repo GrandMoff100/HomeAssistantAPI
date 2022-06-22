@@ -26,22 +26,14 @@ class RawWrapper:
         self,
         api_url: str,
         token: str,
+        *,
         global_request_kwargs: Optional[Dict[str, str]] = None,
-        cache_backend=None,
-        cache_expire_after: Optional[int] = None,
     ) -> None:
         if global_request_kwargs is None:
             global_request_kwargs = {}
-        if cache_backend is None:
-            cache_backend = "memory"
-        if cache_expire_after is None:
-            cache_expire_after = 30
-
         self.api_url = api_url
         self.token = token
         self.global_request_kwargs = global_request_kwargs
-        self.cache_backend = cache_backend
-        self.cache_expire_after = cache_expire_after
 
         if not api_url.endswith("/"):
             self.api_url += "/"

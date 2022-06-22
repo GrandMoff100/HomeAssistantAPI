@@ -26,23 +26,29 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: Kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    _session: Optional[CachedSession] = None
+    def __init__(
+        self,
+        *args,
+        cache_session: Union[
+            CachedSession, Literal[False], Literal[None]
+        ] = None,  # Explicitly disable cache with cache_session=False
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self.cache_session = (
+            cache_session if cache_session is not None else CachedSession()
+        )
 
     def __enter__(self):
-        self._session = CachedSession(
-            expire_after=self.cache_expire_after,
-            backend=self.cache_backend,
-        )
-        logger.debug(f"Entering cached requests session {self._session!r}")
-        self._session.__enter__()
+        logger.debug(f"Entering cached requests session {self.cache_session!r}")
+        self.cache_session.__enter__()
         self.check_api_running()
         self.check_api_config()
         return self
 
     def __exit__(self, *args):
-        logger.debug(f"Exiting requests session {self._session!r}")
-        self._session.__exit__()
-        self._session = None
+        logger.debug(f"Exiting requests session {self.cache_session!r}")
+        self.cache_session.__exit__(*args)
 
     def request(
         self,
@@ -56,8 +62,8 @@ class RawClient(RawWrapper, JsonProcessingMixin):
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
             logger.debug(f"{method} request to {self.endpoint(path)}")
-            if self._session is not None:
-                resp = self._session.request(
+            if self.cache_session:
+                resp = self.cache_session.request(
                     method,
                     self.endpoint(path),
                     headers=self.prepare_headers(headers),
@@ -82,15 +88,15 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         return Processing(response=response).process()
 
     # API information methods
-    def api_error_log(self) -> str:
+    def get_error_log(self) -> str:
         """Returns the server error log as a string."""
         return cast(str, self.request("error_log"))
 
-    def api_config(self) -> Dict[str, Any]:
+    def get_config(self) -> Dict[str, Any]:
         """Returns the yaml configuration of homeassistant."""
         return cast(Dict[str, Any], self.request("config"))
 
-    def logbook_entries(
+    def get_logbook_entries(
         self,
         *args,
         **kwargs,
