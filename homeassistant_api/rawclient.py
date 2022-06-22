@@ -303,4 +303,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
             method="POST",
             json=event_data,
         )
-        return cast(dict, data).get("message", "No message provided")
+
+    def get_components(self) -> Tuple[str, ...]:
+        """Returns a tuple of all registered components."""
+        return tuple(self.request("components"))
