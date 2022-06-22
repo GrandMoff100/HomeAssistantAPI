@@ -63,7 +63,7 @@ jobs:
           unzip tests/homeassistant.zip
           HOMEASSISTANTAPI_TOKEN="$(cat test_server/config/token.txt)"
           PYTHONPATH=$PWD
-          hass -c test_server/config &
+          hass -c test_server/config
           wget http://localhost:8123/api --timeout=60
           export HOMEASSISTANTAPI_TOKEN
           export PYTHONPATH
