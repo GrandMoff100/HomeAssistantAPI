@@ -63,7 +63,7 @@ jobs:
           unzip tests/homeassistant.zip
           export HOMEASSISTANTAPI_TOKEN="$(cat test_server/config/token.txt)"
           hass -c test_server/config &
-          sleep 10
+          wget http://localhost:8123/api --timeout=60
           export PYTHONPATH=$PWD
           poetry run pytest tests --disable-warnings
         env:
