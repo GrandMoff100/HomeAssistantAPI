@@ -42,29 +42,32 @@ jobs:
   code_functionality:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Python
-        uses: actions/setup-python@v2
       - name: Checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
       - name: Install Dependencies
         run: |
-          pip install poetry
-          poetry install --no-root
-          sudo apt-get -qq install -y python3 \
-            python3-dev python3-venv python3-pip \
-            libffi-dev libssl-dev libjpeg-dev zlib1g-dev \
+          python3 -m venv .
+          source bin/activate
+          python3 -m pip install poetry homeassistant
+          python3 -m poetry install --no-root --no-dev
+          sudo apt-get -qq install -y libffi-dev \
+            libssl-dev libjpeg-dev zlib1g-dev \
             autoconf build-essential libopenjp2-7 libtiff5 \
             libturbojpeg0-dev tzdata
       - name: Start Server and Run Test Suite
         run: |
-          pip install homeassistant
           unzip tests/homeassistant.zip
           HOMEASSISTANTAPI_TOKEN="$(cat test_server/config/token.txt)"
           PYTHONPATH=$PWD
-          hass -c test_server/config
-          wget http://localhost:8123/api --timeout=60
+          hass -c test_server/config &
+          wget http://localhost:8123/api --timeout=300
+          # Wait 5 minutes for server to install packages and start.
           export HOMEASSISTANTAPI_TOKEN
           export PYTHONPATH
           poetry run pytest tests --disable-warnings

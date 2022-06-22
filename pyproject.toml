@@ -47,7 +47,6 @@ types-toml = "^0.10.4"
 mypy = "^0.931"
 autodoc-pydantic = "^1.6.1"
 pytest-asyncio = "^0.18.3"
-attrs = "21.2.0"
 
 [tool.pylint.master]
 extension-pkg-whitelist = ["pydantic"]
