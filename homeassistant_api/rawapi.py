@@ -3,16 +3,11 @@
 import re
 from datetime import datetime
 from posixpath import join
-from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 from urllib.parse import quote as url_quote
 
 from .const import DATE_FMT
 from .models import Entity
-
-if TYPE_CHECKING:
-    from ._async.models.entity import AsyncEntity
-else:
-    AsyncEntity = None  # pylint: disable=invalid-name
 
 
 class RawWrapper:
@@ -99,7 +94,7 @@ class RawWrapper:
 
     @staticmethod
     def prepare_get_entity_histories_params(
-        entities: Optional[Tuple[Union[Entity, AsyncEntity], ...]] = None,
+        entities: Optional[Tuple[Entity, ...]] = None,
         start_timestamp: Optional[datetime] = None,
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
         end_timestamp: Optional[datetime] = None,

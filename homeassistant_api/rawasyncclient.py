@@ -58,14 +58,14 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def __aenter__(self):
         logger.debug(
-            f"Entering cached async requests session {self.async_cache_session!r}"
+            "Entering cached async requests session %r", self.async_cache_session
         )
         await self.async_cache_session.__aenter__()
         await self.async_check_api_running()
         return self
 
     async def __aexit__(self, cls, obj, traceback):
-        logger.debug(f"Exiting async requests session {self.async_cache_session!r}")
+        logger.debug("Exiting async requests session %r", self.async_cache_session)
         await self.async_cache_session.__aexit__(cls, obj, traceback)
 
     # Very important request function
@@ -166,7 +166,8 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
                 "Try debugging it in the developer tools page of homeassistant."
             ) from err
 
-    async def async_get_discovery_info(self) -> Dict[str, Any]:
+    @staticmethod
+    async def async_get_discovery_info() -> Dict[str, Any]:
         """Returns a dictionary of discovery info such as internal_url and version"""
         raise DeprecationWarning(
             "This endpoint has been removed from homeassistant. This function is to be removed in future release."
@@ -335,4 +336,5 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def async_get_components(self) -> Tuple[str, ...]:
         """Returns a tuple of all registered components."""
-        return tuple(await self.async_request("components"))
+        data = await self.async_request("components")
+        return tuple(cast(List[str], data))

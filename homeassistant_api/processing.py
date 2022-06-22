@@ -52,14 +52,14 @@ class Processing(BaseModel):
         mimetype = self.response.headers.get("content-type", "text/plain")  # type: ignore[arg-type]
         for processor in self._processors.get(mimetype, ()):
             if not _async ^ inspect.iscoroutinefunction(processor):
-                logger.debug(f"Using processor {processor!r} on {self.response!r}")
+                logger.debug("Using processor %r on %r", processor, self.response)
                 return processor(self.response)
         if _async:
             raise ProcessorNotFoundError(
-                f"No async response processor registered for mimetype {mimetype!r}"
+                f"No async response processor registered for mimetype {mimetype!r}."
             )
         raise ProcessorNotFoundError(
-            f"No non-async response processor found for mimetype {mimetype!r}"
+            f"No non-async response processor found for mimetype {mimetype!r}."
         )
 
     def process(self) -> Any:

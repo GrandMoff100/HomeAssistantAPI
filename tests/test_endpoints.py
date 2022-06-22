@@ -1,6 +1,6 @@
 # pylint: disable=redefined-outer-name
 import os
-from typing import Generator
+from typing import AsyncGenerator, Generator
 
 import pytest
 import pytest_asyncio
@@ -20,7 +20,7 @@ def cached_client() -> Generator[Client, None, None]:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def async_cached_client() -> Generator[Client, None, None]:
+async def async_cached_client() -> AsyncGenerator[Client, None]:
     """Initializes the Client and enters an async cached session."""
     async with Client(
         os.environ["HOMEASSISTANTAPI_URL"], os.environ["HOMEASSISTANTAPI_TOKEN"]
@@ -72,18 +72,18 @@ async def test_async_get_entity(async_cached_client: Client) -> None:
 
 def test_get_entity_histories(cached_client: Client) -> None:
     """Tests the `GET /api/history/period/<timestamp>` endpoint."""
-    for history in cached_client.get_entity_histories(
-        [cached_client.get_entity(entity_id="sun.sun")]
-    ):
+    sun = cached_client.get_entity(entity_id="sun.sun")
+    assert sun is not None
+    for history in cached_client.get_entity_histories((sun,)):
         for state in history.states:
             assert isinstance(state, State)
 
 
 async def test_async_get_entity_histories(async_cached_client: Client) -> None:
     """Tests the `GET /api/history/period/<timestamp>` endpoint."""
-    async for history in async_cached_client.async_get_entity_histories(
-        [await async_cached_client.async_get_entity(entity_id="sun.sun")]
-    ):
+    sun = await async_cached_client.async_get_entity(entity_id="sun.sun")
+    assert sun is not None
+    async for history in async_cached_client.async_get_entity_histories((sun,)):
         for state in history.states:
             assert isinstance(state, State)
 
@@ -147,18 +147,21 @@ async def test_async_get_domains(async_cached_client: Client) -> None:
 def test_get_domain(cached_client: Client) -> None:
     """Tests the `GET /api/services` endpoint."""
     domain = cached_client.get_domain("homeassistant")
+    assert domain is not None
     assert domain.services
 
 
 async def test_async_get_domain(async_cached_client: Client) -> None:
     """Tests the `GET /api/services` endpoint."""
     domain = await async_cached_client.async_get_domain("homeassistant")
+    assert domain is not None
     assert domain.services
 
 
 def test_trigger_service(cached_client: Client) -> None:
     """Tests the `POST /api/services/<domain>/<service>` endpoint."""
     notify = cached_client.get_domain("notify")
+    assert notify is not None
     resp = notify.persistent_notification(
         message="Your API Test Suite just said hello!",
         title="Test Suite Notifcation",
@@ -169,6 +172,7 @@ def test_trigger_service(cached_client: Client) -> None:
 async def test_async_trigger_service(async_cached_client: Client) -> None:
     """Tests the `POST /api/services/<domain>/<service>` endpoint."""
     notify = await async_cached_client.async_get_domain("notify")
+    assert notify is not None
     resp = await notify.persistent_notification.async_trigger(
         message="Your API Test Suite just said hello!",
         title="Test Suite Notifcation (Async)",

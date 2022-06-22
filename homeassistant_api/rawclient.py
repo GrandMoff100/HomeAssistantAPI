@@ -40,14 +40,14 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         )
 
     def __enter__(self):
-        logger.debug(f"Entering cached requests session {self.cache_session!r}")
+        logger.debug("Entering cached requests session %r.", self.cache_session)
         self.cache_session.__enter__()
         self.check_api_running()
         self.check_api_config()
         return self
 
     def __exit__(self, *args):
-        logger.debug(f"Exiting requests session {self.cache_session!r}")
+        logger.debug("Exiting requests session %r", self.cache_session)
         self.cache_session.__exit__(*args)
 
     def request(
@@ -61,7 +61,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         try:
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
-            logger.debug(f"{method} request to {self.endpoint(path)}")
+            logger.debug("%s request to %s", method, self.endpoint(path))
             if self.cache_session:
                 resp = self.cache_session.request(
                     method,
@@ -153,7 +153,8 @@ class RawClient(RawWrapper, JsonProcessingMixin):
                 "Try debugging it in the developer tools page of homeassistant."
             ) from err
 
-    def get_discovery_info(self) -> Dict[str, Any]:
+    @staticmethod
+    def get_discovery_info() -> Dict[str, Any]:
         """Returns a dictionary of discovery info such as internal_url and version"""
         raise DeprecationWarning(
             "This endpoint has been removed from homeassistant. This function is to be removed in future release."

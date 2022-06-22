@@ -36,9 +36,7 @@ class Group(BaseModel):
     def __getattr__(self, key: str):
         if key in self.entities:
             return self.get_entity(key)
-        return super(object, self).__getattribute__(  # type: ignore[misc]  # pylint: disable=bad-super-call
-            key
-        )
+        return super().__getattribute__(key)
 
 
 class Entity(BaseModel):
