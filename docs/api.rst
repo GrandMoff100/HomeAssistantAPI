@@ -31,20 +31,6 @@ Data Models
    .. autopydantic_model:: Event
 
 
-
-.. automodule:: homeassistant_api._async.models
-
-   .. autopydantic_model:: AsyncDomain
-
-   .. autopydantic_model:: AsyncService
-
-   .. autopydantic_model:: AsyncGroup
-
-   .. autopydantic_model:: AsyncEntity
-
-   .. autopydantic_model:: AsyncEvent
-
-
 Processing
 -----------
 

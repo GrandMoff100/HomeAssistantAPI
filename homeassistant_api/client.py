@@ -1,5 +1,5 @@
 """Module containing the primary Client class."""
-from ._async import RawAsyncClient
+from .rawasyncclient import RawAsyncClient
 from .rawclient import RawClient
 
 
