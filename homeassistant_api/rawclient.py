@@ -3,12 +3,12 @@
 import logging
 from datetime import datetime
 from posixpath import join
-from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, Generator, List, Literal, Optional, Tuple, Union, cast
 
 import requests
 from requests_cache import CachedSession
 
-from .errors import APIConfigurationError, RequestError
+from .errors import APIConfigurationError, BadTemplateError, RequestError
 from .mixins import JsonProcessingMixin
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
 from .processing import Processing
@@ -136,26 +136,32 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     def get_rendered_template(self, template: str) -> str:
         """
         Renders a Jinja2 template with Home Assistant context data.
-        See https://developers.home-assistant.io/docs/api/rest/.
+        See https://www.home-assistant.io/docs/configuration/templating.
         """
-        return cast(
-            str,
-            self.request(
-                "template",
-                json=dict(template=template),
-                return_text=True,
-                method="POST",
-            ),
-        )
+        try:
+            return cast(
+                str,
+                self.request(
+                    "template",
+                    json=dict(template=template),
+                    method="POST",
+                ),
+            )
+        except RequestError as err:
+            raise BadTemplateError(
+                "Your template is invalid. "
+                "Try debugging it in the developer tools page of homeassistant."
+            ) from err
 
     def get_discovery_info(self) -> Dict[str, Any]:
         """Returns a dictionary of discovery info such as internal_url and version"""
-        res = self.request("discovery_info")
-        return cast(dict, res)
+        raise DeprecationWarning(
+            "This endpoint has been removed from homeassistant. This function is to be removed in future release."
+        )
 
     # API check methods
     def check_api_config(self) -> bool:
-        """Asks Home Assistant to validate its configuration file"""
+        """Asks Home Assistant to validate its configuration file."""
         res = cast(dict, self.request("config/core/check_config", method="POST"))
         valid = {"valid": True, "invalid": False}.get(res["result"], False)
         if valid is False:
@@ -163,7 +169,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         return valid
 
     def check_api_running(self) -> bool:
-        """Asks Home Assistant if its running"""
+        """Asks Home Assistant if it is running."""
         res = self.request("")
         if cast(dict, res).get("message", None) == "API running.":
             return True
@@ -205,22 +211,18 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         return group.get_entity(cast(str, entity_slug))
 
     # Services and domain methods
-    def get_domains(self) -> Tuple[Domain, ...]:
-        """Fetches all Services from the api"""
+    def get_domains(self) -> Dict[str, Domain]:
+        """Fetches all Services from the API"""
         data = self.request("services")
-        services = map(
+        domains = map(
             self.process_services_json,
             cast(Tuple[Dict[str, Any], ...], data),
         )
-        return tuple(services)
+        return {domain.domain_id: domain for domain in domains}
 
     def get_domain(self, domain_id: str) -> Optional[Domain]:
-        """Fetchers all services under a particular domain."""
-        domains = self.get_domains()
-        for domain in domains:
-            if domain.domain_id == domain_id:
-                return domain
-        return None
+        """Fetches all services under a particular domain."""
+        return self.get_domains().get(domain_id)
 
     def trigger_service(
         self,
@@ -228,14 +230,13 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         service: str,
         **service_data,
     ) -> Tuple[State, ...]:
-        """Tells Home Assistant to trigger a service, returns stats changed while being called"""
+        """Tells Home Assistant to trigger a service, returns all states changed while in the process of being called."""
         data = self.request(
             join("services", domain + "/" + service),
             method="POST",
             json=service_data,
         )
-        states = map(self.process_state_json, cast(List[Dict[str, Any]], data))
-        return tuple(states)
+        return tuple(map(self.process_state_json, cast(List[Dict[str, Any]], data)))
 
     # EntityState methods
     def get_state(  # pylint: disable=duplicate-code
@@ -265,7 +266,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     ) -> State:
         """
         This method sets the representation of a device within Home Assistant and will not communicate with the actual device.
-        To communicate with the device, use :py:meth:`homeassistant_api.Service.trigger` or :py:meth:`homeassistant_api.AsyncService.trigger`
+        To communicate with the device, use :py:meth:`homeassistant_api.Service.trigger` or :py:meth:`homeassistant_api.Service.async_trigger`
         """
         entity_id = self.prepare_entity_id(
             group=group,
@@ -290,19 +291,23 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     def get_events(self) -> Tuple[Event, ...]:
         """Gets the Events that happen within homeassistant"""
         data = self.request("events")
-        events = map(
-            self.process_event_json,
-            cast(Tuple[Dict[str, Any], ...], data),
-        )
-        return tuple(events)
+        if isinstance(data, list):
+            return tuple(
+                map(
+                    self.process_event_json,
+                    cast(List[Dict[str, Any]], data),
+                )
+            )
+        raise TypeError("Received JSON data is not a list of events.")
 
-    def fire_event(self, event_type: str, **event_data) -> str:
+    def fire_event(self, event_type: str, **event_data) -> Optional[str]:
         """Fires a given event_type within homeassistant. Must be an existing event_type."""
         data = self.request(
             join("events", event_type),
             method="POST",
             json=event_data,
         )
+        return cast(dict, data).get("message")
 
     def get_components(self) -> Tuple[str, ...]:
         """Returns a tuple of all registered components."""

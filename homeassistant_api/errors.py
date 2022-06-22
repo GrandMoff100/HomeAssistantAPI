@@ -12,6 +12,10 @@ class RequestError(HomeassistantAPIError):
         super().__init__(f"Bad Request: {body}")
 
 
+class BadTemplateError(HomeassistantAPIError):
+    """Error raised when User sends bad template to homeassistant."""
+
+
 class MalformedDataError(HomeassistantAPIError):
     """Error raised when data from api is not formatted as JSON"""
 
