@@ -1,4 +1,4 @@
-# Gets renamed to configuration.yaml in the Docker container
+# Gets renamed to configuration.yaml in the testing volume
 
 person:
 sun:
@@ -18,9 +18,7 @@ notify:
 logger:
   default: info
 
-
 http:
   trusted_proxies:
     - 127.0.0.1
   use_x_forwarded_for: true
-

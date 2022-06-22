@@ -57,15 +57,14 @@ jobs:
             libffi-dev libssl-dev libjpeg-dev zlib1g-dev \
             autoconf build-essential libopenjp2-7 libtiff5 \
             libturbojpeg0-dev tzdata
-      - name: Start Server
+      - name: Start Server and Run Test Suite
         run: |
-          unzip tests/homeassistant.zip
-          echo "HOMEASSISTANTAPI_URL=http://localhost:8123/api" >> $GITHUB_ENV
-          echo "HOMEASSISTANTAPI_TOKEN=$(cat test_server/config/token.txt)" >> $GITHUB_ENV
           pip install homeassistant
+          unzip tests/homeassistant.zip
+          export HOMEASSISTANTAPI_TOKEN="$(cat test_server/config/token.txt)"
           hass -c test_server/config &
           sleep 10
-      - name: Run Test Suite
-        run: |
           export PYTHONPATH=$PWD
-          poetry run pytest -vvv tests --disable-warnings
+          poetry run pytest tests --disable-warnings
+        env:
+          HOMEASSISTANTAPI_URL: "http://localhost:8123/api"
