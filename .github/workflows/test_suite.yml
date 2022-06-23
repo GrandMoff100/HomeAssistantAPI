@@ -1,4 +1,3 @@
----
 name: Code Standards
 on:
   push: # Comment this line to trigger action only on pull-requests (not recommended if you don't pay for GH Actions)
@@ -95,4 +94,3 @@ jobs:
           HOMEASSISTANTAPI_URL: "${{ env.HOMEASSISTANTAPI_URL }}"
           HOMEASSISTANTAPI_TOKEN: "${{ env.HOMEASSISTANTAPI_TOKEN }}"
           PYTHONPATH: "${{ env.PYTHONPATH }}"
----
