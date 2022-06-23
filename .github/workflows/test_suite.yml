@@ -60,8 +60,6 @@ jobs:
       - name: Unpack Testing Server Config
         run: |
           unzip tests/homeassistant.zip
-          echo "HOMEASSISTANTAPI_URL=http://localhost:8123/api" >> $GITHUB_ENV
-          echo "HOMEASSISTANTAPI_TOKEN=$(cat test_server/config/token.txt)" >> $GITHUB_ENV
       - name: Initialize Testing Server and Run Suite
         run: |
           echo "::group::Install Project Dependencies"
@@ -87,6 +85,8 @@ jobs:
           # Run Test Suite
           echo "::group::Running Test Suite"
           export PYTHONPATH=.
+          export HOMEASSISTANTAPI_URL="http://localhost:8123/api"
+          export HOMEASSISTANTAPI_TOKEN="$(cat test_server/config/token.txt)"
           poetry run pytest tests --disable-warnings
           echo "::endgroup::"
         env:
