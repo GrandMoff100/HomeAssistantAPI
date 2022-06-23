@@ -1,3 +1,4 @@
+---
 repos:
   - repo: https://github.com/pre-commit/mirrors-mypy
     hooks:
@@ -27,3 +28,4 @@ repos:
     hooks:
       - id: pylint
         language: system
+---

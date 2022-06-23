@@ -1,5 +1,5 @@
+---
 name: Code Standards
-
 on:
   push: # Comment this line to trigger action only on pull-requests (not recommended if you don't pay for GH Actions)
     paths:
@@ -92,6 +92,7 @@ jobs:
           poetry run pytest tests --disable-warnings
           echo "::endgroup::"
         env:
-          HOMEASSISTANTAPI_URL: {{ env.HOMEASSISTANTAPI_URL }}
-          HOMEASSISTANTAPI_TOKEN: {{ env.HOMEASSISTANTAPI_TOKEN }}
-          PYTHONPATH: {{ env.PYTHONPATH }}
+          HOMEASSISTANTAPI_URL: "${{ env.HOMEASSISTANTAPI_URL }}"
+          HOMEASSISTANTAPI_TOKEN: "${{ env.HOMEASSISTANTAPI_TOKEN }}"
+          PYTHONPATH: "${{ env.PYTHONPATH }}"
+---
