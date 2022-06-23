@@ -84,9 +84,10 @@ jobs:
 
           # Run Test Suite
           echo "::group::Running Test Suite"
+          TOKEN = "$(cat test_server/config/token.txt)""
           export PYTHONPATH=.
           export HOMEASSISTANTAPI_URL="http://localhost:8123/api"
-          export HOMEASSISTANTAPI_TOKEN="$(cat test_server/config/token.txt)"
+          export HOMEASSISTANTAPI_TOKEN="$TOKEN"
           poetry run pytest tests --disable-warnings
           echo "::endgroup::"
         env:
