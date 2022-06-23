@@ -60,12 +60,10 @@ jobs:
       - name: Unpack Testing Server Config
         run: |
           unzip tests/homeassistant.zip
-          echo "HOMEASSISTANTAPI_URL=http://localhost:8123/api;
-                HOMEASSISTANTAPI_TOKEN=$(cat test_server/config/token.txt);
-          " >> $GITHUB_ENV
+          echo "HOMEASSISTANTAPI_URL=http://localhost:8123/api" >> $GITHUB_ENV
+          echo "HOMEASSISTANTAPI_TOKEN=$(cat test_server/config/token.txt)" >> $GITHUB_ENV
       - name: Initialize Testing Server and Run Suite
         run: |
-
           echo "::group::Install Project Dependencies"
           python3 -m pip install poetry
           python3 -m poetry install
