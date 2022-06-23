@@ -140,8 +140,7 @@ class RawWrapper:
             params.update(end_time=end_timestamp)
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-                url = join("logbook/", formatted_timestamp)
+                url = join("logbook/", start_timestamp.strftime(DATE_FMT))
         else:
             url = "logbook"
         return params, url
