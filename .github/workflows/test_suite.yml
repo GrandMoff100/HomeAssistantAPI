@@ -65,11 +65,11 @@ jobs:
       - name: Initialize Testing Server and Run Suite
         run: |
           # Install Dependencies
-          python3 -m pip install poetry
+          python3 -m pip install poetry -q
           python3 -m poetry install --no-root --no-dev
           python3 -m venv .
           . bin/activate
-          python3 -m pip install homeassistant
+          python3 -m pip install homeassistant -q
           
           # Start Server
           hass -c test_server/config &
