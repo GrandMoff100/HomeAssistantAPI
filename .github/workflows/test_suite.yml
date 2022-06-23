@@ -66,6 +66,7 @@ jobs:
             PYTHONPATH='$PWD'" >> $GITHUB_ENV
       - name: Initialize Testing Server and Run Suite
         run: |
+
           echo "::group::Install Project Dependencies"
           python3 -m pip install poetry
           python3 -m poetry install
@@ -90,3 +91,7 @@ jobs:
           echo "::group::Running Test Suite"
           poetry run pytest tests --disable-warnings
           echo "::endgroup::"
+        env:
+          HOMEASSISTANTAPI_URL: {{ env.HOMEASSISTANTAPI_URL }}
+          HOMEASSISTANTAPI_TOKEN: {{ env.HOMEASSISTANTAPI_TOKEN }}
+          PYTHONPATH: {{ env.PYTHONPATH }}
