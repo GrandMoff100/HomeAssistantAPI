@@ -52,24 +52,31 @@ jobs:
           python-version: "3.9"
       - name: Install Dependencies
         run: |
-          python3 -m venv .
-          source bin/activate
-          python3 -m pip install poetry homeassistant
-          python3 -m poetry install --no-root --no-dev
           sudo apt-get -qq install -y libffi-dev \
             libssl-dev libjpeg-dev zlib1g-dev \
             autoconf build-essential libopenjp2-7 libtiff5 \
             libturbojpeg0-dev tzdata
-      - name: Start Server and Run Test Suite
+      - name: Unpack Testing Server Config
         run: |
           unzip tests/homeassistant.zip
-          HOMEASSISTANTAPI_TOKEN="$(cat test_server/config/token.txt)"
-          PYTHONPATH=$PWD
+          echo "HOMEASSISTANTAPI_URL=http://localhost:8123/api" >> $GITHUB_ENV
+          echo 'HOMEASSISTANTAPI_TOKEN="$(cat test_server/config/token.txt)"' >> $GITHUB_ENV
+          echo 'PYTHONPATH="$PWD"' >> $GITHUB_ENV
+      - name: Initialize Testing Server and Run Suite
+        run: |
+          # Install Dependencies
+          python3 -m poetry install --no-root --no-dev
+          python3 -m venv .
+          . bin/activate
+          python3 -m pip install poetry homeassistant
+          
+          # Start Server
           hass -c test_server/config &
-          wget http://localhost:8123/api --timeout=300
-          # Wait 5 minutes for server to install packages and start.
-          export HOMEASSISTANTAPI_TOKEN
-          export PYTHONPATH
+          deactivate
+
+          # Wait at least 60 seconds for server to install packages and start.
+          sleep 60
+          wget $HOMEASSISTANTAPI_URL -O /dev/null -o /dev/null --no-check-certificate
+
+          # Run Test Suite
           poetry run pytest tests --disable-warnings
-        env:
-          HOMEASSISTANTAPI_URL: "http://localhost:8123/api"
