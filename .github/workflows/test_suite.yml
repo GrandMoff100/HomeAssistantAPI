@@ -63,7 +63,7 @@ jobs:
           unzip tests/homeassistant.zip
           echo "HOMEASSISTANTAPI_URL='http://localhost:8123/api';
             HOMEASSISTANTAPI_TOKEN='$(cat test_server/config/token.txt)';
-            PYTHONPATH='$PWD'" >> $GITHUB_ENV
+            PYTHONPATH=\"$PWD\"" >> $GITHUB_ENV
       - name: Initialize Testing Server and Run Suite
         run: |
 
