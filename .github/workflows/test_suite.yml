@@ -16,6 +16,7 @@ on:
 
 jobs:
   code_styling:
+    name: "Code Styling"
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python
@@ -40,6 +41,7 @@ jobs:
       - name: Run PyLint
         run: pylint homeassistant_api
   code_functionality:
+    name: "Code Functionality"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -59,11 +61,9 @@ jobs:
       - name: Unpack Testing Server Config
         run: |
           unzip tests/homeassistant.zip
-          echo '
-            HOMEASSISTANTAPI_URL=http://localhost:8123/api;
-            HOMEASSISTANTAPI_TOKEN="$(cat test_server/config/token.txt)";
-            PYTHONPATH="$PWD"
-          ' >> $GITHUB_ENV
+          echo "HOMEASSISTANTAPI_URL='http://localhost:8123/api';
+            HOMEASSISTANTAPI_TOKEN='$(cat test_server/config/token.txt)';
+            PYTHONPATH='$PWD'" >> $GITHUB_ENV
       - name: Initialize Testing Server and Run Suite
         run: |
           echo "::group::Install Project Dependencies"
