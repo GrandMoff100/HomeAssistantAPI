@@ -64,25 +64,27 @@ jobs:
           echo 'PYTHONPATH="$PWD"' >> $GITHUB_ENV
       - name: Initialize Testing Server and Run Suite
         run: |
-          # Install Dependencies
-          echo "::debug::Install Project Dependencies"
-          python3 -m pip install poetry -q
+          echo "::group:: Install Project Dependencies"
+          python3 -m pip install poetry
           python3 -m poetry install --no-root --no-dev
+          echo "::endgroup::"
 
-          echo "::debug::Install Home Assistant Dependencies"
+          echo "::group::Install Home Assistant Dependencies"
           python3 -m venv .
           . bin/activate
           python3 -m pip install homeassistant -q
+          echo "::endgroup::"
           
-          # Start Server
-          echo "::debug::Starting the Testing Server"
+          echo "::group::Starting the Testing Server"
           hass -c test_server/config &
           deactivate
 
           # Wait at least 60 seconds for server to install packages and start.
           echo "::debug::Waiting for Server to Start"
           sleep 60
+          echo "::endgroup::"
 
           # Run Test Suite
-          echo "::debug::Running Test Suite"
+          echo "::group::Running Test Suite"
           poetry run pytest tests --disable-warnings
+          echo "::endgroup::"
