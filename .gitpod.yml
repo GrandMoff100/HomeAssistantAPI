@@ -1,9 +1,0 @@
-tasks:
-  - init: |
-      pip install poetry
-      poetry config virtualenvs.create false
-      poetry install
-ports:
-  - port: 8000
-    visibility: public
-    onOpen: ignore

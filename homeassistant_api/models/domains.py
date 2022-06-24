@@ -79,5 +79,13 @@ class Service(BaseModel):
             **service_data,
         )
 
+    async def async_trigger(self, **service_data) -> Tuple[State, ...]:
+        """Triggers the service associated with this object."""
+        return await self.domain.client.async_trigger_service(
+            self.domain.domain_id,
+            self.service_id,
+            **service_data,
+        )
+
     def __call__(self, **service_data) -> Tuple[State, ...]:
         return self.trigger(**service_data)

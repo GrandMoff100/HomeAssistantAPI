@@ -17,6 +17,12 @@ report/
 .replit
 .breakpoints
 
+# Cache files
+*.sqlite
+
+# Test Server
+test_server/
+
 # Distribution / packaging
 .Python
 build/

@@ -3,16 +3,11 @@
 import re
 from datetime import datetime
 from posixpath import join
-from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 from urllib.parse import quote as url_quote
 
 from .const import DATE_FMT
 from .models import Entity
-
-if TYPE_CHECKING:
-    from ._async.models.entity import AsyncEntity
-else:
-    AsyncEntity = None  # pylint: disable=invalid-name
 
 
 class RawWrapper:
@@ -26,22 +21,14 @@ class RawWrapper:
         self,
         api_url: str,
         token: str,
+        *,
         global_request_kwargs: Optional[Dict[str, str]] = None,
-        cache_backend=None,
-        cache_expire_after: Optional[int] = None,
     ) -> None:
         if global_request_kwargs is None:
             global_request_kwargs = {}
-        if cache_backend is None:
-            cache_backend = "memory"
-        if cache_expire_after is None:
-            cache_expire_after = 30
-
         self.api_url = api_url
         self.token = token
         self.global_request_kwargs = global_request_kwargs
-        self.cache_backend = cache_backend
-        self.cache_expire_after = cache_expire_after
 
         if not api_url.endswith("/"):
             self.api_url += "/"
@@ -107,7 +94,7 @@ class RawWrapper:
 
     @staticmethod
     def prepare_get_entity_histories_params(
-        entities: Optional[Tuple[Union[Entity, AsyncEntity], ...]] = None,
+        entities: Optional[Tuple[Entity, ...]] = None,
         start_timestamp: Optional[datetime] = None,
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
         end_timestamp: Optional[datetime] = None,
@@ -153,8 +140,7 @@ class RawWrapper:
             params.update(end_time=end_timestamp)
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
-            url = join("logbook/", formatted_timestamp)
+                url = join("logbook/", start_timestamp.strftime(DATE_FMT))
         else:
             url = "logbook"
         return params, url

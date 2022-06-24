@@ -3,17 +3,33 @@ import asyncio
 import logging
 from datetime import datetime
 from posixpath import join
-from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, Union, cast
+from typing import (
+    Any,
+    AsyncGenerator,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 import aiohttp
 from aiohttp_client_cache import CachedSession
 
-from ..errors import APIConfigurationError, MalformedDataError, RequestError
-from ..mixins import JsonProcessingMixin
-from ..models import Domain, Event, History, LogbookEntry, State
-from ..processing import Processing
-from ..rawapi import RawWrapper
-from .models import AsyncEntity, AsyncGroup
+from homeassistant_api.models.entity import Entity, Group
+
+from .errors import (
+    APIConfigurationError,
+    BadTemplateError,
+    MalformedDataError,
+    RequestError,
+)
+from .mixins import JsonProcessingMixin
+from .models import Domain, Event, History, LogbookEntry, State
+from .processing import Processing
+from .rawapi import RawWrapper
 
 logger = logging.getLogger(__name__)
 
@@ -27,19 +43,30 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
     :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    _async_session: Optional[CachedSession] = None
+    def __init__(
+        self,
+        *args,
+        async_cache_session: Union[
+            CachedSession, Literal[False], Literal[None]
+        ] = None,  # Explicitly disable cache with async_cache_session=False
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self.async_cache_session = (
+            async_cache_session if async_cache_session is not None else CachedSession()
+        )
 
     async def __aenter__(self):
-        self._async_session = CachedSession(
-            expire_after=self.cache_expire_after, cache=self.cache_backend
+        logger.debug(
+            "Entering cached async requests session %r", self.async_cache_session
         )
-        logger.debug(f"Entering cached requests session {self._async_session!r}")
-        await self._async_session.__aenter__()
+        await self.async_cache_session.__aenter__()
         await self.async_check_api_running()
         return self
 
     async def __aexit__(self, cls, obj, traceback):
-        await self._async_session.__aexit__(cls, obj, traceback)
+        logger.debug("Exiting async requests session %r", self.async_cache_session)
+        await self.async_cache_session.__aexit__(cls, obj, traceback)
 
     # Very important request function
     async def async_request(
@@ -53,9 +80,9 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         try:
             if self.global_request_kwargs is not None:
                 kwargs.update(self.global_request_kwargs)
-            if self._async_session is not None:
+            if self.async_cache_session:
                 return await self.async_response_logic(
-                    await self._async_session.request(
+                    await self.async_cache_session.request(
                         method,
                         self.endpoint(path),
                         headers=self.prepare_headers(headers),
@@ -80,15 +107,15 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         return await Processing(response=response).process()
 
     # API information methods
-    async def async_api_error_log(self) -> str:
+    async def async_get_error_log(self) -> str:
         """Returns the server error log as a string"""
         return cast(str, await self.async_request("error_log"))
 
-    async def async_api_config(self) -> Dict[str, Any]:
+    async def async_get_config(self) -> Dict[str, Any]:
         """Returns the yaml configuration of homeassistant"""
         return cast(Dict[str, Any], await self.async_request("config"))
 
-    async def async_logbook_entries(
+    async def async_get_logbook_entries(
         self,
         *args,
         **kwargs,
@@ -101,7 +128,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def async_get_entity_histories(
         self,
-        entities: Optional[Tuple[AsyncEntity, ...]] = None,
+        entities: Optional[Tuple[Entity, ...]] = None,
         start_timestamp: Optional[datetime] = None,
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
         end_timestamp: Optional[datetime] = None,
@@ -127,16 +154,24 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     async def async_get_rendered_template(self, template: str):
         """Renders a given Jinja2 template string with Home Assistant context data."""
-        return await self.async_request(
-            "template",
-            json=dict(template=template),
-            return_text=True,
-            method="POST",
-        )
+        try:
+            return await self.async_request(
+                "template",
+                json=dict(template=template),
+                method="POST",
+            )
+        except RequestError as err:
+            raise BadTemplateError(
+                "Your template is invalid. "
+                "Try debugging it in the developer tools page of homeassistant."
+            ) from err
 
-    async def async_get_discovery_info(self) -> Dict[str, Any]:
+    @staticmethod
+    async def async_get_discovery_info() -> Dict[str, Any]:
         """Returns a dictionary of discovery info such as internal_url and version"""
-        return cast(Dict[str, Any], await self.async_request("discovery_info"))
+        raise DeprecationWarning(
+            "This endpoint has been removed from homeassistant. This function is to be removed in future release."
+        )
 
     # API check methods
     async def async_check_api_config(self) -> bool:
@@ -162,13 +197,13 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         raise MalformedDataError("Server response did not return message attribute")
 
     # Entity methods
-    async def async_get_entities(self) -> Tuple[AsyncGroup, ...]:
+    async def async_get_entities(self) -> Tuple[Group, ...]:
         """Fetches all entities from the api"""
-        entities: Dict[str, AsyncGroup] = {}
+        entities: Dict[str, Group] = {}
         for state in await self.async_get_states():
             group_id, entity_slug = state.entity_id.split(".")
             if group_id not in entities:
-                entities[group_id] = AsyncGroup(group_id=group_id, client=self)
+                entities[group_id] = Group(group_id=group_id, client=self)
             entities[group_id].add_entity(entity_slug, state)
         return tuple(entities.values())
 
@@ -177,7 +212,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         group_id: str = None,
         entity_slug: str = None,
         entity_id: str = None,
-    ) -> Optional[AsyncEntity]:
+    ) -> Optional[Entity]:
         """Returns a Entity model for an entity_id"""
         if group_id is not None and entity_slug is not None:
             state = await self.async_get_state(group=group_id, slug=entity_slug)
@@ -192,44 +227,38 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
                 f"Neither group and slug or entity_id provided. {help_msg}"
             )
         group_id, entity_slug = state.entity_id.split(".")
-        group = AsyncGroup(group_id=group_id, client=self)
+        group = Group(group_id=group_id, client=self)
         group.add_entity(entity_slug, state)
         return group.get_entity(entity_slug)
 
     # Services and domain methods
-    async def async_get_domains(self) -> Tuple[Domain, ...]:
-        """Fetches all Services from the api"""
+    async def async_get_domains(self) -> Dict[str, Domain]:
+        """Fetches all services from the api"""
         data = await self.async_request("services")
-        services = map(
+        domains = map(
             self.process_services_json,
             cast(Tuple[Dict[str, Any], ...], data),
         )
-        return tuple(services)
+        return {domain.domain_id: domain for domain in domains}
 
     async def async_get_domain(self, domain_id: str) -> Optional[Domain]:
-        """Fetchers all services under a particular domain."""
+        """Fetches all services under a particular domain."""
         domains = await self.async_get_domains()
-        for domain in domains:
-            if domain.domain_id == domain_id:
-                return domain
-        return None
+        return domains.get(domain_id)
 
     async def async_trigger_service(
         self,
         domain: str,
         service: str,
         **service_data: Union[Dict[str, Any], List[Any], str],
-    ) -> List[State]:
+    ) -> Tuple[State, ...]:
         """Tells Home Assistant to trigger a service, returns stats changed while being called"""
         data = await self.async_request(
             f"services/{domain}/{service}",
             method="POST",
             json=service_data,
         )
-        return [
-            self.process_state_json(state_data)
-            for state_data in cast(List[Dict[Any, Any]], data)
-        ]
+        return tuple(map(self.process_state_json, cast(List[Dict[Any, Any]], data)))
 
     # EntityState methods
     async def async_get_state(  # pylint: disable=duplicate-code
@@ -281,14 +310,15 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
 
     # Event methods
     async def async_get_events(self) -> Tuple[Event, ...]:
-        """Gets the Events that happen within homeassistant"""
+        """Gets the internal events that happen within homeassistant."""
         data = await self.async_request("events")
-        if not isinstance(data, list):
-            events = map(
-                self.process_event_json,
-                cast(List[Dict[Any, Any]], data),
+        if isinstance(data, list):
+            return tuple(
+                map(
+                    self.process_event_json,
+                    cast(List[Dict[str, Any]], data),
+                )
             )
-            return tuple(events)
         raise TypeError("Received JSON data is not a list of events.")
 
     async def async_fire_event(self, event_type: str, **event_data) -> str:
@@ -303,3 +333,8 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
                 f"Invalid return type from API. Expected {dict!r} got {type(data)!r}"
             )
         return data.get("message", "No message provided")
+
+    async def async_get_components(self) -> Tuple[str, ...]:
+        """Returns a tuple of all registered components."""
+        data = await self.async_request("components")
+        return tuple(cast(List[str], data))

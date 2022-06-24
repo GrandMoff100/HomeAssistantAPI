@@ -36,9 +36,7 @@ class Group(BaseModel):
     def __getattr__(self, key: str):
         if key in self.entities:
             return self.get_entity(key)
-        return super(object, self).__getattribute__(  # type: ignore[misc]  # pylint: disable=bad-super-call
-            key
-        )
+        return super().__getattribute__(key)
 
 
 class Entity(BaseModel):
@@ -87,6 +85,45 @@ class Entity(BaseModel):
         """Gets the previous `State`'s of the `Entity`"""
         history = None
         for history in self.group.client.get_entity_histories(
+            entities=(self,),
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            minimal_state_data=minimal_state_data,
+            significant_changes_only=significant_changes_only,
+        ):
+            break
+        return history
+
+    async def async_get_state(self) -> State:
+        """Asks Home Assistant for the state of the entity and sets it locally"""
+        state_data = await self.group.client.async_request(
+            join("states", self.entity_id)
+        )
+        self.state = self.group.client.process_state_json(
+            cast(Dict[str, Any], state_data)
+        )
+        return self.state
+
+    async def async_set_state(self, state: State) -> State:
+        """Tells Home Assistant to set the given State object."""
+        return await self.group.client.async_set_state(
+            self.entity_id,
+            group=self.group.group_id,
+            slug=self.slug,
+            **state.dict(),
+        )
+
+    async def async_get_history(
+        self,
+        start_timestamp: Optional[datetime] = None,
+        # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
+        end_timestamp: Optional[datetime] = None,
+        minimal_state_data: bool = False,
+        significant_changes_only: bool = False,
+    ) -> Optional[History]:
+        """Gets the previous `State`'s of the `Entity`."""
+        history: Optional[History] = None
+        async for history in self.group.client.async_get_entity_histories(
             entities=(self,),
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,

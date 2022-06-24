@@ -18,11 +18,16 @@ class Event(BaseModel):
     https://data.home-assistant.io/docs/events
     """
 
-    event_type: str
+    event: str
     listener_count: int
     client: "Client" = Field(exclude=True, repr=False)
 
     def fire(self, **event_data) -> str:
         """Fires the corresponding event in Home Assistant."""
-        data = self.client.fire_event(self.event_type, **event_data)
+        data = self.client.fire_event(self.event, **event_data)
+        return cast(Dict[str, str], data).get("message", "No message provided")
+
+    async def async_fire(self, **event_data) -> str:
+        """Fires the event type in homeassistant. Ex. `on_startup`"""
+        data = await self.client.async_fire_event(self.event, **event_data)
         return cast(Dict[str, str], data).get("message", "No message provided")

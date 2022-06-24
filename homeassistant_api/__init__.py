@@ -1,7 +1,8 @@
-"""Imports all library stuff for convenience."""
+"""Interact with your Homeassistant Instance remotely."""
 
 
 __all__ = (
+    "Client",
     "State",
     "Service",
     "History",
@@ -9,15 +10,20 @@ __all__ = (
     "Event",
     "Entity",
     "Domain",
-    "AsyncService",
-    "AsyncGroup",
-    "AsyncEvent",
-    "AsyncEntity",
-    "AsyncDomain",
+    "Processing",
     "LogbookEntry",
+    "APIConfigurationError",
+    "EndpointNotFoundError",
+    "HomeassistantAPIError",
+    "MalformedDataError",
+    "MalformedInputError",
+    "MethodNotAllowedError",
+    "ParameterMissingError",
+    "RequestError",
+    "UnauthorizedError",
+    "UnexpectedStatusCodeError",
 )
 
-from ._async import AsyncDomain, AsyncEntity, AsyncEvent, AsyncGroup, AsyncService
 from .client import Client
 from .errors import (
     APIConfigurationError,
