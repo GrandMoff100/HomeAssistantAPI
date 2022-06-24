@@ -72,7 +72,7 @@ jobs:
           . bin/activate
           python3 -m pip install homeassistant
           echo "::endgroup::"
-          
+
           echo "::group::Starting the Testing Server"
           hass -c test_server/config &
           deactivate
