@@ -84,7 +84,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
 
     @classmethod
     def response_logic(cls, response: requests.Response) -> Union[dict, list, str]:
-        """Processes responses from the api and formats them"""
+        """Processes responses from the API and formats them"""
         return Processing(response=response).process()
 
     # API information methods
@@ -233,7 +233,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     ) -> Tuple[State, ...]:
         """Tells Home Assistant to trigger a service, returns all states changed while in the process of being called."""
         data = self.request(
-            join("services", domain + "/" + service),
+            join("services", domain, service),
             method="POST",
             json=service_data,
         )
@@ -267,7 +267,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     ) -> State:
         """
         This method sets the representation of a device within Home Assistant and will not communicate with the actual device.
-        To communicate with the device, use :py:meth:`homeassistant_api.Service.trigger` or :py:meth:`homeassistant_api.Service.async_trigger`
+        To communicate with the device, use :py:meth:`Service.trigger` or :py:meth:`Service.async_trigger`
         """
         entity_id = self.prepare_entity_id(
             group=group,

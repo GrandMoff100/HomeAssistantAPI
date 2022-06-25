@@ -33,9 +33,9 @@ class RawWrapper:
         if not api_url.endswith("/"):
             self.api_url += "/"
 
-    def endpoint(self, path: str) -> str:
+    def endpoint(self, *path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""
-        return join(self.api_url, path)
+        return join(self.api_url, *path)
 
     @property
     def _headers(self) -> Dict[str, str]:

@@ -73,7 +73,7 @@ Entities
     # {'person': <Group person>, 'zone': <Group zone>, ...}
 
     door = client.get_entity(entity_id='cover.garage_door')
-    # <Entity entity_id="cover.garage_door" state="<EntityState "closed">">
+    # <Entity entity_id="cover.garage_door" state="<State "closed">">
 
     states = client.get_states()
     # [<State "above_horizon" entity_id="sun.sun">, <State "zoning" entity_id="zone.home">,...]
@@ -116,7 +116,7 @@ Async Services
         cover = await client.async_get_domain("cover")
 
         changed_states = await cover.close_cover(entity_id='cover.garage_door')
-        # [<EntityState "closing" entity_id="cover.garage_door">]
+        # [<State "closing" entity_id="cover.garage_door">]
 
     asyncio.get_event_loop().run_until_complete(main())
 
@@ -126,19 +126,19 @@ Async Entities
 .. code-block:: python
 
     entity_groups = await client.async_get_entities()
-    # {'person': <EntityGroup person>, 'zone': <EntityGroup zone>, ...}
+    # {'person': <Group person>, 'zone': <Group zone>, ...}
 
     door = await client.async_get_entity(entity_id='cover.garage_door')
-    # <Entity entity_id="cover.garage_door" state="<EntityState "closed">">
+    # <Entity entity_id="cover.garage_door" state="<yState "closed">">
 
     states = await client.async_get_states()
-    # [<EntityState "above_horizon" entity_id="sun.sun">, <EntityState "zoning" entity_id="zone.home">,...]
+    # [<State "above_horizon" entity_id="sun.sun">, <State "zoning" entity_id="zone.home">,...]
 
     state = await client.async_get_state('sun.sun')
-    # <EntityState "above_horizon" entity_id="sun.sun">
+    # <State "above_horizon" entity_id="sun.sun">
 
     new_state = await client.async_set_state(state='my ToaTallY Whatever vAlUe 12t87932', group_id='my_favorite_colors', entity_slug='number_one')
-    # <EntityState "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
+    # <State "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
 
     # Alternatively you can set state from the entity class itself
     from homeassistant_api import State
@@ -147,7 +147,7 @@ Async Entities
     door.state.state = 'My new state'
     door.state.attributes['open_height'] = '23'
     await door.async_set_state(door.state)
-    # <EntityState "My new state" entity_id="cover.garage_door">
+    # <State "My new state" entity_id="cover.garage_door">
 
 
 What's Next?
