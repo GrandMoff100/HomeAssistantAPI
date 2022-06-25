@@ -9,6 +9,7 @@ from typing import Any, Callable, ClassVar, Dict, Tuple, Union, cast
 import simplejson
 from aiohttp import ClientResponse
 from aiohttp_client_cache.response import CachedResponse as AsyncCachedResponse
+from pydantic import Field
 from requests import Response
 from requests_cache.models.response import CachedResponse
 
@@ -29,7 +30,12 @@ logger = logging.getLogger(__name__)
 class Processing(BaseModel):
     """Uses to processor functions to convert json data into common python data types."""
 
-    response: Union[Response, CachedResponse, ClientResponse, AsyncCachedResponse]
+    response: Union[
+        Response,
+        CachedResponse,
+        ClientResponse,
+        AsyncCachedResponse,
+    ] = Field(exlucde=True, repr=False)
     _processors: ClassVar[Dict[str, Tuple[Callable, ...]]] = {}
 
     @staticmethod
