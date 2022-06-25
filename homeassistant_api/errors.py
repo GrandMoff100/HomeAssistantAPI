@@ -12,6 +12,13 @@ class RequestError(HomeassistantAPIError):
         super().__init__(f"Bad Request: {body}")
 
 
+class ResponseContentError(HomeassistantAPIError):
+    """Error raised when an issue occurs in a response from Homeassistant."""
+
+    def __init__(self, body: str) -> None:
+        super().__init__(f"Bad Response: {body}")
+
+
 class BadTemplateError(HomeassistantAPIError):
     """Error raised when User sends bad template to homeassistant."""
 

@@ -1,6 +1,8 @@
 """Module for the History model."""
 from typing import Tuple
 
+from homeassistant_api.errors import ResponseContentError
+
 from .base import BaseModel
 from .states import State
 
@@ -19,5 +21,6 @@ class History(BaseModel):
         """Returns the shared :code:`entity_id` of states."""
         entity_ids = [state.entity_id for state in self.states]
         result, *others = set(entity_ids)
-        assert len(others) == 0
+        if len(others) > 0:
+            raise ResponseContentError("More than one entity_ids found in response.")
         return result
