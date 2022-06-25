@@ -5,23 +5,31 @@ Advanced Section
 Persistent Caching
 ********************
 
-Persistent caching is exactly what it means. It's making your requests cache between :ref:`Client` objects, and between runs, and contexts (:code:`with client:` statements), well... persist.
-Rather than the default behavior, which is saving the cache to memory and erasing it after each context and run.
+Persistent caching is exactly what it means. It makes your requests cache persist or stay around between :py:class:`Client` objects, and between runs, and contexts (:code:`with client:` statements).
+Rather than the default behavior, which is saving the cache to memory or not at all and erasing it after each context and run.
 
 
-If you want to persist your requests cache you can pass your own caching backend and expire after amount to :ref:`Client`'s init method.
-The most frequently used backends are filesystem backends or sqlite backends.
-You can use :py:class:`aiohttp_client_cache.backends.filesystem.FileBackend` or :py:class:`requests_cache.backends.filesystem.FileCache` depending on whether your program is async or not.
-See the docs for `requests_cache <https://requests-cache.readthedocs.io/en/latest/>`__ and `aiohttp_client_cache <https://aiohttp-client-cache.readthedocs.io/en/latest/>`__ for how to implement these backends and much more.
+If you want to persist your requests cache you can pass your own custom cached session to :py:class:`Client`'s init method.
+You can pass a variety of options to your cached session like how fast to expire the cache, where to cache it (the cache backend), and what to do when the cache is expired.
+
+Depending on whether you are using this in an async of sync project you will want to use either :py:class:`aiohttp_client_cache.backends.CachedSession` or :py:class:`requests_cache.CachedSession` respectively.
+See the docs for `requests_cache <https://requests-cache.readthedocs.io/en/latest/>`__ and `aiohttp_client_cache <https://aiohttp-client-cache.readthedocs.io/en/latest/>`__ for how to implement these backends, options, and much more.
 
 You can simply pass them to your client like so.
 
 .. code-block:: python
 
     from homeassistant_api import Client
-    from requests_cache import FileCache
+    from requests_cache import CachedSession
 
-    client = Client("<URL>", "<TOKEN>", cache_backend=FileCache(cache_name="<whatever_you_want>", cache_dir="foobar-cache"))
+    client = Client(
+        "<API_URL>",
+        "<TOKEN>",
+        cache_session=CachedSession(
+            backend="filesystem",
+            expire_after=timedelta(minutes=5)
+        )
+    )
 
     # CachedSession is activated by the `with` statement.
     with client:
@@ -29,16 +37,17 @@ You can simply pass them to your client like so.
         ...
 
     # Or an example for async
-
+    import asyncio
     from homeassistant_api import Client
-    from aiohttp_client_cache import SQLiteCache
+    from aiohttp_client_cache import CachedSession, FileBackend
 
-    client = Client("<URL>", "<TOKEN>", cache_backend=SQLiteCache('my_app_cache', timeout=60))
+    client = Client("<URL>", "<TOKEN>", cache_session=CachedSession(cache=FileBackend(), expire_after=timedelta(minutes=5)))
     # CachedSession is activated by the `async with` statement.
     async def main():
         async with client:
             # Grab and update some cool entities and services inside your installation.
             ...
+    asyncio.run(main())
 
 
 Response Processing
