@@ -25,7 +25,7 @@ from .errors import (
     MalformedDataError,
     RequestError,
 )
-from .models import Domain, Event, History, LogbookEntry, State, Entity, Group
+from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
 from .processing import Processing
 from .rawbaseclient import RawBaseClient
 

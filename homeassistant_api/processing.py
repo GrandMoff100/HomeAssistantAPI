@@ -26,39 +26,35 @@ from .models import BaseModel
 
 logger = logging.getLogger(__name__)
 
+ResponseType = Union[Response, CachedResponse, ClientResponse, AsyncCachedResponse]
+ProcessorType = Callable[[ResponseType], Any]
+
 
 class Processing(BaseModel):
     """Uses to processor functions to convert json data into common python data types."""
 
-    _response: Union[
-        Response,
-        CachedResponse,
-        ClientResponse,
-        AsyncCachedResponse,
-    ] = Field(exlucde=True, repr=False)
-    _processors: ClassVar[Dict[str, Tuple[Callable, ...]]] = {}
+    _response: ResponseType = Field(exclude=True, repr=False)
+    _processors: ClassVar[Dict[str, Tuple[ProcessorType, ...]]] = {}
 
     @staticmethod
-    def processor(mimetype: str):
+    def processor(mimetype: str) -> Callable[[ProcessorType], ProcessorType]:
         """A decorator used to register a response converter function."""
 
-        def register_processor(processor):
+        def register_processor(processor: ProcessorType) -> ProcessorType:
             if mimetype not in Processing._processors:
                 Processing._processors[mimetype] = tuple()
-            Processing._processors[mimetype] = (processor,) + Processing._processors[
-                mimetype
-            ]
+            Processing._processors[mimetype] += (processor,)
             return processor
 
         return register_processor
 
-    def process_content(self, _async: bool):
+    def process_content(self, _async: bool) -> Any:
         """
         Looks up processors by their Content-Type header and then
         calls the processor with the response.
         """
 
-        mimetype = self._response.headers.get(
+        mimetype = self._response.headers.get(  # type: ignore [arg-type]
             "content-type",
             "text/plain",
         )  # type: ignore[arg-type]
