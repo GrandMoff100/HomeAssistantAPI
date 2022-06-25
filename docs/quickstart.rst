@@ -30,6 +30,9 @@ Access Token
 --------------
 Then once you have done that you need to head over to your profile and set up a "Long Lived Access Token" to use in your code later.
 A good guide on how to do that is `here <https://www.home-assistant.io/docs/authentication/#your-account-profile>`__
+Also if you are building a website and want to integrate Home Assistant you can use a refresh token instead.
+See their `Authentication API docs <https://developers.home-assistant.io/docs/auth_api/>`__ for more information.
+Every time you refresh your token you will need to update the :py:attr:`Client.token` attribute of your :py:class:`Client` instance.
 
 Exposing Home Assistant to the Web
 --------------------------------------
@@ -76,7 +79,7 @@ To install with git we're going to clone the repository and then run :code:`$ po
    python -m poetry install ~/HomeAssistantAPI
 
 
-Then you should be all set to start using the project! If run into any problems open an issue on our github :resource:`issue tracker <issues>`
+Then you should be all set to start using the library! If run into any problems open an issue on our github :resource:`issue tracker <issues>`
 
 
 Example Usages
