@@ -13,25 +13,31 @@ from .models import Entity
 class RawWrapper:
     """Builds, and makes requests to the API"""
 
-    api_url: str
+    base_url: str
     token: str
     global_request_kwargs: Dict[str, str]
 
     def __init__(
         self,
-        api_url: str,
+        base_url: str,
         token: str,
         *,
         global_request_kwargs: Optional[Dict[str, str]] = None,
     ) -> None:
         if global_request_kwargs is None:
             global_request_kwargs = {}
-        self.api_url = api_url
+        self.base_url = base_url
         self.token = token
         self.global_request_kwargs = global_request_kwargs
 
-        if not api_url.endswith("/"):
-            self.api_url += "/"
+    @property
+    def api_url(self) -> str:
+        return join(self.base_url, "api/")
+
+    @property
+    def auth_url(self) -> str:
+        return join(self.base_url, "auth/")
+    
 
     def endpoint(self, path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""
