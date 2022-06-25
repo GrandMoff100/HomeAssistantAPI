@@ -6,7 +6,7 @@ from .states import State
 
 
 class History(BaseModel):
-    """Model representing past :code:`State`'s of an entity."""
+    """Model representing past :py:class:`State`'s of an entity."""
 
     states: Tuple[State, ...]
 

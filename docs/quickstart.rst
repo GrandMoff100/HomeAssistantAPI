@@ -38,7 +38,7 @@ Exposing Home Assistant to the Web
 --------------------------------------
 You may want to setup remote access through a Dynamic DNS server like DuckDNS (a good youtube tutorial on how to do that
 `here <https://www.youtube.com/watch?v=AK5E2T5tWyM>`__, keep in mind you will need to port forward to set that up.)
-If you do pursue this your api url will be something like :code:`https://yourhomeassistant.duckdns.org:8123/api`.
+If you do pursue this your API URL will be something like :code:`https://yourhomeassistant.duckdns.org:8123/api`.
 Which is different than what it could have looked like before.
 Which might have been something like :code:`http://homeassistant.local:8123/api` or :code:`http://localhost:8123/api`
 
@@ -79,7 +79,8 @@ To install with git we're going to clone the repository and then run :code:`$ po
    python -m poetry install ~/HomeAssistantAPI
 
 
-Then you should be all set to start using the library! If run into any problems open an issue on our github :resource:`issue tracker <issues>`
+Then you should be all set to start using the library!
+If run into any problems open an issue on our github :resource:`issue tracker <issues>`
 
 
 Example Usages

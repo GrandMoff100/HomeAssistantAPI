@@ -44,7 +44,7 @@ class Entity(BaseModel):
 
     slug: str
     state: State
-    group: Group
+    group: Group = Field(exclude=True, repr=False)
 
     def get_state(self) -> State:
         """Asks Home Assistant for the state of the entity and caches it locally"""
@@ -60,7 +60,7 @@ class Entity(BaseModel):
         (You can construct the state object yourself.)
         """
         state_data = self.group.client.request(
-            join("states", self.group.group_id + "." + self.slug),
+            join("states", f"{self.group.group_id}.{self.slug}"),
             method="POST",
             json=state,
         )
@@ -72,7 +72,7 @@ class Entity(BaseModel):
     @property
     def entity_id(self) -> str:
         """Constructs the entity_id string from its group and slug"""
-        return (self.group.group_id + "." + self.slug).strip()
+        return f"{self.group.group_id}.{self.slug}".strip()
 
     def get_history(
         self,
@@ -82,7 +82,7 @@ class Entity(BaseModel):
         minimal_state_data: bool = False,
         significant_changes_only: bool = False,
     ) -> History:
-        """Gets the previous `State`'s of the `Entity`"""
+        """Gets the previous :py:class:`State`'s of the :py:class:`Entity`"""
         history = None
         for history in self.group.client.get_entity_histories(
             entities=(self,),
@@ -121,7 +121,7 @@ class Entity(BaseModel):
         minimal_state_data: bool = False,
         significant_changes_only: bool = False,
     ) -> Optional[History]:
-        """Gets the previous `State`'s of the `Entity`."""
+        """Gets the previous :py:class:`State`'s of the :py:class:`Entity`."""
         history: Optional[History] = None
         async for history in self.group.client.async_get_entity_histories(
             entities=(self,),
