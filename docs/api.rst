@@ -1,6 +1,11 @@
 Code Reference
 ***************
 
+.. module:: homeassistant_api
+      :platform: Linux, Windows, MacOS
+      :synopsis: Home Assistant API
+      :license: MIT
+
 Client
 --------
 
