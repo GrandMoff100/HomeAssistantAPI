@@ -52,7 +52,7 @@ We encourage you to open a pull request and add your own after you get to know t
 See the :ref:`Contributing Section <contributing_section>`.
 
 
-Code Reference
+More Usage
 ---------------
 View the documentation for each class and method :doc:`here <api>`.
 
