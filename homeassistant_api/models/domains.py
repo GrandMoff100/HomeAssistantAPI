@@ -1,4 +1,6 @@
 """File for Service and Domain data models"""
+import gc
+import inspect
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
 
 from pydantic import Field, validator
@@ -88,4 +90,10 @@ class Service(BaseModel):
         )
 
     def __call__(self, **service_data) -> Tuple[State, ...]:
-        return self.trigger(**service_data)
+        """Triggers the service associated with this object."""
+        if inspect.iscoroutinefunction(
+            gc.get_referrers(inspect.currentframe().f_back.f_code)[0]
+        ):
+            return self.async_trigger(**service_data)
+        else:
+            return self.trigger(**service_data)
