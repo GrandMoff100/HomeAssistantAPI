@@ -9,7 +9,7 @@ from urllib.parse import quote as url_quote
 from .models import Entity
 
 
-class RawWrapper:
+class RawBaseClient:
     """Builds, and makes requests to the API"""
 
     api_url: str

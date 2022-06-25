@@ -9,15 +9,14 @@ import requests
 from requests_cache import CachedSession
 
 from .errors import APIConfigurationError, BadTemplateError, RequestError
-from .mixins import JsonProcessingMixin
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
 from .processing import Processing
-from .rawapi import RawWrapper
+from .rawbaseclient import RawBaseClient
 
 logger = logging.getLogger(__name__)
 
 
-class RawClient(RawWrapper, JsonProcessingMixin):
+class RawClient(RawBaseClient):
     """
     The base object for interacting with Homeassistant
 
@@ -216,7 +215,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         """Fetches all Services from the API"""
         data = self.request("services")
         domains = map(
-            self.process_services_json,
+            lambda json: Domain.from_json(json, client=self),
             cast(Tuple[Dict[str, Any], ...], data),
         )
         return {domain.domain_id: domain for domain in domains}
@@ -237,7 +236,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
             method="POST",
             json=service_data,
         )
-        return tuple(map(self.process_state_json, cast(List[Dict[str, Any]], data)))
+        return tuple(map(State.from_json, cast(List[Dict[str, Any]], data)))
 
     # EntityState methods
     def get_state(  # pylint: disable=duplicate-code
@@ -254,7 +253,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
             entity_id=entity_id,
         )
         data = self.request(join("states", entity_id))
-        return self.process_state_json(cast(dict, data))
+        return State.from_json(cast(Dict[str, Any], data))
 
     def set_state(  # pylint: disable=duplicate-code
         self,
@@ -280,12 +279,12 @@ class RawClient(RawWrapper, JsonProcessingMixin):
             method="POST",
             json=payload,
         )
-        return self.process_state_json(cast(dict, data))
+        return State.from_json(cast(dict, data))
 
     def get_states(self) -> Tuple[State, ...]:
         """Gets the states of all entities within homeassistant"""
         data = self.request("states")
-        states = map(self.process_state_json, cast(List[Dict[str, Any]], data))
+        states = map(State.from_json, cast(List[Dict[str, Any]], data))
         return tuple(states)
 
     # Event methods
@@ -295,7 +294,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         if isinstance(data, list):
             return tuple(
                 map(
-                    self.process_event_json,
+                    Event.from_json,
                     cast(List[Dict[str, Any]], data),
                 )
             )

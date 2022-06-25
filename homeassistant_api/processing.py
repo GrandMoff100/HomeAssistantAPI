@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 class Processing(BaseModel):
     """Uses to processor functions to convert json data into common python data types."""
 
-    response: Union[
+    _response: Union[
         Response,
         CachedResponse,
         ClientResponse,
@@ -55,11 +55,11 @@ class Processing(BaseModel):
     def process_content(self, _async: bool):
         """Looks up processors by content-type and then calls the processor with the response."""
 
-        mimetype = self.response.headers.get("content-type", "text/plain")  # type: ignore[arg-type]
+        mimetype = self._response.headers.get("content-type", "text/plain")  # type: ignore[arg-type]
         for processor in self._processors.get(mimetype, ()):
             if not _async ^ inspect.iscoroutinefunction(processor):
-                logger.debug("Using processor %r on %r", processor, self.response)
-                return processor(self.response)
+                logger.debug("Using processor %r on %r", processor, self._response)
+                return processor(self._response)
         if _async:
             raise ProcessorNotFoundError(
                 f"No async response processor registered for mimetype {mimetype!r}."
@@ -70,25 +70,25 @@ class Processing(BaseModel):
 
     def process(self) -> Any:
         """Validates the http status code before starting to process the repsonse content"""
-        if _async := isinstance(self.response, (ClientResponse, AsyncCachedResponse)):
-            status_code = self.response.status
-        elif isinstance(self.response, Response):
-            status_code = self.response.status_code
+        if _async := isinstance(self._response, (ClientResponse, AsyncCachedResponse)):
+            status_code = self._response.status
+        elif isinstance(self._response, Response):
+            status_code = self._response.status_code
         else:
             raise ValueError(
-                f"Only expected a response object from requests or aiohttp. Got {self.response!r}"
+                f"Only expected a response object from requests or aiohttp. Got {self._response!r}"
             )
         if status_code in (200, 201):
             return self.process_content(_async)
         if status_code == 400:
-            raise RequestError(self.response.content)
+            raise RequestError(self._response.content)
         if status_code == 401:
             raise UnauthorizedError()
         if status_code == 404:
-            raise EndpointNotFoundError(self.response.url)
+            raise EndpointNotFoundError(self._response.url)
         if status_code == 405:
             raise MethodNotAllowedError(
-                cast(str, self.response.request.method),
+                cast(str, self._response.request.method),
             )  # type: ignore[union-attr]
         print(
             "If this happened, "
@@ -98,7 +98,7 @@ class Processing(BaseModel):
         )
         raise UnexpectedStatusCodeError(
             status_code,
-            self.response.content,
+            self._response.content,
         )
 
 

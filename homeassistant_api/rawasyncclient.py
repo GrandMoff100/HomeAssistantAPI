@@ -26,15 +26,14 @@ from .errors import (
     MalformedDataError,
     RequestError,
 )
-from .mixins import JsonProcessingMixin
 from .models import Domain, Event, History, LogbookEntry, State
 from .processing import Processing
-from .rawapi import RawWrapper
+from .rawbaseclient import RawBaseClient
 
 logger = logging.getLogger(__name__)
 
 
-class RawAsyncClient(RawWrapper, JsonProcessingMixin):
+class RawAsyncClient(RawBaseClient):
     """
     The async equivalent of :py:class:`RawClient`
 
@@ -236,7 +235,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         """Fetches all services from the api"""
         data = await self.async_request("services")
         domains = map(
-            self.process_services_json,
+            lambda json: Domain.from_json(json, client=self),
             cast(Tuple[Dict[str, Any], ...], data),
         )
         return {domain.domain_id: domain for domain in domains}
@@ -258,7 +257,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
             method="POST",
             json=service_data,
         )
-        return tuple(map(self.process_state_json, cast(List[Dict[Any, Any]], data)))
+        return tuple(map(State.from_json, cast(List[Dict[Any, Any]], data)))
 
     # EntityState methods
     async def async_get_state(  # pylint: disable=duplicate-code
@@ -275,7 +274,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
             entity_id=entity_id,
         )
         data = await self.async_request(join("states", target_entity_id))
-        return self.process_state_json(cast(Dict[Any, Any], data))
+        return State.from_json(cast(Dict[Any, Any], data))
 
     async def async_set_state(  # pylint: disable=duplicate-code
         self,
@@ -298,15 +297,12 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
             method="POST",
             json=payload,
         )
-        return self.process_state_json(cast(Dict[Any, Any], data))
+        return State.from_json(cast(Dict[Any, Any], data))
 
-    async def async_get_states(self) -> List[State]:
+    async def async_get_states(self) -> Tuple[State, ...]:
         """Gets the states of all entities within homeassistant"""
         data = await self.async_request("states")
-        return [
-            self.process_state_json(state_data)
-            for state_data in cast(List[Dict[Any, Any]], data)
-        ]
+        return tuple(map(State.from_json, cast(List[Dict[Any, Any]], data)))
 
     # Event methods
     async def async_get_events(self) -> Tuple[Event, ...]:
@@ -315,7 +311,7 @@ class RawAsyncClient(RawWrapper, JsonProcessingMixin):
         if isinstance(data, list):
             return tuple(
                 map(
-                    self.process_event_json,
+                    Event.from_json,
                     cast(List[Dict[str, Any]], data),
                 )
             )

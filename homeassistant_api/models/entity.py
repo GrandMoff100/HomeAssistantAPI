@@ -18,7 +18,7 @@ class Group(BaseModel):
     """Represents the groups that entities belong to."""
 
     group_id: str
-    client: "Client" = Field(exclude=True, repr=False)
+    _client: "Client" = Field(exclude=True, repr=False)
     entities: Dict[str, "Entity"] = {}
 
     def add_entity(self, entity_slug: str, state: State) -> None:
@@ -49,9 +49,7 @@ class Entity(BaseModel):
     def get_state(self) -> State:
         """Asks Home Assistant for the state of the entity and caches it locally"""
         state_data = self.group.client.request(join("states", self.entity_id))
-        self.state = self.group.client.process_state_json(
-            cast(Dict[str, Any], state_data)
-        )
+        self.state = State.from_json(cast(Dict[str, Any], state_data))
         return self.state
 
     def set_state(self, state: State) -> State:
@@ -64,9 +62,7 @@ class Entity(BaseModel):
             method="POST",
             json=state,
         )
-        self.state = self.group.client.process_state_json(
-            cast(Dict[str, Any], state_data)
-        )
+        self.state = State.from_json(cast(Dict[str, Any], state_data))
         return self.state
 
     @property
@@ -99,9 +95,7 @@ class Entity(BaseModel):
         state_data = await self.group.client.async_request(
             join("states", self.entity_id)
         )
-        self.state = self.group.client.process_state_json(
-            cast(Dict[str, Any], state_data)
-        )
+        self.state = State.from_json(cast(Dict[str, Any], state_data))
         return self.state
 
     async def async_set_state(self, state: State) -> State:
