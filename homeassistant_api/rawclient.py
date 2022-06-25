@@ -3,7 +3,18 @@
 import logging
 from datetime import datetime
 from posixpath import join
-from typing import Any, Dict, Generator, List, Literal, Optional, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generator,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 import requests
 from requests_cache import CachedSession
@@ -12,6 +23,12 @@ from .errors import APIConfigurationError, BadTemplateError, RequestError
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
 from .processing import Processing
 from .rawbaseclient import RawBaseClient
+
+if TYPE_CHECKING:
+    from .client import Client
+else:
+    Client = None  # pylint: disable=invalid-name
+
 
 logger = logging.getLogger(__name__)
 
@@ -215,7 +232,7 @@ class RawClient(RawBaseClient):
         """Fetches all Services from the API"""
         data = self.request("services")
         domains = map(
-            lambda json: Domain.from_json(json, client=self),
+            lambda json: Domain.from_json(json, client=cast(Client, self)),
             cast(Tuple[Dict[str, Any], ...], data),
         )
         return {domain.domain_id: domain for domain in domains}
@@ -294,7 +311,7 @@ class RawClient(RawBaseClient):
         if isinstance(data, list):
             return tuple(
                 map(
-                    Event.from_json,
+                    lambda json: Event.from_json(json, client=cast(Client, self)),
                     cast(List[Dict[str, Any]], data),
                 )
             )

@@ -53,9 +53,15 @@ class Processing(BaseModel):
         return register_processor
 
     def process_content(self, _async: bool):
-        """Looks up processors by content-type and then calls the processor with the response."""
+        """
+        Looks up processors by their Content-Type header and then
+        calls the processor with the response.
+        """
 
-        mimetype = self._response.headers.get("content-type", "text/plain")  # type: ignore[arg-type]
+        mimetype = self._response.headers.get(
+            "content-type",
+            "text/plain",
+        )  # type: ignore[arg-type]
         for processor in self._processors.get(mimetype, ()):
             if not _async ^ inspect.iscoroutinefunction(processor):
                 logger.debug("Using processor %r on %r", processor, self._response)

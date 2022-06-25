@@ -17,7 +17,8 @@ class Domain(BaseModel):
 
     domain_id: str = Field(
         ...,
-        description="The name of the domain that services belong to. (e.g. :code:`frontend` in :code:`frontend.reload_themes`",
+        description="The name of the domain that services belong to. "
+        "(e.g. :code:`frontend` in :code:`frontend.reload_themes`",
     )
     _client: "Client" = Field(exclude=True, repr=False)
     services: Dict[str, "Service"] = {}
@@ -105,7 +106,7 @@ class Service(BaseModel):
 
     def __call__(
         self, **service_data
-    ) -> Union[Tuple[State, ...], Coroutine[Any, Any, Tuple[State, ...]],]:
+    ) -> Union[Tuple[State, ...], Coroutine[Any, Any, Tuple[State, ...]]]:
         """Triggers the service associated with this object."""
         assert (frame := inspect.currentframe()) is not None
         assert (caller := frame.f_back) is not None
