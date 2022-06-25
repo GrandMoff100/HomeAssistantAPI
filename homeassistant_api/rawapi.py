@@ -106,14 +106,14 @@ class RawWrapper:
         if entities is not None:
             params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
         if end_timestamp is not None:
-            params["end_time"] = url_quote(end_timestamp.toisoformat())
+            params["end_time"] = url_quote(end_timestamp.isoformat())
         if minimal_state_data:
             params["minimal_response"] = None
         if significant_changes_only:
             params["significant_changes_only"] = None
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.toisoformat()
+                formatted_timestamp = start_timestamp.isoformat()
                 url = join("history/period/", formatted_timestamp)
             else:
                 raise TypeError(f"timestamp needs to be of type {datetime!r}")
@@ -135,11 +135,11 @@ class RawWrapper:
             params.update(entity=filter_entity.entity_id)
         if end_timestamp is not None:
             if isinstance(end_timestamp, datetime):
-                end_timestamp = url_quote(end_timestamp.toisoformat())
+                end_timestamp = url_quote(end_timestamp.isoformat())
             params.update(end_time=end_timestamp)
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
-                url = join("logbook/", start_timestamp.toisoformat())
+                url = join("logbook/", start_timestamp.isoformat())
         else:
             url = "logbook"
         return params, url
