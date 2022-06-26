@@ -2,13 +2,15 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
 
+from pydantic import Field
+
 from .base import BaseModel
 
 
 class State(BaseModel):
     """A model representing a state of an entity."""
 
-    entity_id: str
+    entity_id: str = Field(..., description="")
     state: str
     attributes: Dict[str, Any] = {}
     last_changed: Optional[datetime] = None

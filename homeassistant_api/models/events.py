@@ -18,9 +18,9 @@ class Event(BaseModel):
     https://data.home-assistant.io/docs/events
     """
 
-    event: str
-    listener_count: int
-    _client: "Client" = Field(exclude=True, repr=False)
+    event: str = Field(..., description="The event name/type.")
+    listener_count: int = Field(..., description="How many listeners are interesting in this event in Home Assistant.")
+    _client: "Client" = Field(exclude=True, repr=False, description="The client object to fire events with. (Assigned automatically.)")
 
     def fire(self, **event_data) -> str:
         """Fires the corresponding event in Home Assistant."""

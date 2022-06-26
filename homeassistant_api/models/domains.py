@@ -20,8 +20,8 @@ class Domain(BaseModel):
         description="The name of the domain that services belong to. "
         "(e.g. :code:`frontend` in :code:`frontend.reload_themes`",
     )
-    _client: "Client" = Field(exclude=True, repr=False)
-    services: Dict[str, "Service"] = {}
+    _client: "Client" = Field(exclude=True, repr=False, description="The client object to trigger services with.")
+    services: Dict[str, "Service"] = Field({}, description="A dictionary of all services belonging to the domain indexed by their names")
 
     @classmethod
     def from_json(cls, json: Dict[str, Any], client: "Client") -> "Domain":

@@ -79,7 +79,7 @@ class RawBaseClient:
         slug: Optional[str] = None,
         entity_id: Optional[str] = None,
     ) -> str:
-        """Combines optional `group` and `slug` into `entity_id` only if provided."""
+        """Combines optional :code:`group` and :code:`slug` into an :code:`entity_id` if provided."""
         if (group is None or slug is None) and entity_id is None:
             raise ValueError(
                 "To use group or slug you need to pass both not just one. "

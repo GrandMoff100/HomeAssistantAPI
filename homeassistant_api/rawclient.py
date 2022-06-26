@@ -209,7 +209,7 @@ class RawClient(RawBaseClient):
         entity_slug: str = None,
         entity_id: str = None,
     ) -> Optional[Entity]:
-        """Returns a Entity model for an entity_id"""
+        """Returns an :py:class:`Entity` model for an :code:`entity_id`"""
         if group_id is not None and entity_slug is not None:
             state = self.get_state(group=group_id, slug=entity_slug)
         elif entity_id is not None:
@@ -229,7 +229,7 @@ class RawClient(RawBaseClient):
 
     # Services and domain methods
     def get_domains(self) -> Dict[str, Domain]:
-        """Fetches all Services from the API"""
+        """Fetches all :py:class:`Service`s from the API."""
         data = self.request("services")
         domains = map(
             lambda json: Domain.from_json(json, client=cast(Client, self)),

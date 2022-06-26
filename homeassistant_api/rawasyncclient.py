@@ -216,7 +216,7 @@ class RawAsyncClient(RawBaseClient):
         entity_slug: str = None,
         entity_id: str = None,
     ) -> Optional[Entity]:
-        """Returns a Entity model for an entity_id"""
+        """Returns a Entity model for an :code:`entity_id`"""
         if group_id is not None and entity_slug is not None:
             state = await self.async_get_state(group=group_id, slug=entity_slug)
         elif entity_id is not None:
@@ -271,7 +271,7 @@ class RawAsyncClient(RawBaseClient):
         group: Optional[str] = None,
         slug: Optional[str] = None,
     ) -> State:
-        """Fetches the state of the entity specified"""
+        """Fetches the state of the entity specified."""
         target_entity_id = self.prepare_entity_id(
             group=group,
             slug=slug,

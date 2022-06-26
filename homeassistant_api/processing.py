@@ -26,6 +26,7 @@ from .models import BaseModel
 
 logger = logging.getLogger(__name__)
 
+
 ResponseType = Union[Response, CachedResponse, ClientResponse, AsyncCachedResponse]
 ProcessorType = Callable[[ResponseType], Any]
 
@@ -33,7 +34,7 @@ ProcessorType = Callable[[ResponseType], Any]
 class Processing(BaseModel):
     """Uses to processor functions to convert json data into common python data types."""
 
-    _response: ResponseType = Field(exclude=True, repr=False)
+    _response: ResponseType
     _processors: ClassVar[Dict[str, Tuple[ProcessorType, ...]]] = {}
 
     @staticmethod
