@@ -9,7 +9,6 @@ from typing import Any, Callable, ClassVar, Dict, Tuple, Union, cast
 import simplejson
 from aiohttp import ClientResponse
 from aiohttp_client_cache.response import CachedResponse as AsyncCachedResponse
-from pydantic import Field
 from requests import Response
 from requests_cache.models.response import CachedResponse
 
@@ -22,7 +21,6 @@ from .errors import (
     UnauthorizedError,
     UnexpectedStatusCodeError,
 )
-from .models import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -31,11 +29,14 @@ ResponseType = Union[Response, CachedResponse, ClientResponse, AsyncCachedRespon
 ProcessorType = Callable[[ResponseType], Any]
 
 
-class Processing(BaseModel):
+class Processing:
     """Uses to processor functions to convert json data into common python data types."""
 
     _response: ResponseType
     _processors: ClassVar[Dict[str, Tuple[ProcessorType, ...]]] = {}
+
+    def __init__(self, response: ResponseType) -> None:
+        self._response = response
 
     @staticmethod
     def processor(mimetype: str) -> Callable[[ProcessorType], ProcessorType]:

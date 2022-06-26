@@ -17,9 +17,20 @@ if TYPE_CHECKING:
 class Group(BaseModel):
     """Represents the groups that entities belong to."""
 
-    group_id: str = Field(..., description="A unique string identifying different types/groups of entities.")
-    _client: "Client" = Field(exclude=True, repr=False, description="The client object to modify and retrieve entities with.")
-    entities: Dict[str, "Entity"] = Field({}, description="A dictionary of all entities belonging to the group indexed by their :code:`entity_id`.")
+    group_id: str = Field(
+        ...,
+        description="A unique string identifying different types/groups of entities.",
+    )
+    _client: "Client" = Field(
+        exclude=True,
+        repr=False,
+        description="The client object to modify and retrieve entities with.",
+    )
+    entities: Dict[str, "Entity"] = Field(
+        {},
+        description="A dictionary of all entities belonging to the group "
+        "indexed by their :code:`entity_id`.",
+    )
 
     def add_entity(self, entity_slug: str, state: State) -> None:
         """Registers entities to this Group object"""
