@@ -19,7 +19,7 @@ class Domain(BaseModel):
         super().__init__(*args, **kwargs)
         if _client is None:
             raise ValueError("No client passed.")
-        object.__setattr__("_client", _client)
+        object.__setattr__(self, "_client", _client)
 
     _client: "Client"
     domain_id: str = Field(
