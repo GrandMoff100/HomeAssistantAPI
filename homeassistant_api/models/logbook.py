@@ -19,7 +19,7 @@ class LogbookEntry(BaseModel):
     )
     domain: Optional[str] = Field(None, description="When the entry was logged.")
     context_id: Optional[str] = Field(
-        ..., description="Optional relevant context instead of an entity."
+        None description="Optional relevant context instead of an entity."
     )
     icon: Optional[str] = Field(
         None, description="An MDI icon associated with the entity_id."
