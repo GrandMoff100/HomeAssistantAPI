@@ -42,4 +42,4 @@ class Event(BaseModel):
     @classmethod
     def from_json(cls, json: Dict[str, Any], client: "Client") -> "Event":
         """Constructs Event model from json data"""
-        return cls(**json, client=client)
+        return cls(**json, _client=client)

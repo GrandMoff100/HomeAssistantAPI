@@ -59,7 +59,7 @@ class Entity(BaseModel):
 
     def get_state(self) -> State:
         """Asks Home Assistant for the state of the entity and caches it locally"""
-        state_data = self.group.client.request(join("states", self.entity_id))
+        state_data = self.group._client.request(join("states", self.entity_id))
         self.state = State.from_json(cast(Dict[str, Any], state_data))
         return self.state
 
@@ -68,7 +68,7 @@ class Entity(BaseModel):
         Tells Home Assistant to set the given State object.
         (You can construct the state object yourself.)
         """
-        state_data = self.group.client.request(
+        state_data = self.group._client.request(
             join("states", f"{self.group.group_id}.{self.slug}"),
             method="POST",
             json=state,
@@ -91,7 +91,7 @@ class Entity(BaseModel):
     ) -> History:
         """Gets the previous :py:class:`State`'s of the :py:class:`Entity`"""
         history = None
-        for history in self.group.client.get_entity_histories(
+        for history in self.group._client.get_entity_histories(
             entities=(self,),
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
@@ -103,7 +103,7 @@ class Entity(BaseModel):
 
     async def async_get_state(self) -> State:
         """Asks Home Assistant for the state of the entity and sets it locally"""
-        state_data = await self.group.client.async_request(
+        state_data = await self.group._client.async_request(
             join("states", self.entity_id)
         )
         self.state = State.from_json(cast(Dict[str, Any], state_data))
@@ -111,7 +111,7 @@ class Entity(BaseModel):
 
     async def async_set_state(self, state: State) -> State:
         """Tells Home Assistant to set the given State object."""
-        return await self.group.client.async_set_state(
+        return await self.group._client.async_set_state(
             self.entity_id,
             group=self.group.group_id,
             slug=self.slug,
@@ -128,7 +128,7 @@ class Entity(BaseModel):
     ) -> Optional[History]:
         """Gets the previous :py:class:`State`'s of the :py:class:`Entity`."""
         history: Optional[History] = None
-        async for history in self.group.client.async_get_entity_histories(
+        async for history in self.group._client.async_get_entity_histories(
             entities=(self,),
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,

@@ -33,7 +33,7 @@ class Domain(BaseModel):
     @classmethod
     def from_json(cls, json: Dict[str, Any], client: "Client") -> "Domain":
         """Constructs Domain and Service models from json data."""
-        domain = cls(domain_id=cast(str, json.get("domain")), client=client)
+        domain = cls(domain_id=cast(str, json.get("domain")), _client=client)
         services = json.get("services")
         if services is None:
             raise ValueError("Missing services attribute in passed json argument.")
@@ -97,7 +97,7 @@ class Service(BaseModel):
 
     def trigger(self, **service_data) -> Tuple[State, ...]:
         """Triggers the service associated with this object."""
-        return self.domain.client.trigger_service(
+        return self.domain._client.trigger_service(
             self.domain.domain_id,
             self.service_id,
             **service_data,
@@ -105,7 +105,7 @@ class Service(BaseModel):
 
     async def async_trigger(self, **service_data) -> Tuple[State, ...]:
         """Triggers the service associated with this object."""
-        return await self.domain.client.async_trigger_service(
+        return await self.domain._client.async_trigger_service(
             self.domain.domain_id,
             self.service_id,
             **service_data,

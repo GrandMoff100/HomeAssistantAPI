@@ -199,7 +199,7 @@ class RawClient(RawBaseClient):
         for state in self.get_states():
             group_id, entity_slug = state.entity_id.split(".")
             if group_id not in entities:
-                entities[group_id] = Group(group_id=cast(str, group_id), client=self)
+                entities[group_id] = Group(group_id=cast(str, group_id), _client=self)
             entities[group_id].add_entity(entity_slug, state)
         return entities
 
@@ -223,7 +223,7 @@ class RawClient(RawBaseClient):
                 f"Neither group and slug or entity_id provided. {help_msg}"
             )
         group_id, entity_slug = state.entity_id.split(".")
-        group = Group(group_id=cast(str, group_id), client=self)
+        group = Group(group_id=cast(str, group_id), _client=self)
         group.add_entity(cast(str, entity_slug), state)
         return group.get_entity(cast(str, entity_slug))
 
@@ -232,7 +232,7 @@ class RawClient(RawBaseClient):
         """Fetches all :py:class:`Service`s from the API."""
         data = self.request("services")
         domains = map(
-            lambda json: Domain.from_json(json, client=cast(Client, self)),
+            lambda json: Domain.from_json(json, _client=cast(Client, self)),
             cast(Tuple[Dict[str, Any], ...], data),
         )
         return {domain.domain_id: domain for domain in domains}
@@ -311,7 +311,7 @@ class RawClient(RawBaseClient):
         if isinstance(data, list):
             return tuple(
                 map(
-                    lambda json: Event.from_json(json, client=cast(Client, self)),
+                    lambda json: Event.from_json(json, _client=cast(Client, self)),
                     cast(List[Dict[str, Any]], data),
                 )
             )

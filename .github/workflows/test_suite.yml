@@ -90,6 +90,3 @@ jobs:
           export HOMEASSISTANTAPI_TOKEN="$TOKEN"
           poetry run pytest tests --disable-warnings
           echo "::endgroup::"
-        env:
-          HOMEASSISTANTAPI_URL: ${{ env.HOMEASSISTANTAPI_URL }}
-          HOMEASSISTANTAPI_TOKEN: ${{ env.HOMEASSISTANTAPI_TOKEN }}
