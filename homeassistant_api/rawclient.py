@@ -232,7 +232,7 @@ class RawClient(RawBaseClient):
         """Fetches all :py:class:`Service`s from the API."""
         data = self.request("services")
         domains = map(
-            lambda json: Domain.from_json(json, _client=cast(Client, self)),
+            lambda json: Domain.from_json(json, client=cast(Client, self)),
             cast(Tuple[Dict[str, Any], ...], data),
         )
         return {domain.domain_id: domain for domain in domains}
@@ -311,7 +311,7 @@ class RawClient(RawBaseClient):
         if isinstance(data, list):
             return tuple(
                 map(
-                    lambda json: Event.from_json(json, _client=cast(Client, self)),
+                    lambda json: Event.from_json(json, client=cast(Client, self)),
                     cast(List[Dict[str, Any]], data),
                 )
             )

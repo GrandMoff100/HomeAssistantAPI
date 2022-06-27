@@ -57,6 +57,7 @@ disable = [
     "duplicate-code",
     "too-many-public-methods",
     "too-many-arguments",
+    "protected-access"
 ]
 
 [tool.pytest.ini_options]
