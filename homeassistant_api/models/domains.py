@@ -17,7 +17,9 @@ class Domain(BaseModel):
 
     def __init__(self, *args, _client: Optional["Client"] = None, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._client = _client
+        if _client is None:
+            raise ValueError("No client passed.")
+        object.__setattr__("_client", _client)
 
     _client: "Client"
     domain_id: str = Field(
