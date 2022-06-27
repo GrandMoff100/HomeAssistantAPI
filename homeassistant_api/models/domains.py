@@ -15,12 +15,16 @@ if TYPE_CHECKING:
 class Domain(BaseModel):
     """Model representing the domain that services belong to."""
 
+    def __init__(self, *args, _client: Optional["Client"] = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self._client = _client
+
+    _client: "Client"
     domain_id: str = Field(
         ...,
         description="The name of the domain that services belong to. "
         "(e.g. :code:`frontend` in :code:`frontend.reload_themes`",
     )
-    _client: "Client"
     services: Dict[str, "Service"] = Field(
         {},
         description="A dictionary of all services belonging to the domain indexed by their names",
