@@ -11,6 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
+import re
 import sys
 
 import toml  # type: ignore[import]
@@ -37,11 +38,7 @@ except KeyError:
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 
-branch = (
-    "master"
-    if version.endswith("a") or version.endswith("b") or version.endswith("rc")
-    else "v" + version
-)
+branch = "dev" if re.match(r".+\.(post|pre)\d+", version) else "v" + version
 
 extensions = [
     "sphinx.ext.autodoc",

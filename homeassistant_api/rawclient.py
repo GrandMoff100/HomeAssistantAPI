@@ -3,21 +3,37 @@
 import logging
 from datetime import datetime
 from posixpath import join
-from typing import Any, Dict, Generator, List, Literal, Optional, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generator,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 import requests
 from requests_cache import CachedSession
 
 from .errors import APIConfigurationError, BadTemplateError, RequestError
-from .mixins import JsonProcessingMixin
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
 from .processing import Processing
-from .rawapi import RawWrapper
+from .rawbaseclient import RawBaseClient
+
+if TYPE_CHECKING:
+    from .client import Client
+else:
+    Client = None  # pylint: disable=invalid-name
+
 
 logger = logging.getLogger(__name__)
 
 
-class RawClient(RawWrapper, JsonProcessingMixin):
+class RawClient(RawBaseClient):
     """
     The base object for interacting with Homeassistant
 
@@ -84,7 +100,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
 
     @classmethod
     def response_logic(cls, response: requests.Response) -> Union[dict, list, str]:
-        """Processes responses from the api and formats them"""
+        """Processes responses from the API and formats them"""
         return Processing(response=response).process()
 
     # API information methods
@@ -183,7 +199,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         for state in self.get_states():
             group_id, entity_slug = state.entity_id.split(".")
             if group_id not in entities:
-                entities[group_id] = Group(group_id=cast(str, group_id), client=self)
+                entities[group_id] = Group(group_id=cast(str, group_id), _client=self)
             entities[group_id].add_entity(entity_slug, state)
         return entities
 
@@ -193,7 +209,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         entity_slug: str = None,
         entity_id: str = None,
     ) -> Optional[Entity]:
-        """Returns a Entity model for an entity_id"""
+        """Returns an :py:class:`Entity` model for an :code:`entity_id`"""
         if group_id is not None and entity_slug is not None:
             state = self.get_state(group=group_id, slug=entity_slug)
         elif entity_id is not None:
@@ -207,16 +223,16 @@ class RawClient(RawWrapper, JsonProcessingMixin):
                 f"Neither group and slug or entity_id provided. {help_msg}"
             )
         group_id, entity_slug = state.entity_id.split(".")
-        group = Group(group_id=cast(str, group_id), client=self)
+        group = Group(group_id=cast(str, group_id), _client=self)
         group.add_entity(cast(str, entity_slug), state)
         return group.get_entity(cast(str, entity_slug))
 
     # Services and domain methods
     def get_domains(self) -> Dict[str, Domain]:
-        """Fetches all Services from the API"""
+        """Fetches all :py:class:`Service`s from the API."""
         data = self.request("services")
         domains = map(
-            self.process_services_json,
+            lambda json: Domain.from_json(json, client=cast(Client, self)),
             cast(Tuple[Dict[str, Any], ...], data),
         )
         return {domain.domain_id: domain for domain in domains}
@@ -233,11 +249,11 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     ) -> Tuple[State, ...]:
         """Tells Home Assistant to trigger a service, returns all states changed while in the process of being called."""
         data = self.request(
-            join("services", domain + "/" + service),
+            join("services", domain, service),
             method="POST",
             json=service_data,
         )
-        return tuple(map(self.process_state_json, cast(List[Dict[str, Any]], data)))
+        return tuple(map(State.from_json, cast(List[Dict[str, Any]], data)))
 
     # EntityState methods
     def get_state(  # pylint: disable=duplicate-code
@@ -254,7 +270,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
             entity_id=entity_id,
         )
         data = self.request(join("states", entity_id))
-        return self.process_state_json(cast(dict, data))
+        return State.from_json(cast(Dict[str, Any], data))
 
     def set_state(  # pylint: disable=duplicate-code
         self,
@@ -267,7 +283,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
     ) -> State:
         """
         This method sets the representation of a device within Home Assistant and will not communicate with the actual device.
-        To communicate with the device, use :py:meth:`homeassistant_api.Service.trigger` or :py:meth:`homeassistant_api.Service.async_trigger`
+        To communicate with the device, use :py:meth:`Service.trigger` or :py:meth:`Service.async_trigger`
         """
         entity_id = self.prepare_entity_id(
             group=group,
@@ -280,12 +296,12 @@ class RawClient(RawWrapper, JsonProcessingMixin):
             method="POST",
             json=payload,
         )
-        return self.process_state_json(cast(dict, data))
+        return State.from_json(cast(dict, data))
 
     def get_states(self) -> Tuple[State, ...]:
         """Gets the states of all entities within homeassistant"""
         data = self.request("states")
-        states = map(self.process_state_json, cast(List[Dict[str, Any]], data))
+        states = map(State.from_json, cast(List[Dict[str, Any]], data))
         return tuple(states)
 
     # Event methods
@@ -295,7 +311,7 @@ class RawClient(RawWrapper, JsonProcessingMixin):
         if isinstance(data, list):
             return tuple(
                 map(
-                    self.process_event_json,
+                    lambda json: Event.from_json(json, client=cast(Client, self)),
                     cast(List[Dict[str, Any]], data),
                 )
             )

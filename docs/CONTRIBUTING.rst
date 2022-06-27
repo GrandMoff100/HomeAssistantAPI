@@ -10,7 +10,8 @@ See below.
 Contribution Ideas
 *********************
 
-If you don't know what you want to contribute yet you should take a look at the TODO.md in the :resource:`repository <repo>`.
+If you don't know what you want to contribute yet you should take a look at our :resource:`issues page <issues>`.
+See what other people have been up to and if you have an idea for a new feature or a new way to implement a feature you should :resource:`create an issue <issues>` or :resource:`fork the repository <repo>` and start contributing.
 We're always interested in integrating ways to make the library faster, extensible and easier to use.
 
 Setting up your Development Environment
@@ -21,7 +22,8 @@ So now that you know what you want to contribute it is time to setup a developme
 Step One: Fork the Repository
 ===============================
 
-Click `here <https://github.com/GrandMoff100/HomeAssistantAPI/fork>`_ to fork the repository. Then click your username.
+Click `here <https://github.com/GrandMoff100/HomeAssistantAPI/fork>`__ to fork the repository.
+Then click your username.
 
 Step Two: Clone the Repository Locally
 =======================================
@@ -38,7 +40,7 @@ Step Three: Installing Dependencies
 Firstly, you need to have Python 3.7 or newer with Pip installed.
 Download the latest Python Version from `here <https://www.python.org/>`__.
 Then you need to install the very popular Python Package Manager, :code:`poetry`.
-Checkout the `Poetry docs <https://python-poetry.org/docs/>`_.
+Checkout the `Poetry Docs <https://python-poetry.org/docs/>`__.
 You can install that with :code:`pip` by running :code:`pip install poetry`.
 Now you can install the project's dependencies by running :code:`cd HomeAssistantAPI && poetry install`
 

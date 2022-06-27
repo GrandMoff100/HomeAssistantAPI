@@ -6,11 +6,10 @@ from posixpath import join
 from typing import Dict, Optional, Tuple, Union
 from urllib.parse import quote as url_quote
 
-from .const import DATE_FMT
 from .models import Entity
 
 
-class RawWrapper:
+class RawBaseClient:
     """Builds, and makes requests to the API"""
 
     api_url: str
@@ -33,9 +32,9 @@ class RawWrapper:
         if not api_url.endswith("/"):
             self.api_url += "/"
 
-    def endpoint(self, path: str) -> str:
+    def endpoint(self, *path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""
-        return join(self.api_url, path)
+        return join(self.api_url, *path)
 
     @property
     def _headers(self) -> Dict[str, str]:
@@ -80,7 +79,9 @@ class RawWrapper:
         slug: Optional[str] = None,
         entity_id: Optional[str] = None,
     ) -> str:
-        """Combines optional `group` and `slug` into `entity_id` only if provided."""
+        """
+        Combines optional :code:`group` and :code:`slug` into an :code:`entity_id` if provided.
+        """
         if (group is None or slug is None) and entity_id is None:
             raise ValueError(
                 "To use group or slug you need to pass both not just one. "
@@ -107,14 +108,14 @@ class RawWrapper:
         if entities is not None:
             params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
         if end_timestamp is not None:
-            params["end_time"] = url_quote(end_timestamp.strftime(DATE_FMT))
+            params["end_time"] = url_quote(end_timestamp.isoformat())
         if minimal_state_data:
             params["minimal_response"] = None
         if significant_changes_only:
             params["significant_changes_only"] = None
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.strftime(DATE_FMT)
+                formatted_timestamp = start_timestamp.isoformat()
                 url = join("history/period/", formatted_timestamp)
             else:
                 raise TypeError(f"timestamp needs to be of type {datetime!r}")
@@ -136,11 +137,11 @@ class RawWrapper:
             params.update(entity=filter_entity.entity_id)
         if end_timestamp is not None:
             if isinstance(end_timestamp, datetime):
-                end_timestamp = url_quote(end_timestamp.strftime(DATE_FMT))
+                end_timestamp = url_quote(end_timestamp.isoformat())
             params.update(end_time=end_timestamp)
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):
-                url = join("logbook/", start_timestamp.strftime(DATE_FMT))
+                url = join("logbook/", start_timestamp.isoformat())
         else:
             url = "logbook"
         return params, url
