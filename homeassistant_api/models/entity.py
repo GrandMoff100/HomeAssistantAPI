@@ -1,8 +1,7 @@
 """Module for Entity and entity Group data models"""
 
 from datetime import datetime
-from posixpath import join
-from typing import TYPE_CHECKING, Any, Dict, Optional, cast
+from typing import TYPE_CHECKING, Dict, Optional
 
 from pydantic import Field
 
@@ -17,32 +16,32 @@ if TYPE_CHECKING:
 class Group(BaseModel):
     """Represents the groups that entities belong to."""
 
+    def __init__(self, *args, _client: Optional["Client"] = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        object.__setattr__(self, "_client", _client)
+
     group_id: str = Field(
         ...,
         description="A unique string identifying different types/groups of entities.",
     )
-    _client: "Client" = Field(
-        exclude=True,
-        repr=False,
-        description="The client object to modify and retrieve entities with.",
-    )
+    _client: "Client"
     entities: Dict[str, "Entity"] = Field(
         {},
         description="A dictionary of all entities belonging to the group "
         "indexed by their :code:`entity_id`.",
     )
 
-    def add_entity(self, entity_slug: str, state: State) -> None:
+    def _add_entity(self, slug: str, state: State) -> None:
         """Registers entities to this Group object"""
-        self.entities[entity_slug] = Entity(
-            slug=entity_slug,
+        self.entities[slug] = Entity(
+            slug=slug,
             state=state,
             group=self,
         )
 
-    def get_entity(self, entity_slug: str) -> Optional["Entity"]:
+    def get_entity(self, slug: str) -> Optional["Entity"]:
         """Returns Entity with the given name if it exists. Otherwise returns None"""
-        return self.entities.get(entity_slug)
+        return self.entities.get(slug)
 
     def __getattr__(self, key: str):
         if key in self.entities:
@@ -58,22 +57,16 @@ class Entity(BaseModel):
     group: Group = Field(exclude=True, repr=False)
 
     def get_state(self) -> State:
-        """Asks Home Assistant for the state of the entity and caches it locally"""
-        state_data = self.group._client.request(join("states", self.entity_id))
-        self.state = State.from_json(cast(Dict[str, Any], state_data))
+        """Asks Home Assistant for the state of the entity and updates it locally"""
+        self.state = self.group._client.get_state(entity_id=self.entity_id)
         return self.state
 
-    def set_state(self, state: State) -> State:
+    def update_state(self) -> State:
         """
-        Tells Home Assistant to set the given State object.
-        (You can construct the state object yourself.)
+        Tells Home Assistant to set its current local State object.
+        (You can modify the local state object yourself.)
         """
-        state_data = self.group._client.request(
-            join("states", f"{self.group.group_id}.{self.slug}"),
-            method="POST",
-            json=state,
-        )
-        self.state = State.from_json(cast(Dict[str, Any], state_data))
+        self.state = self.group._client.set_state(self.state)
         return self.state
 
     @property
@@ -86,7 +79,6 @@ class Entity(BaseModel):
         start_timestamp: Optional[datetime] = None,
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
         end_timestamp: Optional[datetime] = None,
-        minimal_state_data: bool = False,
         significant_changes_only: bool = False,
     ) -> History:
         """Gets the previous :py:class:`State`'s of the :py:class:`Entity`"""
@@ -95,7 +87,6 @@ class Entity(BaseModel):
             entities=(self,),
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
-            minimal_state_data=minimal_state_data,
             significant_changes_only=significant_changes_only,
         ):
             break
@@ -103,37 +94,29 @@ class Entity(BaseModel):
 
     async def async_get_state(self) -> State:
         """Asks Home Assistant for the state of the entity and sets it locally"""
-        state_data = await self.group._client.async_request(
-            join("states", self.entity_id)
+        self.state = await self.group._client.async_get_state(
+            group_id=self.group.group_id,
+            slug=self.slug,
         )
-        self.state = State.from_json(cast(Dict[str, Any], state_data))
         return self.state
 
-    async def async_set_state(self, state: State) -> State:
-        """Tells Home Assistant to set the given State object."""
-        return await self.group._client.async_set_state(
-            self.entity_id,
-            group=self.group.group_id,
-            slug=self.slug,
-            **state.dict(),
-        )
+    async def async_update_state(self) -> State:
+        """Tells Home Assistant to set the current local State object."""
+        self.state = await self.group._client.async_set_state(self.state)
+        return self.state
 
     async def async_get_history(
         self,
         start_timestamp: Optional[datetime] = None,
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
         end_timestamp: Optional[datetime] = None,
-        minimal_state_data: bool = False,
         significant_changes_only: bool = False,
     ) -> Optional[History]:
-        """Gets the previous :py:class:`State`'s of the :py:class:`Entity`."""
-        history: Optional[History] = None
+        """Gets the :py:class:`History` of previous :py:class:`State` of the :py:class:`Entity`."""
         async for history in self.group._client.async_get_entity_histories(
             entities=(self,),
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
-            minimal_state_data=minimal_state_data,
             significant_changes_only=significant_changes_only,
         ):
-            break
-        return history
+            return history

@@ -8,15 +8,13 @@ class HomeassistantAPIError(BaseException):
 class RequestError(HomeassistantAPIError):
     """Error raised when an issue occurs when requesting to Homeassistant."""
 
-    def __init__(self, body: str) -> None:
-        super().__init__(f"Bad Request: {body}")
+
+class RequestTimeoutError(RequestError):
+    """Error raised when a request times out."""
 
 
-class ResponseContentError(HomeassistantAPIError):
+class ResponseError(HomeassistantAPIError):
     """Error raised when an issue occurs in a response from Homeassistant."""
-
-    def __init__(self, body: str) -> None:
-        super().__init__(f"Bad Response: {body}")
 
 
 class BadTemplateError(HomeassistantAPIError):
@@ -39,12 +37,15 @@ class ParameterMissingError(HomeassistantAPIError):
     """Error raised when an expected attribute is missing from api response data."""
 
 
-class UnexpectedStatusCodeError(HomeassistantAPIError):
-    """Error raised when Home Assistant returns a response with status code that was unexpected."""
+class InternalServerError(HomeassistantAPIError):
+    """Error raised when Home Assistant says that it got itself in trouble."""
 
-    def __init__(self, code: int, content) -> None:
+    def __init__(self, status_code: int, content: str) -> None:
         super().__init__(
-            f"Home Assistant return response with an unrecognized status code {code!r}.\n{content}"
+            f"Home Assistant returned a response with an error status code {status_code!r}.\n{content}\n"
+            "If this happened, "
+            "please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues "
+            "with the request status code and the request content. Thanks!"
         )
 
 

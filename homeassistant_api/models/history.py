@@ -3,8 +3,6 @@ from typing import Tuple
 
 from pydantic import Field
 
-from homeassistant_api.errors import ResponseContentError
-
 from .base import BaseModel
 from .states import State
 
@@ -24,7 +22,5 @@ class History(BaseModel):
     def entity_id(self) -> str:
         """Returns the shared :code:`entity_id` of states."""
         entity_ids = [state.entity_id for state in self.states]
-        result, *others = set(entity_ids)
-        if len(others) > 0:
-            raise ResponseContentError("More than one entity_ids found in response.")
+        result, *_ = set(entity_ids)
         return result

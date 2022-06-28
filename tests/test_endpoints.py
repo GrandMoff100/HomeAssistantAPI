@@ -1,31 +1,10 @@
-# pylint: disable=redefined-outer-name
-import os
-from typing import AsyncGenerator, Generator
+"""Module for making sure endpoints that should succeed, do indeed succeed."""
 
-import pytest
-import pytest_asyncio
+from datetime import datetime
 
 from homeassistant_api import Client
 from homeassistant_api.models.events import Event
 from homeassistant_api.models.states import State
-
-
-@pytest.fixture(scope="function")
-def cached_client() -> Generator[Client, None, None]:
-    """Initializes the Client and enters a cached session."""
-    with Client(
-        os.environ["HOMEASSISTANTAPI_URL"], os.environ["HOMEASSISTANTAPI_TOKEN"]
-    ) as client:
-        yield client
-
-
-@pytest_asyncio.fixture(scope="function")
-async def async_cached_client() -> AsyncGenerator[Client, None]:
-    """Initializes the Client and enters an async cached session."""
-    async with Client(
-        os.environ["HOMEASSISTANTAPI_URL"], os.environ["HOMEASSISTANTAPI_TOKEN"]
-    ) as client:
-        yield client
 
 
 def test_get_error_log(cached_client: Client) -> None:
@@ -50,7 +29,11 @@ async def test_async_get_config(async_cached_client: Client) -> None:
 
 def test_get_logbook_entries(cached_client: Client) -> None:
     """Tests the `GET /api/logbook/<timestamp>` endpoint."""
-    for entry in cached_client.get_logbook_entries():
+    for entry in cached_client.get_logbook_entries(
+        filter_entities="sun.red_sun",
+        start_timestamp=datetime(2020, 1, 1),
+        end_timestamp=datetime.now(),
+    ):
         assert entry
 
 
@@ -74,7 +57,12 @@ def test_get_entity_histories(cached_client: Client) -> None:
     """Tests the `GET /api/history/period/<timestamp>` endpoint."""
     sun = cached_client.get_entity(entity_id="sun.sun")
     assert sun is not None
-    for history in cached_client.get_entity_histories((sun,)):
+    for history in cached_client.get_entity_histories(
+        (sun,),
+        end_timestamp=datetime(2023, 1, 1),
+        start_timestamp=datetime(2020, 1, 1),
+        significant_changes_only=True,
+    ):
         for state in history.states:
             assert isinstance(state, State)
 
@@ -173,7 +161,7 @@ async def test_async_trigger_service(async_cached_client: Client) -> None:
     """Tests the `POST /api/services/<domain>/<service>` endpoint."""
     notify = await async_cached_client.async_get_domain("notify")
     assert notify is not None
-    resp = await notify.persistent_notification.async_trigger(
+    resp = await notify.persistent_notification(
         message="Your API Test Suite just said hello!",
         title="Test Suite Notifcation (Async)",
     )
@@ -208,14 +196,16 @@ async def test_async_get_state(async_cached_client: Client) -> None:
 
 def test_set_state(cached_client: Client) -> None:
     """Tests the `POST /api/states/<entity_id>` endpoint."""
-    state = cached_client.set_state("beyond_our_solar_system", entity_id="sun.red_sun")
+    state = cached_client.set_state(
+        State(state="beyond_our_solar_system", entity_id="sun.red_sun")
+    )
     assert state.state == "beyond_our_solar_system"
 
 
 async def test_async_set_state(async_cached_client: Client) -> None:
     """Tests the `POST /api/states/<entity_id>` endpoint."""
     state = await async_cached_client.async_set_state(
-        "beyond_our_solar_system", entity_id="sun.red_sun"
+        State(state="beyond_our_solar_system", entity_id="sun.red_sun")
     )
     assert state.state == "beyond_our_solar_system"
 
@@ -244,3 +234,15 @@ async def test_async_fire_event(async_cached_client: Client) -> None:
     """Tests the `POST /api/events/<event_type>` endpoint."""
     data = await async_cached_client.async_fire_event("my_new_event", parameter="123")
     assert data == "Event my_new_event fired."
+
+
+def test_get_components(cached_client: Client) -> None:
+    """Tests the `GET /api/components` endpoint."""
+    components = cached_client.get_components()
+    assert "person" in components
+
+
+async def test_async_get_components(async_cached_client: Client) -> None:
+    """Tests the `GET /api/components` endpoint."""
+    components = await async_cached_client.async_get_components()
+    assert "person" in components

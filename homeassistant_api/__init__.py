@@ -21,7 +21,6 @@ __all__ = (
     "ParameterMissingError",
     "RequestError",
     "UnauthorizedError",
-    "UnexpectedStatusCodeError",
 )
 
 from .client import Client
@@ -35,7 +34,6 @@ from .errors import (
     ParameterMissingError,
     RequestError,
     UnauthorizedError,
-    UnexpectedStatusCodeError,
 )
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, Service, State
 from .processing import Processing
