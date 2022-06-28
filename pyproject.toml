@@ -72,12 +72,9 @@ log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 
 [tool.coverage.report]
 exclude_lines = [
-    "from homeassistant_api import Client",
-    "raise UnexpectedStatusCodeError\\(",
-    "raise MalformedDataError\\(",
-    "raise RequestError\\(",
-    "raise ProcessorNotFoundError\\(",
-    "raise APIConfigurationError\\(",
+    "if TYPE_CHECKING:",
+    "def __repr__\\(self\\) -> str:",
+    "raise RequestTimeoutError\\(",
     "except \\(json\\.decoder\\.JSONDecodeError, simplejson.decoder\\.JSONDecodeError\\) as err:",
     "pass",
     "last_updated < \\(now := datetime\\.now\\(\\)\\) - wait"

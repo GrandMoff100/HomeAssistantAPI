@@ -6,9 +6,9 @@ Usage
 The Basics...
 #################
 
-This library is centered around the :ref:`Client` class.
+This library is centered around the :py:class:`Client` class.
 Once you have have your api base url and Long Lived Access Token from Home Assistant we can start to do stuff.
-The rest of this guide assumes you have the :ref:`Client` saved to a :code:`client` variable.
+The rest of this guide assumes you have the :py:class:`Client` saved to a :code:`client` variable.
 Most of these examples require some integrations to be setup inside Home Assistant for the examples to actually work.
 The most commonly used features of this library include triggering services and getting and modifying entity states.
 
@@ -39,7 +39,7 @@ The most commonly used features of this library include triggering services and 
 
     # You can also initialize Client before you use it.
 
-    client = Client("https://myhomeassistant.duckdns.org:8123/api", "mylongtokenpasswordthingyfoobar")
+    client = Client("https://foobarhomeassistant.duckdns.org:8123/api", "mylongtokenpasswordthingyfoobar")
 
     # If you want to use caching you can use client as a context manager like so
     with client:
@@ -81,7 +81,9 @@ Entities
     state = client.get_state('sun.sun')
     # <State "above_horizon" entity_id="sun.sun">
 
-    new_state = client.set_state(state='my ToaTallY Whatever vAlUe 12t87932', group_id='my_favorite_colors', entity_slug='number_one')
+    new_state = client.set_state(
+        State(state='my ToaTallY Whatever vAlUe 12t87932', entity_id='my_favorite_colors.number_one')
+    )
     # <State "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
 
     # Alternatively you can set state from the entity class itself
@@ -137,7 +139,12 @@ Async Entities
     state = await client.async_get_state('sun.sun')
     # <State "above_horizon" entity_id="sun.sun">
 
-    new_state = await client.async_set_state(state='my ToaTallY Whatever vAlUe 12t87932', group_id='my_favorite_colors', entity_slug='number_one')
+    new_state = await client.async_set_state(
+        State(
+            state='my ToaTallY Whatever vAlUe 12t87932',
+            entity_id='my_favorite_colors.number_one'
+        )
+    )
     # <State "my ToaTallY Whatever vAlUe 12t87932" entity_id="my_favorite_colors.number_one">
 
     # Alternatively you can set state from the entity class itself
@@ -145,7 +152,7 @@ Async Entities
 
     # If you are wondering where door came from its about 15 lines up.
     door.state.state = 'My new state'
-    door.state.attributes['open_height'] = '23'
+    door.state.attributes.update({'open_height': '5ft'})
     await door.async_set_state(door.state)
     # <State "My new state" entity_id="cover.garage_door">
 
