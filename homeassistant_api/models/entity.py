@@ -80,17 +80,16 @@ class Entity(BaseModel):
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
         end_timestamp: Optional[datetime] = None,
         significant_changes_only: bool = False,
-    ) -> History:
+    ) -> Optional[History]:
         """Gets the previous :py:class:`State`'s of the :py:class:`Entity`"""
-        history = None
         for history in self.group._client.get_entity_histories(
             entities=(self,),
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
             significant_changes_only=significant_changes_only,
         ):
-            break
-        return history
+            return history
+        return None
 
     async def async_get_state(self) -> State:
         """Asks Home Assistant for the state of the entity and sets it locally"""
@@ -112,7 +111,9 @@ class Entity(BaseModel):
         end_timestamp: Optional[datetime] = None,
         significant_changes_only: bool = False,
     ) -> Optional[History]:
-        """Gets the :py:class:`History` of previous :py:class:`State` of the :py:class:`Entity`."""
+        """
+        Gets the :py:class:`History` of previous :py:class:`State`'s of the :py:class:`Entity`.
+        """
         async for history in self.group._client.async_get_entity_histories(
             entities=(self,),
             start_timestamp=start_timestamp,
@@ -120,3 +121,4 @@ class Entity(BaseModel):
             significant_changes_only=significant_changes_only,
         ):
             return history
+        return None

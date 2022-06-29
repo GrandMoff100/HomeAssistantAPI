@@ -1,6 +1,6 @@
 """Event Model File"""
 
-from typing import TYPE_CHECKING, Any, Dict, Optional, cast
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from pydantic import Field
 
@@ -29,7 +29,7 @@ class Event(BaseModel):
         super().__init__(*args, **kwargs)
         object.__setattr__(self, "_client", _client)
 
-    def fire(self, **event_data) -> str:
+    def fire(self, **event_data) -> Optional[str]:
         """Fires the corresponding event in Home Assistant."""
         return self._client.fire_event(self.event, **event_data)
 

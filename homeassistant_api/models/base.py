@@ -1,6 +1,6 @@
 """Module for Global Base Model Configuration inheritance."""
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from pydantic import BaseModel as PydanticBaseModel
 

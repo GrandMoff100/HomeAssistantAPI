@@ -41,6 +41,7 @@ class Domain(BaseModel):
             )
         domain = cls(domain_id=cast(str, json.get("domain")), _client=client)
         services = json.get("services")
+        assert isinstance(services, dict)
         for service_id, data in services.items():
             domain._add_service(service_id, **data)
         return domain
@@ -109,9 +110,9 @@ class Service(BaseModel):
     ) -> Union[Tuple[State, ...], Coroutine[Any, Any, Tuple[State, ...]]]:
         """Triggers the service associated with this object."""
         assert (frame := inspect.currentframe()) is not None
-        assert (caller := frame.f_back) is not None
+        assert (parent_frame := frame.f_back) is not None
         if inspect.iscoroutinefunction(
-            caller := gc.get_referrers(caller.f_code)[0]
+            caller := gc.get_referrers(parent_frame.f_code)[0]
         ) or inspect.iscoroutine(caller):
             return self.async_trigger(**service_data)
         return self.trigger(**service_data)

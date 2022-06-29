@@ -20,13 +20,7 @@ from typing import (
 import requests
 from requests_cache import CachedSession
 
-from .errors import (
-    APIConfigurationError,
-    BadTemplateError,
-    RequestError,
-    RequestTimeoutError,
-    ResponseError,
-)
+from .errors import BadTemplateError, RequestError, RequestTimeoutError
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
 from .processing import Processing, ResponseType
 from .rawbaseclient import RawBaseClient
@@ -49,6 +43,8 @@ class RawClient(RawBaseClient):
     :param global_request_kwargs: Kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
+    cache_session: Union[CachedSession, requests.Session]
+
     def __init__(
         self,
         *args,
@@ -58,9 +54,12 @@ class RawClient(RawBaseClient):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.cache_session = (
-            cache_session if cache_session is not None else CachedSession()
-        )
+        if cache_session is None:
+            self.cache_session = CachedSession()
+        elif cache_session is False:
+            self.cache_session = requests.Session()
+        else:
+            self.cache_session = cache_session
 
     def __enter__(self):
         logger.debug("Entering cached requests session %r.", self.cache_session)
@@ -79,7 +78,7 @@ class RawClient(RawBaseClient):
         method="GET",
         headers: Dict[str, str] = None,
         **kwargs,
-    ) -> Union[Dict[str, Any], list, str]:
+    ) -> Any:
         """Base method for making requests to the api"""
         try:
             if self.global_request_kwargs is not None:
@@ -195,7 +194,10 @@ class RawClient(RawBaseClient):
         for state in self.get_states():
             group_id, entity_slug = state.entity_id.split(".")
             if group_id not in entities:
-                entities[group_id] = Group(group_id=cast(str, group_id), _client=self)
+                entities[group_id] = Group(
+                    group_id=cast(str, group_id),
+                    _client=self,  # type: ignore[arg-type]
+                )
             entities[group_id]._add_entity(entity_slug, state)
         return entities
 
@@ -219,7 +221,10 @@ class RawClient(RawBaseClient):
                 f"Neither group_id and slug or entity_id provided. {help_msg}"
             )
         split_group_id, split_slug = state.entity_id.split(".")
-        group = Group(group_id=cast(str, split_group_id), _client=self)
+        group = Group(
+            group_id=cast(str, split_group_id),
+            _client=self,  # type: ignore[arg-type]
+        )
         group._add_entity(cast(str, split_slug), state)
         return group.get_entity(cast(str, split_slug))
 

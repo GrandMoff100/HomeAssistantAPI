@@ -42,7 +42,8 @@ class InternalServerError(HomeassistantAPIError):
 
     def __init__(self, status_code: int, content: str) -> None:
         super().__init__(
-            f"Home Assistant returned a response with an error status code {status_code!r}.\n{content}\n"
+            f"Home Assistant returned a response with an error status code {status_code!r}.\n"
+            f"{content}\n"
             "If this happened, "
             "please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues "
             "with the request status code and the request content. Thanks!"
@@ -74,3 +75,10 @@ class ProcessorNotFoundError(HomeassistantAPIError):
     """
     Error raised when a response is encountered that homeassistant_api is not told how to handle.
     """
+
+
+class UnexpectedStatusCodeError(ResponseError):
+    """Error raised when a response has an unexpected status code."""
+
+    def __init__(self, status_code: int) -> None:
+        super().__init__(f"Response has unexpected status code: {status_code!r}")

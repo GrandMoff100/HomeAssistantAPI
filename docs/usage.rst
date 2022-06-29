@@ -41,7 +41,7 @@ The most commonly used features of this library include triggering services and 
 
     client = Client("https://foobarhomeassistant.duckdns.org:8123/api", "mylongtokenpasswordthingyfoobar")
 
-    # If you want to use caching you can use client as a context manager like so
+    # In order to activate the requests session you to use the Client context manager like so.
     with client:
         while True:
             sun = client.get_entity(entity_id="sun.sun")

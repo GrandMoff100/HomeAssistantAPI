@@ -4,7 +4,6 @@ import re
 from datetime import datetime
 from posixpath import join
 from typing import Dict, Iterable, Optional, Tuple, Union
-from urllib.parse import quote as url_quote
 
 from .models import Entity
 
@@ -94,6 +93,7 @@ class RawBaseClient:
             )
         if group_id is not None and slug is not None:
             entity_id = f"{group_id}.{slug}"
+        assert entity_id is not None
         return self.format_entity_id(entity_id)
 
     @staticmethod
@@ -110,7 +110,9 @@ class RawBaseClient:
         if entities is not None:
             params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
         if end_timestamp is not None:
-            params["end_time"] = url_quote(end_timestamp.isoformat())
+            params[
+                "end_time"
+            ] = end_timestamp.isoformat()  # Params are automatically URL encoded
         if significant_changes_only:
             params["significant_changes_only"] = None
         if start_timestamp is not None:
@@ -131,9 +133,11 @@ class RawBaseClient:
         params: Dict[str, str] = {}
         if filter_entities is not None:
             params.update(
-                entity=",".join(filter_entities)
-                if isinstance(filter_entities, list)
-                else filter_entities
+                {
+                    "entity": filter_entities
+                    if isinstance(filter_entities, str)
+                    else ",".join(filter_entities)
+                }
             )
         if end_timestamp is not None:
             if isinstance(end_timestamp, datetime):

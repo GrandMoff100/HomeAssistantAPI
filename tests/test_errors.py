@@ -1,6 +1,7 @@
 """Module for making sure requests that should not succeed, do indeed fail."""
 
 import os
+from multiprocessing.dummy import Process
 from typing import Dict
 
 import pytest
@@ -18,6 +19,7 @@ from homeassistant_api.errors import (
     RequestError,
     RequestTimeoutError,
     ResponseError,
+    UnexpectedStatusCodeError,
 )
 from homeassistant_api.models.states import State
 from homeassistant_api.processing import Processing
@@ -140,6 +142,7 @@ def make_response(
     response.headers = requests.structures.CaseInsensitiveDict(headers)
     return response
 
+
 def test_exception_malformed_data_error() -> None:
     with pytest.raises(MalformedDataError):
         Processing(
@@ -171,3 +174,8 @@ def test_exception_api_config_error() -> None:
 def test_exception_response_error() -> None:
     with pytest.raises(ResponseError):
         raise ResponseError("(Fake) Server returned a problematic response.")
+
+
+def test_exception_unexpected_status_code() -> None:
+    with pytest.raises(UnexpectedStatusCodeError):
+        Processing(make_response(0, "", {})).process()

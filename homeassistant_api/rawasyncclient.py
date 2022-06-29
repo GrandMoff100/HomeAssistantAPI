@@ -20,13 +20,7 @@ from typing import (
 from aiohttp import ClientSession
 from aiohttp_client_cache import CachedSession
 
-from .errors import (
-    APIConfigurationError,
-    BadTemplateError,
-    MalformedDataError,
-    RequestError,
-    RequestTimeoutError,
-)
+from .errors import BadTemplateError, RequestError, RequestTimeoutError
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
 from .processing import AsyncResponseType, Processing
 from .rawbaseclient import RawBaseClient
@@ -48,8 +42,7 @@ class RawAsyncClient(RawBaseClient):
     :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    async_cache_session: Union[CachedSession, Literal[False], Literal[None]]
-    async_session: Optional[ClientSession]
+    async_cache_session: Union[CachedSession, ClientSession]
 
     def __init__(
         self,
@@ -60,9 +53,12 @@ class RawAsyncClient(RawBaseClient):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.async_cache_session = (
-            async_cache_session if async_cache_session is not None else CachedSession()
-        )
+        if async_cache_session is False:
+            self.async_cache_session = ClientSession()
+        elif async_cache_session is None:
+            self.async_cache_session = CachedSession()
+        else:
+            self.async_cache_session = async_cache_session
 
     async def __aenter__(self):
         logger.debug(
@@ -83,7 +79,7 @@ class RawAsyncClient(RawBaseClient):
         method: str = "GET",
         headers: Optional[Dict[str, str]] = None,
         **kwargs,
-    ) -> Union[Dict[str, Any], List[Dict[str, Any]], str]:
+    ) -> Any:
         """Base method for making requests to the api"""
         try:
             if self.global_request_kwargs is not None:
@@ -197,7 +193,7 @@ class RawAsyncClient(RawBaseClient):
         for state in await self.async_get_states():
             group_id, entity_slug = state.entity_id.split(".")
             if group_id not in entities:
-                entities[group_id] = Group(group_id=group_id, _client=self)
+                entities[group_id] = Group(group_id=group_id, _client=self)  # type: ignore[arg-type]
             entities[group_id]._add_entity(entity_slug, state)
         return tuple(entities.values())
 
@@ -221,7 +217,7 @@ class RawAsyncClient(RawBaseClient):
                 f"Neither group_id and slug or entity_id provided. {help_msg}"
             )
         group_id, entity_slug = state.entity_id.split(".")
-        group = Group(group_id=group_id, _client=self)
+        group = Group(group_id=group_id, _client=self)  # type: ignore[arg-type]
         group._add_entity(entity_slug, state)
         return group.get_entity(entity_slug)
 
