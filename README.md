@@ -10,6 +10,7 @@
 ## Python wrapper for Homeassistant's [REST API](https://developers.home-assistant.io/docs/api/rest/)
 
 Here is a quick example.
+
 ```py
 from homeassistant_api import Client
 
@@ -20,11 +21,13 @@ with Client(
 
     light = client.get_domain("light")
 
-    light.turn_on(entity_id='light.living_room_lamp')
+    light.turn_on(entity_id="light.living_room_lamp")
 ```
+
 All the methods also support async!
 
 ## Documentation
+
 All documentation, API reference, contribution guidelines and pretty much everything else
 you'd want to know is on our readthedocs site [here](https://homeassistantapi.readthedocs.io)
 
