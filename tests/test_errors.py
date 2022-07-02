@@ -1,11 +1,14 @@
 """Module for making sure requests that should not succeed, do indeed fail."""
 
+import json
 import os
-from multiprocessing.dummy import Process
+import unittest
 from typing import Dict
 
+import aiohttp
 import pytest
 import requests
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from homeassistant_api import Client, Domain, UnauthorizedError
 from homeassistant_api.errors import (
@@ -16,12 +19,9 @@ from homeassistant_api.errors import (
     MalformedDataError,
     MethodNotAllowedError,
     ProcessorNotFoundError,
-    RequestError,
-    RequestTimeoutError,
     ResponseError,
     UnexpectedStatusCodeError,
 )
-from homeassistant_api.models.states import State
 from homeassistant_api.processing import Processing
 
 
@@ -114,13 +114,13 @@ def test_prepare_entity_id(cached_client: Client) -> None:
     """Tests all cases for :py:meth:`Client.prepare_entity_id`."""
     assert cached_client.prepare_entity_id(group_id="person", slug="me") == "person.me"
     assert cached_client.prepare_entity_id(entity_id="person.me") == "person.me"
-    assert (
-        cached_client.prepare_entity_id(group_id="person", entity_id="person.you")
-        == "person.you"
+    assert "person.you" == cached_client.prepare_entity_id(
+        group_id="person",
+        entity_id="person.you",
     )
-    assert (
-        cached_client.prepare_entity_id(slug="me", entity_id="person.you")
-        == "person.you"
+    assert "person.you" == cached_client.prepare_entity_id(
+        slug="me",
+        entity_id="person.you",
     )
     with pytest.raises(ValueError):
         cached_client.prepare_entity_id(group_id="person")  # No slug
@@ -135,18 +135,51 @@ def make_response(
     content: str,
     headers: Dict[str, str],
 ) -> requests.Response:
-    """Make a requests.Response object from a status code, headers, content."""
-    response = requests.Response()
-    response.status_code = status_code
-    response._content = content.encode()
-    response.headers = requests.structures.CaseInsensitiveDict(headers)
-    return response
+    """Make a :py:class:`requests.Response` object from a status_code, headers, content."""
+    return unittest.mock.Mock(
+        spec=requests.Response,
+        status_code=status_code,
+        text=content,
+        headers=CIMultiDictProxy(CIMultiDict(headers)),
+        json=unittest.mock.Mock(
+            side_effect=json.JSONDecodeError("This is a fake message", "", 1)
+        ),
+    )
+
+
+def make_async_response(
+    status_code: int,
+    content: str,
+    headers: Dict[str, str],
+) -> aiohttp.ClientResponse:
+    """Make an :py:class:`aiohttp.ClientResponse` object from a status_code, headers, content."""
+    return unittest.mock.Mock(
+        spec=aiohttp.ClientResponse,
+        status=status_code,
+        text=unittest.mock.AsyncMock(return_value=content),
+        content=unittest.mock.Mock(_buffer=[content.encode()]),
+        headers=CIMultiDictProxy(CIMultiDict(headers)),
+        json=unittest.mock.AsyncMock(
+            side_effect=json.JSONDecodeError("This is a fake message", "", 1)
+        ),
+    )
 
 
 def test_exception_malformed_data_error() -> None:
     with pytest.raises(MalformedDataError):
         Processing(
             make_response(
+                200,
+                "{this is not valid json}",
+                {"Content-Type": "application/json"},
+            )
+        ).process()
+
+
+async def test_async_exception_malformed_data_error() -> None:
+    with pytest.raises(MalformedDataError):
+        await Processing(
+            make_async_response(
                 200,
                 "{this is not valid json}",
                 {"Content-Type": "application/json"},

@@ -17,8 +17,8 @@ from typing import (
     cast,
 )
 
-from aiohttp import ClientSession
-from aiohttp_client_cache import CachedSession
+import aiohttp
+import aiohttp_client_cache
 
 from .errors import BadTemplateError, RequestError, RequestTimeoutError
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
@@ -42,21 +42,30 @@ class RawAsyncClient(RawBaseClient):
     :param global_request_kwargs: A dictionary or dict-like object of kwargs to pass to :func:`requests.request` or :meth:`aiohttp.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    async_cache_session: Union[CachedSession, ClientSession]
+    async_cache_session: Union[
+        aiohttp_client_cache.CachedSession, aiohttp.ClientSession
+    ]
 
     def __init__(
         self,
         *args,
         async_cache_session: Union[
-            CachedSession, Literal[False], Literal[None]
+            aiohttp_client_cache.CachedSession,
+            Literal[False],
+            Literal[None],
         ] = None,  # Explicitly disable cache with async_cache_session=False
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
         if async_cache_session is False:
-            self.async_cache_session = ClientSession()
+            self.async_cache_session = aiohttp.ClientSession()
         elif async_cache_session is None:
-            self.async_cache_session = CachedSession()
+            self.async_cache_session = aiohttp_client_cache.CachedSession(
+                cache=aiohttp_client_cache.CacheBackend(
+                    cache_name="default_async_cache",
+                    expire_after=300,
+                ),
+            )
         else:
             self.async_cache_session = async_cache_session
 

@@ -18,7 +18,7 @@ from typing import (
 )
 
 import requests
-from requests_cache import CachedSession
+import requests_cache
 
 from .errors import BadTemplateError, RequestError, RequestTimeoutError
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
@@ -43,21 +43,27 @@ class RawClient(RawBaseClient):
     :param global_request_kwargs: Kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
-    cache_session: Union[CachedSession, requests.Session]
+    cache_session: Union[requests_cache.CachedSession, requests.Session]
 
     def __init__(
         self,
         *args,
         cache_session: Union[
-            CachedSession, Literal[False], Literal[None]
+            requests_cache.CachedSession,
+            Literal[False],
+            Literal[None],
         ] = None,  # Explicitly disable cache with cache_session=False
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        if cache_session is None:
-            self.cache_session = CachedSession()
-        elif cache_session is False:
+        if cache_session is False:
             self.cache_session = requests.Session()
+        elif cache_session is None:
+            self.cache_session = requests_cache.CachedSession(
+                cache_name="default_cache",
+                backend="memory",
+                expire_after=300,
+            )
         else:
             self.cache_session = cache_session
 
