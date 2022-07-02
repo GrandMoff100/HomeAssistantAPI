@@ -25,9 +25,9 @@ class Event(BaseModel):
         description="How many listeners are interesting in this event in Home Assistant.",
     )
 
-    def __init__(self, *args, client: Optional["Client"] = None, **kwargs) -> None:
+    def __init__(self, *args, _client: Optional["Client"] = None, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        object.__setattr__(self, "_client", client)
+        object.__setattr__(self, "_client", _client)
 
     def fire(self, **event_data) -> Optional[str]:
         """Fires the corresponding event in Home Assistant."""
@@ -38,6 +38,6 @@ class Event(BaseModel):
         return await self._client.async_fire_event(self.event, **event_data)
 
     @classmethod
-    def from_json(cls, json: Dict[str, Any], client: "Client") -> "Event":
+    def from_json(cls, json: Dict[str, Any], _client: "Client") -> "Event":
         """Constructs Event model from json data"""
-        return cls(**json, client=client)
+        return cls(**json, _client=_client)

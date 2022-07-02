@@ -41,9 +41,9 @@ async def test_async_unauthorized() -> None:
 
 async def test_domain_missing_services_attribute(cached_client: Client) -> None:
     with pytest.raises(ValueError):
-        Domain.from_json({"services": None}, client=cached_client)  # Missing domain
+        Domain.from_json({"services": None}, _client=cached_client)  # Missing domain
     with pytest.raises(ValueError):
-        Domain.from_json({"domain": None}, client=cached_client)  # Missing services
+        Domain.from_json({"domain": None}, _client=cached_client)  # Missing services
 
 
 def test_endpoint_not_found_error(cached_client: Client) -> None:

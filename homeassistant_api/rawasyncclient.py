@@ -237,7 +237,7 @@ class RawAsyncClient(RawBaseClient):
         """Fetches all services from the api"""
         data = await self.async_request("services")
         domains = map(
-            lambda json: Domain.from_json(json, client=cast(Client, self)),
+            lambda json: Domain.from_json(json, _client=cast(Client, self)),
             cast(Tuple[Dict[str, Any], ...], data),
         )
         return {domain.domain_id: domain for domain in domains}
@@ -301,7 +301,7 @@ class RawAsyncClient(RawBaseClient):
         data = await self.async_request("events")
         return tuple(
             map(
-                lambda json: Event.from_json(json, client=cast(Client, self)),
+                lambda json: Event.from_json(json, _client=cast(Client, self)),
                 cast(List[Dict[str, Any]], data),
             )
         )
@@ -330,7 +330,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_get_calendars(self) -> Tuple[Calendar, ...]:
         """Returns a tuple of all registered calendar entities."""
         return tuple(
-            Calendar.from_json(**json, client=cast(Client, self))
+            Calendar.from_json(**json, _client=cast(Client, self))
             for json in await self.async_request("calendars")
         )
 

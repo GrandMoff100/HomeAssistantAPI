@@ -241,7 +241,7 @@ class RawClient(RawBaseClient):
         """Fetches all :py:class:`Service`s from the API."""
         data = self.request("services")
         domains = map(
-            lambda json: Domain.from_json(json, client=cast(Client, self)),
+            lambda json: Domain.from_json(json, _client=cast(Client, self)),
             cast(Tuple[Dict[str, Any], ...], data),
         )
         return {domain.domain_id: domain for domain in domains}
@@ -308,7 +308,7 @@ class RawClient(RawBaseClient):
         data = self.request("events")
         return tuple(
             map(
-                lambda json: Event.from_json(json, client=cast(Client, self)),
+                lambda json: Event.from_json(json, _client=cast(Client, self)),
                 cast(List[Dict[str, Any]], data),
             )
         )
@@ -336,7 +336,7 @@ class RawClient(RawBaseClient):
     def get_calendars(self) -> Tuple[Calendar, ...]:
         """Returns a tuple of all registered calendar entities.."""
         return tuple(
-            Calendar.from_json(json, client=cast(Client, self))
+            Calendar.from_json(json, _client=cast(Client, self))
             for json in self.request("calendars")
         )
 

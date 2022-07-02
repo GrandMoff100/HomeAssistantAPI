@@ -41,10 +41,10 @@ class Calendar(BaseModel):
     name: str
     _client: "Client"
 
-    def __init__(self, *args, client: Optional["Client"] = None, **kwargs) -> None:
+    def __init__(self, *args, _client: Optional["Client"] = None, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        assert client is not None
-        self._client = client
+        assert _client is not None
+        self._client = _client
 
     @classmethod
     def from_json(
@@ -52,7 +52,7 @@ class Calendar(BaseModel):
     ) -> "Calendar":
         """Process the calendar json."""
         assert client is not None
-        return cls(**json, client=client)
+        return cls(**json, _client=client)
 
     def get_calendar_events(
         self,
