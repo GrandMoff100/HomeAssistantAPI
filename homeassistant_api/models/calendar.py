@@ -1,3 +1,4 @@
+"""Module for Calendar and CalendarEvent data models."""
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
 
@@ -18,7 +19,7 @@ class CalendarEvent(BaseModel):
     location: Optional[str] = None
 
     @classmethod
-    def process_calendar_event_json(cls, json: Dict[str, Any]) -> "CalendarEvent":
+    def from_json(cls, json: Dict[str, Any]) -> "CalendarEvent":
         """Process the calendar event json."""
         if "date" in json.get("start", {}) or "date" in json.get("end", {}):
             json["all_day"] = True
@@ -44,6 +45,14 @@ class Calendar(BaseModel):
         super().__init__(*args, **kwargs)
         assert client is not None
         self._client = client
+
+    @classmethod
+    def from_json(
+        cls, json: Dict[str, Any], client: Optional["Client"] = None
+    ) -> "Calendar":
+        """Process the calendar json."""
+        assert client is not None
+        return cls(**json, client=client)
 
     def get_calendar_events(
         self,

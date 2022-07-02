@@ -19,6 +19,7 @@ from typing import (
 
 import aiohttp
 import aiohttp_client_cache
+
 from homeassistant_api.models.calendar import Calendar, CalendarEvent
 
 from .errors import BadTemplateError, RequestError, RequestTimeoutError
@@ -329,7 +330,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_get_calendars(self) -> Tuple[Calendar, ...]:
         """Returns a tuple of all registered calendar entities."""
         return tuple(
-            Calendar(**json, client=self)
+            Calendar.from_json(**json, client=cast(Client, self))
             for json in await self.async_request("calendars")
         )
 
@@ -340,13 +341,13 @@ class RawAsyncClient(RawBaseClient):
         end_time: Optional[datetime] = None,
     ) -> Tuple[CalendarEvent, ...]:
         """Returns a tuple of all events within a calendar."""
-        params = {}
+        params: Dict[str, str] = {}
         if start_time is not None:
             params.update(start=start_time.isoformat())
         if end_time is not None:
             params.update(end=end_time.isoformat())
         return tuple(
-            CalendarEvent.process_calendar_event_json(json)
+            CalendarEvent.from_json(json)
             for json in await self.async_request(
                 join("calendars", calendar_entity_id),
                 params=params,
