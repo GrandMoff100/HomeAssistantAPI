@@ -16,9 +16,9 @@ if TYPE_CHECKING:
 class Group(BaseModel):
     """Represents the groups that entities belong to."""
 
-    def __init__(self, *args, _client: Optional["Client"] = None, **kwargs) -> None:
+    def __init__(self, *args, client: Optional["Client"] = None, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        object.__setattr__(self, "_client", _client)
+        object.__setattr__(self, "_client", client)
 
     group_id: str = Field(
         ...,

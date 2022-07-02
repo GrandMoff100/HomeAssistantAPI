@@ -15,11 +15,11 @@ if TYPE_CHECKING:
 class Domain(BaseModel):
     """Model representing the domain that services belong to."""
 
-    def __init__(self, *args, _client: Optional["Client"] = None, **kwargs) -> None:
+    def __init__(self, *args, client: Optional["Client"] = None, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        if _client is None:
+        if client is None:
             raise ValueError("No client passed.")
-        object.__setattr__(self, "_client", _client)
+        object.__setattr__(self, "_client", client)
 
     _client: "Client"
     domain_id: str = Field(
@@ -39,7 +39,7 @@ class Domain(BaseModel):
             raise ValueError(
                 "Missing services or attribute attribute in json argument."
             )
-        domain = cls(domain_id=cast(str, json.get("domain")), _client=client)
+        domain = cls(domain_id=cast(str, json.get("domain")), client=client)
         services = json.get("services")
         assert isinstance(services, dict)
         for service_id, data in services.items():

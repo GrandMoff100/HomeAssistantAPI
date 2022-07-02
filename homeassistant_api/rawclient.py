@@ -16,6 +16,7 @@ from typing import (
     Union,
     cast,
 )
+from homeassistant_api.models.calendar import Calendar, CalendarEvent
 
 import requests
 import requests_cache
@@ -330,3 +331,30 @@ class RawClient(RawBaseClient):
     def get_components(self) -> Tuple[str, ...]:
         """Returns a tuple of all registered components."""
         return tuple(self.request("components"))
+
+    def get_calendars(self) -> Tuple[Calendar, ...]:
+        """Returns a tuple of all registered calendar entities.."""
+        return tuple(
+            Calendar(**json, client=self)
+            for json in self.request("calendars")
+        )
+
+    def get_calendar_events(
+        self,
+        calendar_entity_id: str,
+        start_time: Optional[datetime] = None,
+        end_time: Optional[datetime] = None,
+    ) -> Tuple[CalendarEvent, ...]:
+        """Returns a tuple of all events within a calendar."""
+        params = {}
+        if start_time is not None:
+            params.update(start=start_time.isoformat())
+        if end_time is not None:
+            params.update(end=end_time.isoformat())
+        return tuple(
+            CalendarEvent.process_calendar_event_json(json)
+            for json in self.request(
+                join("calendars", calendar_entity_id),
+                params=params,
+            )
+        )
