@@ -3,8 +3,7 @@
 import re
 from datetime import datetime
 from posixpath import join
-from typing import Dict, Optional, Tuple, Union
-from urllib.parse import quote as url_quote
+from typing import Dict, Iterable, Optional, Tuple, Union
 
 from .models import Entity
 
@@ -32,6 +31,9 @@ class RawBaseClient:
         if not api_url.endswith("/"):
             self.api_url += "/"
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.api_url!r})"
+
     def endpoint(self, *path: str) -> str:
         """Joins the api base url with a local path to an absolute url"""
         return join(self.api_url, *path)
@@ -55,7 +57,7 @@ class RawBaseClient:
             headers.update(self._headers)
         else:
             raise ValueError(
-                f"headers must be dict or dict subclass, not type {type(headers).__name__!r}"
+                f"headers must be dict or dict subclass, not type {type(headers)!r}"
             )
         return headers
 
@@ -75,22 +77,23 @@ class RawBaseClient:
     def prepare_entity_id(
         self,
         *,
-        group: Optional[str] = None,
+        group_id: Optional[str] = None,
         slug: Optional[str] = None,
         entity_id: Optional[str] = None,
     ) -> str:
         """
         Combines optional :code:`group` and :code:`slug` into an :code:`entity_id` if provided.
+        Favors :code:`entity_id` over :code:`group` or :code:`slug`.
         """
-        if (group is None or slug is None) and entity_id is None:
+        if (group_id is None or slug is None) and entity_id is None:
             raise ValueError(
-                "To use group or slug you need to pass both not just one. "
-                "Make sure you are using keyword arguments."
+                "To use group or slug you need to pass both, not just one. "
+                "Otherwise pass entity_id. "
+                "Also make sure you are using keyword arguments."
             )
-        if group is not None and slug is not None:
-            entity_id = group + "." + slug
-        elif entity_id is None:
-            raise ValueError("Neither group and slug or entity_id provided.")
+        if group_id is not None and slug is not None:
+            entity_id = f"{group_id}.{slug}"
+        assert entity_id is not None
         return self.format_entity_id(entity_id)
 
     @staticmethod
@@ -99,7 +102,6 @@ class RawBaseClient:
         start_timestamp: Optional[datetime] = None,
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
         end_timestamp: Optional[datetime] = None,
-        minimal_state_data: bool = False,
         significant_changes_only: bool = False,
     ) -> Tuple[Dict[str, Optional[str]], str]:
 
@@ -108,24 +110,20 @@ class RawBaseClient:
         if entities is not None:
             params["filter_entity_id"] = ",".join([ent.entity_id for ent in entities])
         if end_timestamp is not None:
-            params["end_time"] = url_quote(end_timestamp.isoformat())
-        if minimal_state_data:
-            params["minimal_response"] = None
+            params[
+                "end_time"
+            ] = end_timestamp.isoformat()  # Params are automatically URL encoded
         if significant_changes_only:
             params["significant_changes_only"] = None
         if start_timestamp is not None:
-            if isinstance(start_timestamp, datetime):
-                formatted_timestamp = start_timestamp.isoformat()
-                url = join("history/period/", formatted_timestamp)
-            else:
-                raise TypeError(f"timestamp needs to be of type {datetime!r}")
+            url = join("history/period/", start_timestamp.isoformat())
         else:
             url = "history/period"
         return params, url
 
     @staticmethod
     def prepare_get_logbook_entry_params(
-        filter_entity: Optional[Entity] = None,
+        filter_entities: Optional[Union[str, Iterable[str]]] = None,
         start_timestamp: Optional[
             Union[str, datetime]
         ] = None,  # Defaults to 1 day before
@@ -133,11 +131,18 @@ class RawBaseClient:
     ) -> Tuple[Dict[str, str], str]:
         """Prepares the query string and url path for retrieving logbook entries."""
         params: Dict[str, str] = {}
-        if filter_entity is not None:
-            params.update(entity=filter_entity.entity_id)
+        if filter_entities is not None:
+            params.update(
+                {
+                    "entity": filter_entities
+                    if isinstance(filter_entities, str)
+                    else ",".join(filter_entities)
+                }
+            )
         if end_timestamp is not None:
             if isinstance(end_timestamp, datetime):
-                end_timestamp = url_quote(end_timestamp.isoformat())
+                end_timestamp = end_timestamp.isoformat()
+                # Parameters are already URL encoded automatically.
             params.update(end_time=end_timestamp)
         if start_timestamp is not None:
             if isinstance(start_timestamp, datetime):

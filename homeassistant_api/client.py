@@ -1,4 +1,6 @@
 """Module containing the primary Client class."""
+from typing import Any
+
 from .rawasyncclient import RawAsyncClient
 from .rawclient import RawClient
 
@@ -13,3 +15,11 @@ class Client(RawClient, RawAsyncClient):
     :param cache_session: A :py:class:`requests_cache.CachedSession` object to use for caching requests. Optional.
     :param async_cache_session: A :py:class:`aiohttp_client_cache.CachedSession` object to use for caching requests. Optional.
     """  # pylint: disable=line-too-long
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if "cache_session" in kwargs:
+            RawClient.__init__(self, *args, **kwargs)
+        elif "async_cache_session" in kwargs:
+            RawAsyncClient.__init__(self, *args, **kwargs)
+        else:
+            super().__init__(*args, **kwargs)

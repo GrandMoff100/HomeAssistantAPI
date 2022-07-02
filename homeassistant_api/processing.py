@@ -3,7 +3,6 @@
 import inspect
 import json
 import logging
-import sys
 from typing import Any, Callable, ClassVar, Dict, Tuple, Union, cast
 
 import simplejson
@@ -14,6 +13,7 @@ from requests_cache.models.response import CachedResponse
 
 from .errors import (
     EndpointNotFoundError,
+    InternalServerError,
     MalformedDataError,
     MethodNotAllowedError,
     ProcessorNotFoundError,
@@ -25,17 +25,19 @@ from .errors import (
 logger = logging.getLogger(__name__)
 
 
-ResponseType = Union[Response, CachedResponse, ClientResponse, AsyncCachedResponse]
-ProcessorType = Callable[[ResponseType], Any]
+AsyncResponseType = Union[AsyncCachedResponse, ClientResponse]
+ResponseType = Union[Response, CachedResponse]
+AllResponseType = Union[AsyncCachedResponse, ClientResponse, Response, CachedResponse]
+ProcessorType = Callable[[AllResponseType], Any]
 
 
 class Processing:
     """Uses to processor functions to convert json data into common python data types."""
 
-    _response: ResponseType
+    _response: AllResponseType
     _processors: ClassVar[Dict[str, Tuple[ProcessorType, ...]]] = {}
 
-    def __init__(self, response: ResponseType) -> None:
+    def __init__(self, response: AllResponseType) -> None:
         self._response = response
 
     @staticmethod
@@ -50,7 +52,7 @@ class Processing:
 
         return register_processor
 
-    def process_content(self, _async: bool) -> Any:
+    def process_content(self, *, async_: bool = False) -> Any:
         """
         Looks up processors by their Content-Type header and then
         calls the processor with the response.
@@ -61,81 +63,72 @@ class Processing:
             "text/plain",
         )  # type: ignore[arg-type]
         for processor in self._processors.get(mimetype, ()):
-            if not _async ^ inspect.iscoroutinefunction(processor):
+            if not async_ ^ inspect.iscoroutinefunction(processor):
                 logger.debug("Using processor %r on %r", processor, self._response)
                 return processor(self._response)
-        if _async:
-            raise ProcessorNotFoundError(
-                f"No async response processor registered for mimetype {mimetype!r}."
-            )
         raise ProcessorNotFoundError(
-            f"No non-async response processor found for mimetype {mimetype!r}."
+            f"No response processor found for mimetype {mimetype!r}."
         )
 
     def process(self) -> Any:
         """Validates the http status code before starting to process the repsonse content"""
-        if _async := isinstance(self._response, (ClientResponse, AsyncCachedResponse)):
+        if async_ := isinstance(self._response, (ClientResponse, AsyncCachedResponse)):
             status_code = self._response.status
-        elif isinstance(self._response, Response):
+            _buffer = self._response.content._buffer
+            content = "" if not _buffer else _buffer[0].decode()
+        elif isinstance(self._response, (Response, CachedResponse)):
             status_code = self._response.status_code
-        else:
-            raise ValueError(
-                f"Only expected a response object from requests or aiohttp. Got {self._response!r}"
-            )
+            content = self._response.content.decode()
         if status_code in (200, 201):
-            return self.process_content(_async)
+            return self.process_content(async_=async_)
         if status_code == 400:
-            raise RequestError(self._response.content)
+            raise RequestError(content)
         if status_code == 401:
             raise UnauthorizedError()
         if status_code == 404:
-            raise EndpointNotFoundError(self._response.url)
+            raise EndpointNotFoundError(str(self._response.url))
         if status_code == 405:
-            raise MethodNotAllowedError(
-                cast(str, self._response.request.method),
-            )  # type: ignore[union-attr]
-        print(
-            "If this happened, "
-            "please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues "
-            "with the request status code and the request content",
-            file=sys.stderr,
-        )
-        raise UnexpectedStatusCodeError(
-            status_code,
-            self._response.content,
-        )
+            method = (
+                self._response.request.method
+                if isinstance(self._response, (Response, CachedResponse))
+                else self._response.method
+            )
+            raise MethodNotAllowedError(cast(str, method))
+        if status_code >= 500:
+            raise InternalServerError(status_code, content)
+        raise UnexpectedStatusCodeError(status_code)
 
 
 # List of default processors
-@Processing.processor("application/json")
-def process_json(response):
+@Processing.processor("application/json")  # type: ignore[arg-type]
+def process_json(response: ResponseType) -> Dict[str, Any]:
     """Returns the json dict content of the response."""
     try:
         return response.json()
-    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError) as err:
+    except (json.JSONDecodeError, simplejson.JSONDecodeError) as err:
         raise MalformedDataError(
             f"Home Assistant responded with non-json response: {repr(response.text)}"
         ) from err
 
 
-@Processing.processor("application/octet-stream")
-def process_text(response):
+@Processing.processor("application/octet-stream")  # type: ignore[arg-type]
+def process_text(response: ResponseType) -> str:
     """Returns the plaintext of the reponse."""
     return response.text
 
 
-@Processing.processor("application/json")
-async def async_process_json(response):
+@Processing.processor("application/json")  # type: ignore[arg-type]
+async def async_process_json(response: AsyncResponseType) -> Dict[str, Any]:
     """Returns the json dict content of the response."""
     try:
         return await response.json()
-    except (json.decoder.JSONDecodeError, simplejson.decoder.JSONDecodeError) as err:
+    except (json.JSONDecodeError, simplejson.JSONDecodeError) as err:
         raise MalformedDataError(
             f"Home Assistant responded with non-json response: {repr(await response.text())}"
         ) from err
 
 
-@Processing.processor("application/octet-stream")
-async def async_process_text(response):
+@Processing.processor("application/octet-stream")  # type: ignore[arg-type]
+async def async_process_text(response: AsyncResponseType) -> str:
     """Returns the plaintext of the reponse."""
     return await response.text()

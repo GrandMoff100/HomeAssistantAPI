@@ -1,5 +1,6 @@
 """Module for all interaction with homeassistant."""
 
+import json
 import logging
 from datetime import datetime
 from posixpath import join
@@ -17,15 +18,15 @@ from typing import (
 )
 
 import requests
-from requests_cache import CachedSession
+import requests_cache
 
-from .errors import APIConfigurationError, BadTemplateError, RequestError
+from .errors import BadTemplateError, RequestError, RequestTimeoutError
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, State
-from .processing import Processing
+from .processing import Processing, ResponseType
 from .rawbaseclient import RawBaseClient
 
 if TYPE_CHECKING:
-    from .client import Client
+    from homeassistant_api import Client
 else:
     Client = None  # pylint: disable=invalid-name
 
@@ -42,18 +43,29 @@ class RawClient(RawBaseClient):
     :param global_request_kwargs: Kwargs to pass to :func:`requests.request` or :meth:`aiohttp.ClientSession.request`. Optional.
     """  # pylint: disable=line-too-long
 
+    cache_session: Union[requests_cache.CachedSession, requests.Session]
+
     def __init__(
         self,
         *args,
         cache_session: Union[
-            CachedSession, Literal[False], Literal[None]
+            requests_cache.CachedSession,
+            Literal[False],
+            Literal[None],
         ] = None,  # Explicitly disable cache with cache_session=False
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.cache_session = (
-            cache_session if cache_session is not None else CachedSession()
-        )
+        if cache_session is False:
+            self.cache_session = requests.Session()
+        elif cache_session is None:
+            self.cache_session = requests_cache.CachedSession(
+                cache_name="default_cache",
+                backend="memory",
+                expire_after=300,
+            )
+        else:
+            self.cache_session = cache_session
 
     def __enter__(self):
         logger.debug("Entering cached requests session %r.", self.cache_session)
@@ -72,7 +84,7 @@ class RawClient(RawBaseClient):
         method="GET",
         headers: Dict[str, str] = None,
         **kwargs,
-    ) -> Union[Dict[str, Any], list, str]:
+    ) -> Any:
         """Base method for making requests to the api"""
         try:
             if self.global_request_kwargs is not None:
@@ -85,21 +97,14 @@ class RawClient(RawBaseClient):
                     headers=self.prepare_headers(headers),
                     **kwargs,
                 )
-            else:
-                resp = requests.request(
-                    method,
-                    self.endpoint(path),
-                    headers=self.prepare_headers(headers),
-                    **kwargs,
-                )
         except requests.exceptions.Timeout as err:
-            raise RequestError(
+            raise RequestTimeoutError(
                 f'Home Assistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
             ) from err
         return self.response_logic(resp)
 
     @classmethod
-    def response_logic(cls, response: requests.Response) -> Union[dict, list, str]:
+    def response_logic(cls, response: ResponseType) -> Any:
         """Processes responses from the API and formats them"""
         return Processing(response=response).process()
 
@@ -129,7 +134,6 @@ class RawClient(RawBaseClient):
         start_timestamp: Optional[datetime] = None,
         # Defaults to 1 day before. https://developers.home-assistant.io/docs/api/rest/
         end_timestamp: Optional[datetime] = None,
-        minimal_state_data: bool = False,
         significant_changes_only: bool = False,
     ) -> Generator[History, None, None]:
         """
@@ -139,7 +143,6 @@ class RawClient(RawBaseClient):
             entities=entities,
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
-            minimal_state_data=minimal_state_data,
             significant_changes_only=significant_changes_only,
         )
         data = self.request(
@@ -179,18 +182,16 @@ class RawClient(RawBaseClient):
     # API check methods
     def check_api_config(self) -> bool:
         """Asks Home Assistant to validate its configuration file."""
-        res = cast(dict, self.request("config/core/check_config", method="POST"))
+        res = cast(
+            Dict[str, Any], self.request("config/core/check_config", method="POST")
+        )
         valid = {"valid": True, "invalid": False}.get(res["result"], False)
-        if valid is False:
-            raise APIConfigurationError(res["errors"])
         return valid
 
     def check_api_running(self) -> bool:
         """Asks Home Assistant if it is running."""
         res = self.request("")
-        if cast(dict, res).get("message", None) == "API running.":
-            return True
-        raise ValueError("Server response did not return message attribute")
+        return cast(Dict[str, Any], res).get("message") == "API running."
 
     # Entity methods
     def get_entities(self) -> Dict[str, Group]:
@@ -199,33 +200,39 @@ class RawClient(RawBaseClient):
         for state in self.get_states():
             group_id, entity_slug = state.entity_id.split(".")
             if group_id not in entities:
-                entities[group_id] = Group(group_id=cast(str, group_id), _client=self)
-            entities[group_id].add_entity(entity_slug, state)
+                entities[group_id] = Group(
+                    group_id=cast(str, group_id),
+                    _client=self,  # type: ignore[arg-type]
+                )
+            entities[group_id]._add_entity(entity_slug, state)
         return entities
 
     def get_entity(
         self,
         group_id: str = None,
-        entity_slug: str = None,
+        slug: str = None,
         entity_id: str = None,
     ) -> Optional[Entity]:
         """Returns an :py:class:`Entity` model for an :code:`entity_id`"""
-        if group_id is not None and entity_slug is not None:
-            state = self.get_state(group=group_id, slug=entity_slug)
+        if group_id is not None and slug is not None:
+            state = self.get_state(group_id=group_id, slug=slug)
         elif entity_id is not None:
             state = self.get_state(entity_id=entity_id)
         else:
             help_msg = (
                 "Use keyword arguments to pass entity_id. "
-                "Or you can pass the entity_group and entity_slug instead"
+                "Or you can pass the group_id and slug instead"
             )
             raise ValueError(
-                f"Neither group and slug or entity_id provided. {help_msg}"
+                f"Neither group_id and slug or entity_id provided. {help_msg}"
             )
-        group_id, entity_slug = state.entity_id.split(".")
-        group = Group(group_id=cast(str, group_id), _client=self)
-        group.add_entity(cast(str, entity_slug), state)
-        return group.get_entity(cast(str, entity_slug))
+        split_group_id, split_slug = state.entity_id.split(".")
+        group = Group(
+            group_id=cast(str, split_group_id),
+            _client=self,  # type: ignore[arg-type]
+        )
+        group._add_entity(cast(str, split_slug), state)
+        return group.get_entity(cast(str, split_slug))
 
     # Services and domain methods
     def get_domains(self) -> Dict[str, Domain]:
@@ -260,12 +267,12 @@ class RawClient(RawBaseClient):
         self,
         *,
         entity_id: Optional[str] = None,
-        group: Optional[str] = None,
+        group_id: Optional[str] = None,
         slug: Optional[str] = None,
     ) -> State:
         """Fetches the state of the entity specified"""
         entity_id = self.prepare_entity_id(
-            group=group,
+            group_id=group_id,
             slug=slug,
             entity_id=entity_id,
         )
@@ -274,29 +281,18 @@ class RawClient(RawBaseClient):
 
     def set_state(  # pylint: disable=duplicate-code
         self,
-        state: str,
-        *,
-        entity_id: Optional[str] = None,
-        group: Optional[str] = None,
-        slug: Optional[str] = None,
-        **payload,
+        state: State,
     ) -> State:
         """
         This method sets the representation of a device within Home Assistant and will not communicate with the actual device.
         To communicate with the device, use :py:meth:`Service.trigger` or :py:meth:`Service.async_trigger`
         """
-        entity_id = self.prepare_entity_id(
-            group=group,
-            slug=slug,
-            entity_id=entity_id,
-        )
-        payload.update(state=state)
         data = self.request(
-            join("states", entity_id),
+            join("states", state.entity_id),
             method="POST",
-            json=payload,
+            json=json.loads(state.json()),
         )
-        return State.from_json(cast(dict, data))
+        return State.from_json(cast(Dict[str, Any], data))
 
     def get_states(self) -> Tuple[State, ...]:
         """Gets the states of all entities within homeassistant"""
@@ -308,14 +304,19 @@ class RawClient(RawBaseClient):
     def get_events(self) -> Tuple[Event, ...]:
         """Gets the Events that happen within homeassistant"""
         data = self.request("events")
-        if isinstance(data, list):
-            return tuple(
-                map(
-                    lambda json: Event.from_json(json, client=cast(Client, self)),
-                    cast(List[Dict[str, Any]], data),
-                )
+        return tuple(
+            map(
+                lambda json: Event.from_json(json, client=cast(Client, self)),
+                cast(List[Dict[str, Any]], data),
             )
-        raise TypeError("Received JSON data is not a list of events.")
+        )
+
+    def get_event(self, name: str) -> Optional[Event]:
+        """Gets the :py:class:`Event` with the specified name if it has at least one listener."""
+        for event in self.get_events():
+            if event.event == name.strip().lower():
+                return event
+        return None
 
     def fire_event(self, event_type: str, **event_data) -> Optional[str]:
         """Fires a given event_type within homeassistant. Must be an existing event_type."""

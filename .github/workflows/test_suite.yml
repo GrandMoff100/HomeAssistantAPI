@@ -88,5 +88,11 @@ jobs:
           export PYTHONPATH=.
           export HOMEASSISTANTAPI_URL="http://localhost:8123/api"
           export HOMEASSISTANTAPI_TOKEN="$TOKEN"
-          poetry run pytest tests --disable-warnings
+          poetry run pytest tests --disable-warnings --cov --cov-report xml:coverage.xml
           echo "::endgroup::"
+      - name: Upload Coverage Report
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: true
+          verbose: true
