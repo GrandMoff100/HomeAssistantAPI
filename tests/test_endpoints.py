@@ -3,6 +3,7 @@
 from datetime import datetime
 
 from homeassistant_api import Client
+from homeassistant_api.models.calendar import Calendar, CalendarEvent
 from homeassistant_api.models.events import Event
 from homeassistant_api.models.states import State
 
@@ -246,3 +247,30 @@ async def test_async_get_components(async_cached_client: Client) -> None:
     """Tests the `GET /api/components` endpoint."""
     components = await async_cached_client.async_get_components()
     assert "person" in components
+
+
+def test_get_calendars(cached_client: Client) -> None:
+    """Tests the `GET /api/calendars` endpoint."""
+    calendars = cached_client.get_calendars()
+    for calendar in calendars:
+        assert isinstance(calendar, Calendar)
+
+async def test_async_get_calendars(async_cached_client: Client) -> None:
+    """Tests the `GET /api/calendars` endpoint."""
+    calendars = await async_cached_client.async_get_calendars()
+    for calendar in calendars:
+        assert isinstance(calendar, Calendar)
+
+
+def test_get_calendar_events(cached_client: Client) -> None:
+    """Tests the `GET /api/calendars/<calendar_entity_id>` endpoint."""
+    events = cached_client.get_calendar_events("test_calendar")
+    for event in events:
+        assert isinstance(event, CalendarEvent)
+
+
+async def test_async_get_calendar_events(async_cached_client: Client) -> None:
+    """Tests the `GET /api/calendars/<calendar_entity_id>` endpoint."""
+    events = await async_cached_client.async_get_calendar_events("test_calendar")
+    for event in events:
+        assert isinstance(event, CalendarEvent)
