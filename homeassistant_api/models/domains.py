@@ -116,6 +116,6 @@ class Service(BaseModel):
                 caller := gc.get_referrers(parent_frame.f_code)[0]
             ) or inspect.iscoroutine(caller):
                 return self.async_trigger(**service_data)
-        except IndexError:
+        except IndexError:  # pragma: no cover
             pass
         return self.trigger(**service_data)

@@ -78,5 +78,6 @@ exclude_lines = [
     "raise RequestTimeoutError\\(",
     "except \\(json\\.decoder\\.JSONDecodeError, simplejson.decoder\\.JSONDecodeError\\) as err:",
     "pass",
-    "last_updated < \\(now := datetime\\.now\\(\\)\\) - wait"
+    "last_updated < \\(now := datetime\\.now\\(\\)\\) - wait",
+    "pragma: no cover"
 ]
