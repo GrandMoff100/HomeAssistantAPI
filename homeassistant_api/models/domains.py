@@ -111,8 +111,11 @@ class Service(BaseModel):
         """Triggers the service associated with this object."""
         assert (frame := inspect.currentframe()) is not None
         assert (parent_frame := frame.f_back) is not None
-        if inspect.iscoroutinefunction(
-            caller := gc.get_referrers(parent_frame.f_code)[0]
-        ) or inspect.iscoroutine(caller):
-            return self.async_trigger(**service_data)
+        try:
+            if inspect.iscoroutinefunction(
+                caller := gc.get_referrers(parent_frame.f_code)[0]
+            ) or inspect.iscoroutine(caller):
+                return self.async_trigger(**service_data)
+        except IndexError:  # pragma: no cover
+            pass
         return self.trigger(**service_data)
