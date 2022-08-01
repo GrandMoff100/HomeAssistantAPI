@@ -72,7 +72,7 @@ class Domain(BaseModel):
 class ServiceField(BaseModel):
     """Model for service parameters/fields."""
 
-    description: str
+    description: Optional[str] = None
     example: Any
     selector: Optional[Dict[str, Any]] = None
     name: Optional[str] = None
