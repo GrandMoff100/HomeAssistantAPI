@@ -10,8 +10,6 @@ on:
     paths:
       - "**.py"
   workflow_dispatch:
-  schedule:
-    - cron: 0 12 * * 6
 
 jobs:
   code_styling:
