@@ -26,7 +26,7 @@ class Client(RawClient, RawAsyncClient):
             if inspect.iscoroutinefunction(
                 caller := gc.get_referrers(parent_frame.f_code)[0]
             ) or inspect.iscoroutine(caller):
-                RawAsyncClient.__init__(*args, **kwargs)
+                RawAsyncClient.__init__(self, *args, **kwargs)
         except IndexError:  # pragma: no cover
             pass
-        RawClient.__init__(*args, **kwargs)
+        RawClient.__init__(self, *args, **kwargs)
