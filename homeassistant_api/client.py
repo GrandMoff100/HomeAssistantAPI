@@ -1,8 +1,7 @@
 """Module containing the primary Client class."""
-from typing import Any
-
-import inspect
 import gc
+import inspect
+from typing import Any
 
 from .rawasyncclient import RawAsyncClient
 from .rawclient import RawClient
