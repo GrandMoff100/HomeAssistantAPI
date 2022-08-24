@@ -1,4 +1,6 @@
 """Module containing the primary Client class."""
+import gc
+import inspect
 from typing import Any
 
 from .rawasyncclient import RawAsyncClient
@@ -17,9 +19,13 @@ class Client(RawClient, RawAsyncClient):
     """  # pylint: disable=line-too-long
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        if "cache_session" in kwargs:
-            RawClient.__init__(self, *args, **kwargs)
-        elif "async_cache_session" in kwargs:
-            RawAsyncClient.__init__(self, *args, **kwargs)
-        else:
-            super().__init__(*args, **kwargs)
+        assert (frame := inspect.currentframe()) is not None
+        assert (parent_frame := frame.f_back) is not None
+        try:
+            if inspect.iscoroutinefunction(
+                caller := gc.get_referrers(parent_frame.f_code)[0]
+            ) or inspect.iscoroutine(caller):
+                RawAsyncClient.__init__(self, *args, **kwargs)
+        except IndexError:  # pragma: no cover
+            pass
+        RawClient.__init__(self, *args, **kwargs)
