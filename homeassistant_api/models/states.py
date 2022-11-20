@@ -10,7 +10,7 @@ from .base import BaseModel
 class Context(BaseModel):
     """Model for entity state contexts."""
 
-    id: str = Field(max_length=26, description="Unique string identifying the context.")
+    id: str = Field(max_length=128, description="Unique string identifying the context.")
 
 
 class State(BaseModel):
