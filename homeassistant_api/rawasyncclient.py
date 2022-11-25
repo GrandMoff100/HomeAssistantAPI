@@ -56,7 +56,7 @@ class RawAsyncClient(RawBaseClient):
         ] = None,  # Explicitly disable cache with async_cache_session=False
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        RawBaseClient.__init__(self, *args, **kwargs)
         if async_cache_session is False:
             self.async_cache_session = aiohttp.ClientSession()
         elif async_cache_session is None:
@@ -77,9 +77,9 @@ class RawAsyncClient(RawBaseClient):
         await self.async_check_api_running()
         return self
 
-    async def __aexit__(self, cls, obj, traceback):
+    async def __aexit__(self, _, __, ___):
         logger.debug("Exiting async requests session %r", self.async_cache_session)
-        await self.async_cache_session.__aexit__(cls, obj, traceback)
+        await self.async_cache_session.close()
 
     # Very important request function
     async def async_request(
