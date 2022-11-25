@@ -34,6 +34,7 @@ async def test_custom_async_cached_session() -> None:
                 expire_after=10,
             ),
         ),
+        use_async=True,
     ):
         pass
 
@@ -43,5 +44,6 @@ async def test_default_async_session() -> None:
         os.environ["HOMEASSISTANTAPI_URL"],
         os.environ["HOMEASSISTANTAPI_TOKEN"],
         async_cache_session=False,
+        use_async=True,
     ):
         pass

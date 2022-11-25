@@ -55,7 +55,7 @@ class RawClient(RawBaseClient):
         ] = None,  # Explicitly disable cache with cache_session=False
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        RawBaseClient.__init__(self, *args, **kwargs)
         if cache_session is False:
             self.cache_session = requests.Session()
         elif cache_session is None:
@@ -74,9 +74,9 @@ class RawClient(RawBaseClient):
         self.check_api_config()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, _, __, ___):
         logger.debug("Exiting requests session %r", self.cache_session)
-        self.cache_session.__exit__(*args)
+        self.cache_session.close()
 
     def request(
         self,

@@ -34,7 +34,9 @@ def test_unauthorized() -> None:
 async def test_async_unauthorized() -> None:
     with pytest.raises(UnauthorizedError):
         async with Client(
-            os.environ["HOMEASSISTANTAPI_URL"], "lolthisisawrongtokenforsure"
+            os.environ["HOMEASSISTANTAPI_URL"],
+            "lolthisisawrongtokenforsure",
+            use_async=True,
         ):
             pass
 

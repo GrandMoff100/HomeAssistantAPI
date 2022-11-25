@@ -1,10 +1,11 @@
 """Module containing the primary Client class."""
-import gc
-import inspect
+import logging
 from typing import Any
 
 from .rawasyncclient import RawAsyncClient
 from .rawclient import RawClient
+
+logger = logging.getLogger(__name__)
 
 
 class Client(RawClient, RawAsyncClient):
@@ -18,14 +19,10 @@ class Client(RawClient, RawAsyncClient):
     :param async_cache_session: A :py:class:`aiohttp_client_cache.CachedSession` object to use for caching requests. Optional.
     """  # pylint: disable=line-too-long
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        assert (frame := inspect.currentframe()) is not None
-        assert (parent_frame := frame.f_back) is not None
-        try:
-            if inspect.iscoroutinefunction(
-                caller := gc.get_referrers(parent_frame.f_code)[0]
-            ) or inspect.iscoroutine(caller):
-                RawAsyncClient.__init__(self, *args, **kwargs)
-        except IndexError:  # pragma: no cover
-            pass
-        RawClient.__init__(self, *args, **kwargs)
+    def __init__(self, *args: Any, use_async: bool = False, **kwargs: Any) -> None:
+        if use_async:
+            logger.error("Initializing Client asyncsyncronously")
+            RawAsyncClient.__init__(self, *args, **kwargs)
+        else:
+            logger.error("Initializing Client syncronously")
+            RawClient.__init__(self, *args, **kwargs)
