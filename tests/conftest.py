@@ -12,7 +12,8 @@ from homeassistant_api import Client
 def setup_cached_client() -> Generator[Client, None, None]:
     """Initializes the Client and enters a cached session."""
     with Client(
-        os.environ["HOMEASSISTANTAPI_URL"], os.environ["HOMEASSISTANTAPI_TOKEN"]
+        os.environ["HOMEASSISTANTAPI_URL"],
+        os.environ["HOMEASSISTANTAPI_TOKEN"],
     ) as client:
         yield client
 
@@ -29,6 +30,8 @@ def event_loop():
 async def setup_async_cached_client() -> AsyncGenerator[Client, None]:
     """Initializes the Client and enters an async cached session."""
     async with Client(
-        os.environ["HOMEASSISTANTAPI_URL"], os.environ["HOMEASSISTANTAPI_TOKEN"]
+        os.environ["HOMEASSISTANTAPI_URL"],
+        os.environ["HOMEASSISTANTAPI_TOKEN"],
+        use_async=True,
     ) as client:
         yield client
