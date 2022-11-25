@@ -25,10 +25,19 @@ packages = [{ include = "homeassistant_api" }]
 aiohttp = "^3.8.1"
 aiohttp-client-cache = "^0.6.1"
 pydantic = "<=1.9.0"
-python = ">=3.7,<4.0.0"
-requests = "2.27.1"
+python = "^3.7,<4.0.0"
+requests = "^2.27.1"
 requests-cache = "^0.9.2"
 simplejson = "^3.17.6"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+sphinx-autodoc-typehints = "^1.17.0"
+sphinx-rtd-theme = "^1.0.0"
+autodoc-pydantic = "^1.6.1"
+toml = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
@@ -37,18 +46,14 @@ isort = "^5.10.1"
 pre-commit = "^2.17.0"
 pylint = "^2.12.2"
 pytest = "^6.2.5"
-sphinx-autodoc-typehints = {version = "^1.17.0", extras = ["docs"]}
-sphinx-rtd-theme = {version = "^1.0.0", extras = ["docs"]}
 toml = "^0.10.2"
 types-docutils = "^0.17.5"
 types-requests = "^2.27.9"
 types-simplejson = "^3.17.3"
 types-toml = "^0.10.4"
 mypy = "^0.931"
-autodoc-pydantic = {version = "^1.6.1", extras = ["docs"]}
 pytest-asyncio = "^0.18.3"
 pytest-cov = "^3.0.0"
-coverage = {extras = ["toml"], version = "^6.4.1"}
 aiosqlite = "^0.17.0"
 
 [tool.pylint.master]
