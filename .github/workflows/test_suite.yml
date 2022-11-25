@@ -25,18 +25,17 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install poetry
-          poetry config virtualenvs.create false
           poetry install
       - name: Run Black
-        run: black homeassistant_api --check
+        run: poetry run black homeassistant_api --check
       - name: Run iSort
-        run: isort homeassistant_api --check-only
+        run: poetry run isort homeassistant_api --check-only
       - name: Run Flake8
-        run: flake8 homeassistant_api
+        run: poetry run flake8 homeassistant_api
       - name: Run MyPy
-        run: mypy homeassistant_api --show-error-codes
+        run: poetry run mypy homeassistant_api --show-error-codes
       - name: Run PyLint
-        run: pylint homeassistant_api
+        run: poetry run pylint homeassistant_api
   code_functionality:
     name: "Code Functionality"
     runs-on: ubuntu-latest
