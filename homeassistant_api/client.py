@@ -1,6 +1,4 @@
 """Module containing the primary Client class."""
-import gc
-import inspect
 import logging
 from typing import Any
 
