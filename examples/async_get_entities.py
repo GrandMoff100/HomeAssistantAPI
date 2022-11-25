@@ -9,7 +9,7 @@ token = os.getenv("HOMEASSISTANT_API_TOKEN")
 
 async def main():
     # Initialize main object
-    client = Client(url, token)
+    client = Client(url, token, use_async=True)
     # Uses async context manager to ping the server and initialize caching.
     async with client:
         # All async methods are prefixed with `async_`.
