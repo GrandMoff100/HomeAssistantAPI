@@ -48,12 +48,25 @@ You can simply pass them to your client like so.
         expire_after=timedelta(minutes=5)),
         use_async=True
     )
-    # CachedSession is activated by the `async with` statement.
     async def main():
         async with client:
             # Grab and update some cool entities and services inside your installation.
             ...
     asyncio.run(main())
+
+
+Why the heck is :py:class:`Client` a context manager?
+********************************************************
+
+The :py:class:`Client` is a context manager because it activates the cache session and pings Home Assistant to make sure its running.
+You might not want this behavior, if you don't then don't use the :code:`with` or :code:`async with` statement.
+You can still use the client without it, but you will have to manually activate the cache session before you use it.
+
+Disabling Caching
+******************
+
+To explicitly disable the default cache you can pass :code:`cache_session=False` or :code:`async_cache_session=False` to :py:class:`Client`'s init method depending on your use case.
+Otherwise the default cache will be used by default when you use :code:`with client:` or :code:`async with client:`.
 
 
 Response Processing
@@ -64,7 +77,7 @@ These functions take a Response object as a parameter and return the python data
 How To Register Response Processors (Converters)
 ==================================================
 
-To register a response processor you need to import the Processing class and then implement the decorator.
+To register a response processor you need to import the :py:class:`Processing` class and then implement the decorator.
 
 
 .. code-block:: python
