@@ -106,8 +106,8 @@ Async Services
     import asyncio
     from homeassistant_api import Client
 
-    # Initialize client like usual
-    client = Client(url, token)
+    # Initialize client like usual, except with the :code:`use_async` keyword.
+    client = Client(url, token, use_async=True)
 
     async def main():
 

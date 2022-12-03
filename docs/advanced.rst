@@ -41,7 +41,13 @@ You can simply pass them to your client like so.
     from homeassistant_api import Client
     from aiohttp_client_cache import CachedSession, FileBackend
 
-    client = Client("<URL>", "<TOKEN>", cache_session=CachedSession(cache=FileBackend(), expire_after=timedelta(minutes=5)))
+    client = Client(
+        "<URL>",
+        "<TOKEN>",
+        cache_session=CachedSession(cache=FileBackend(),
+        expire_after=timedelta(minutes=5)),
+        use_async=True
+    )
     # CachedSession is activated by the `async with` statement.
     async def main():
         async with client:
