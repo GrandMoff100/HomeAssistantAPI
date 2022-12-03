@@ -42,6 +42,8 @@ The most commonly used features of this library include triggering services and 
     client = Client("https://foobarhomeassistant.duckdns.org:8123/api", "mylongtokenpasswordthingyfoobar")
 
     # In order to activate the requests session you to use the Client context manager like so.
+    # Using it as a context manager will automatically close the session when you're done with it.
+    # But also will *ping* your Home Assistant instance to make sure it's running.
     with client:
         while True:
             sun = client.get_entity(entity_id="sun.sun")
@@ -106,8 +108,8 @@ Async Services
     import asyncio
     from homeassistant_api import Client
 
-    # Initialize client like usual
-    client = Client(url, token)
+    # Initialize client like usual, except with the :code:`use_async` keyword.
+    client = Client(url, token, use_async=True)
 
     async def main():
 
@@ -155,6 +157,9 @@ Async Entities
     door.state.attributes.update({'open_height': '5ft'})
     await door.async_set_state(door.state)
     # <State "My new state" entity_id="cover.garage_door">
+
+
+
 
 
 What's Next?

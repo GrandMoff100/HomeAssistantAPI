@@ -236,7 +236,7 @@ class RawClient(RawBaseClient):
 
     # Services and domain methods
     def get_domains(self) -> Dict[str, Domain]:
-        """Fetches all :py:class:`Service`s from the API."""
+        """Fetches all :py:class:`Service` 's from the API."""
         data = self.request("services")
         domains = map(
             lambda json: Domain.from_json(json, client=cast(Client, self)),
@@ -245,7 +245,7 @@ class RawClient(RawBaseClient):
         return {domain.domain_id: domain for domain in domains}
 
     def get_domain(self, domain_id: str) -> Optional[Domain]:
-        """Fetches all services under a particular domain."""
+        """Fetches all :py:class:`Service`'s under a particular service :py:class:`Domain`."""
         return self.get_domains().get(domain_id)
 
     def trigger_service(
