@@ -37,8 +37,9 @@ class Processing:
     _response: AllResponseType
     _processors: ClassVar[Dict[str, Tuple[ProcessorType, ...]]] = {}
 
-    def __init__(self, response: AllResponseType) -> None:
+    def __init__(self, response: AllResponseType, decode_bytes: bool = False) -> None:
         self._response = response
+        self._decode_bytes = decode_bytes
 
     @staticmethod
     def processor(mimetype: str) -> Callable[[ProcessorType], ProcessorType]:
@@ -75,10 +76,14 @@ class Processing:
         if async_ := isinstance(self._response, (ClientResponse, AsyncCachedResponse)):
             status_code = self._response.status
             _buffer = self._response.content._buffer
-            content = "" if not _buffer else _buffer[0].decode()
+            content = b"" if not _buffer else _buffer[0].decode()
+            if self._decode_bytes:
+                content = content.decode()
         elif isinstance(self._response, (Response, CachedResponse)):
             status_code = self._response.status_code
-            content = self._response.content.decode()
+            content = self._response.content
+            if self._decode_bytes:
+                content = content.decode()
         if status_code in (200, 201):
             return self.process_content(async_=async_)
         if status_code == 400:
