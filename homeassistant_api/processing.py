@@ -37,7 +37,7 @@ class Processing:
     _response: AllResponseType
     _processors: ClassVar[Dict[str, Tuple[ProcessorType, ...]]] = {}
 
-    def __init__(self, response: AllResponseType, decode_bytes: bool = False) -> None:
+    def __init__(self, response: AllResponseType, decode_bytes: bool = True) -> None:
         self._response = response
         self._decode_bytes = decode_bytes
 
