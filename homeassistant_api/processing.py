@@ -76,7 +76,7 @@ class Processing:
         if async_ := isinstance(self._response, (ClientResponse, AsyncCachedResponse)):
             status_code = self._response.status
             _buffer = self._response.content._buffer
-            content = b"" if not _buffer else _buffer[0].decode()
+            content = b"" if not _buffer else _buffer[0]
             if self._decode_bytes:
                 content = content.decode()
         elif isinstance(self._response, (Response, CachedResponse)):
