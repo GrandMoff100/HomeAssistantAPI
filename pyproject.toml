@@ -2,12 +2,6 @@
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0"]
 
-[tool.bandit]
-skips = ["B105"]
-
-[tool.isort]
-profile = "black"
-
 [tool.poetry]
 authors = ["GrandMoff100 <minecraftcrusher100@gmail.com>"]
 description = "Python Wrapper for Homeassistant's REST API"
@@ -37,37 +31,26 @@ optional = true
 sphinx-autodoc-typehints = "^1.17.0"
 sphinx-rtd-theme = "^1.0.0"
 autodoc-pydantic = "^1.6.1"
-toml = "^0.10.2"
 
-[tool.poetry.dev-dependencies]
-black = "^22.3.0"
-flake8 = "^4.0.1"
-isort = "^5.10.1"
+[tool.poetry.group.styling]
+optional = true
+
+[tool.poetry.group.styling.dependencies]
 pre-commit = "^2.17.0"
-pylint = "^2.12.2"
-pytest = "^6.2.5"
-toml = "^0.10.2"
 types-docutils = "^0.17.5"
 types-requests = "^2.27.9"
 types-simplejson = "^3.17.3"
 types-toml = "^0.10.4"
 mypy = "^0.931"
+ruff = "^0.0.209"
+
+[tool.poetry.group.testing]
+optional = true
+
+[tool.poetry.group.testing.dependencies]
 pytest-asyncio = "^0.18.3"
 pytest-cov = "^3.0.0"
-aiosqlite = "^0.17.0"
-
-[tool.pylint.master]
-extension-pkg-whitelist = ["pydantic"]
-ignore-paths = ["examples"]
-
-[tool.pylint.messages_control]
-disable = [
-    "duplicate-code",
-    "too-many-public-methods",
-    "too-many-arguments",
-    "protected-access"
-]
-
+pytest = "^6.2.5"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -86,3 +69,20 @@ exclude_lines = [
     "last_updated < \\(now := datetime\\.now\\(\\)\\) - wait",
     "pragma: no cover"
 ]
+
+[tool.ruff]
+exclude = [
+    '.git',
+    '__pycache__',
+    '.github',
+]
+ignore = ['E501']
+select = [
+    'E',
+    'F',
+    'W',
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ['F401']
+"conf.py" = ['E402']

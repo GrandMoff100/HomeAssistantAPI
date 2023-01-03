@@ -10,20 +10,7 @@ repos:
     hooks:
       - id: trailing-whitespace
     rev: "v4.1.0"
-  - repo: https://github.com/psf/black
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.209'
     hooks:
-      - id: black
-    rev: "22.3.0"
-  - repo: https://github.com/PyCQA/isort
-    rev: "5.10.1"
-    hooks:
-      - id: isort
-  - repo: https://github.com/PyCQA/flake8
-    rev: "4.0.1"
-    hooks:
-      - id: flake8
-  - repo: https://github.com/PyCQA/pylint
-    rev: "v2.12.2"
-    hooks:
-      - id: pylint
-        language: system
+      - id: ruff
