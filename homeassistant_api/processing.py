@@ -73,17 +73,17 @@ class Processing:
 
     def process(self) -> Any:
         """Validates the http status code before starting to process the repsonse content"""
+        content: Union[str, bytes]
         if async_ := isinstance(self._response, (ClientResponse, AsyncCachedResponse)):
             status_code = self._response.status
             _buffer = self._response.content._buffer
             content = b"" if not _buffer else _buffer[0]
-            if self._decode_bytes:
-                content = content.decode()
         elif isinstance(self._response, (Response, CachedResponse)):
             status_code = self._response.status_code
             content = self._response.content
-            if self._decode_bytes:
-                content = content.decode()
+        if self._decode_bytes and isinstance(content, bytes):
+            content = content.decode()
+
         if status_code in (200, 201):
             return self.process_content(async_=async_)
         if status_code == 400:
@@ -96,7 +96,7 @@ class Processing:
             method = (
                 self._response.request.method
                 if isinstance(self._response, (Response, CachedResponse))
-                else self._response.method
+                else self._response.method  # type: ignore
             )
             raise MethodNotAllowedError(cast(str, method))
         if status_code >= 500:
