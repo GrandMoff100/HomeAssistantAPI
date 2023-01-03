@@ -93,11 +93,10 @@ class Processing:
         if status_code == 404:
             raise EndpointNotFoundError(str(self._response.url))
         if status_code == 405:
-            method = (
-                self._response.request.method
-                if isinstance(self._response, (Response, CachedResponse))
-                else self._response.method  # type: ignore
-            )
+            if isinstance(self._response, (Response, AsyncCachedResponse)):
+                method = self._response.request.method
+            else:
+                method = self._response.method
             raise MethodNotAllowedError(cast(str, method))
         if status_code >= 500:
             raise InternalServerError(status_code, content)
