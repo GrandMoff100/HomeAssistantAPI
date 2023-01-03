@@ -83,6 +83,7 @@ class RawClient(RawBaseClient):
         path,
         method="GET",
         headers: Dict[str, str] = None,
+        decode_bytes: bool = True,
         **kwargs,
     ) -> Any:
         """Base method for making requests to the api"""
@@ -101,12 +102,12 @@ class RawClient(RawBaseClient):
             raise RequestTimeoutError(
                 f'Home Assistant did not respond in time (timeout: {kwargs.get("timeout", 300)} sec)'
             ) from err
-        return self.response_logic(resp)
+        return self.response_logic(response=resp, decode_bytes=decode_bytes)
 
     @classmethod
-    def response_logic(cls, response: ResponseType) -> Any:
+    def response_logic(cls, response: ResponseType, decode_bytes: bool = True) -> Any:
         """Processes responses from the API and formats them"""
-        return Processing(response=response).process()
+        return Processing(response=response, decode_bytes=decode_bytes).process()
 
     # API information methods
     def get_error_log(self) -> str:

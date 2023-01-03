@@ -1,5 +1,7 @@
 """Module for custom error classes"""
 
+from typing import Union
+
 
 class HomeassistantAPIError(BaseException):
     """Base class for custom errors"""
@@ -40,10 +42,10 @@ class ParameterMissingError(HomeassistantAPIError):
 class InternalServerError(HomeassistantAPIError):
     """Error raised when Home Assistant says that it got itself in trouble."""
 
-    def __init__(self, status_code: int, content: str) -> None:
+    def __init__(self, status_code: int, content: Union[str, bytes]) -> None:
         super().__init__(
             f"Home Assistant returned a response with an error status code {status_code!r}.\n"
-            f"{content}\n"
+            f"{content!r}\n"
             "If this happened, "
             "please report it at https://github.com/GrandMoff100/HomeAssistantAPI/issues "
             "with the request status code and the request content. Thanks!"
