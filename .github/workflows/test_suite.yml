@@ -1,6 +1,6 @@
 name: Code Standards
 on:
-  push: # Comment this line to trigger action only on pull-requests (not recommended if you don't pay for GH Actions)
+  push:
     paths:
       - "**.py"
   pull_request:
@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install poetry
-          poetry install -G styling
+          poetry install --with styling
       - name: Run Ruff
         run: poetry run ruff homeassistant_api
       - name: Run MyPy
@@ -58,7 +58,7 @@ jobs:
         run: |
           echo "::group::Install Project Dependencies"
           python3 -m pip install poetry
-          python3 -m poetry install -G testing
+          python3 -m poetry install --with testing
           echo "::endgroup::"
 
           echo "::group::Install Home Assistant Dependencies"

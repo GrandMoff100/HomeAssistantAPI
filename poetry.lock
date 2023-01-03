@@ -969,7 +969,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7,<4.0.0"
-content-hash = "c7987aa1360586f2522bb666d517df3ad8777ed70b260b2bf1aa432a252c360f"
+content-hash = "c37a2e1a4c6aa122d3308b63863ba49baefe95d884e9b503b9cd80cd7ccdfeaa"
 
 [metadata.files]
 aiodns = [
