@@ -24,7 +24,7 @@ copyright = "2021, Nate Larsen"  # pylint: disable=redefined-builtin
 author = "Nate Larsen"
 
 # The full version, including alpha/beta/rc tags
-with open("pyproject.toml") as f:
+with open("../pyproject.toml") as f:
     pyproject = f.read()
     release = version = re.search("version = \"(.+?)\"", pyproject).group(1)
 
