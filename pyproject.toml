@@ -31,7 +31,6 @@ optional = true
 sphinx-autodoc-typehints = "^1.17.0"
 sphinx-rtd-theme = "^1.0.0"
 autodoc-pydantic = "^1.6.1"
-toml = "^0.10.2"
 
 [tool.poetry.group.styling]
 optional = true

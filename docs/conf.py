@@ -14,8 +14,6 @@ import os
 import re
 import sys
 
-import toml  # type: ignore[import]
-
 sys.path.insert(0, os.path.abspath("../"))
 sys.path.append(os.path.abspath("extensions"))
 
@@ -26,11 +24,9 @@ copyright = "2021, Nate Larsen"  # pylint: disable=redefined-builtin
 author = "Nate Larsen"
 
 # The full version, including alpha/beta/rc tags
-try:
-    data = toml.load("../pyproject.toml")
-    release = version = data["tool"]["poetry"]["version"]
-except KeyError:
-    release = version = "1.0.0"
+with open("pyproject.toml") as f:
+    pyproject = f.read()
+    release = version = re.search("version = \"(.+?)\"", pyproject).group(1)
 
 # -- General configuration ---------------------------------------------------
 
