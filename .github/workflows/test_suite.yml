@@ -27,17 +27,12 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install poetry
-          poetry install
-      - name: Run Black
-        run: poetry run black homeassistant_api --check
-      - name: Run iSort
-        run: poetry run isort homeassistant_api --check-only
-      - name: Run Flake8
-        run: poetry run flake8 homeassistant_api
+          poetry install -G styling
+      - name: Run Ruff
+        run: poetry run ruff homeassistant_api
       - name: Run MyPy
         run: poetry run mypy homeassistant_api --show-error-codes
-      - name: Run PyLint
-        run: poetry run pylint homeassistant_api
+
   code_functionality:
     name: "Code Functionality"
     runs-on: ubuntu-latest
@@ -63,7 +58,7 @@ jobs:
         run: |
           echo "::group::Install Project Dependencies"
           python3 -m pip install poetry
-          python3 -m poetry install
+          python3 -m poetry install -G testing
           echo "::endgroup::"
 
           echo "::group::Install Home Assistant Dependencies"
