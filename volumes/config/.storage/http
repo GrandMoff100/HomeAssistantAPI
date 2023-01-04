@@ -8,8 +8,8 @@
     ],
     "use_x_forwarded_for": true,
     "ip_ban_enabled": true,
-    "server_port": 8123,
     "login_attempts_threshold": -1,
+    "server_port": 8123,
     "cors_allowed_origins": [
       "https://cast.home-assistant.io"
     ],

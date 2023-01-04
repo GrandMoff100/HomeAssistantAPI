@@ -46,12 +46,12 @@ jobs:
           mkdir volumes/coverage
       - name: Run Test Environment
         run: |
-          docker compose up --exit-code-from tests
+          docker compose up --build --exit-code-from tests
         env:
           HOMEASSISTANTAPI_TOKEN: ${{ secrets.HOMEASSISTANTAPI_TOKEN }}
       - name: Post Docker Setup
         run: |
-          sudo chown -R $USER volumes/coverage
+          sudo chown -R $USER volumes
       - name: Upload Coverage Report
         uses: codecov/codecov-action@v2
         with:
