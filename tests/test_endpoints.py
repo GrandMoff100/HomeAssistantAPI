@@ -30,7 +30,7 @@ async def test_async_get_config(async_cached_client: Client) -> None:
 def test_get_logbook_entries(cached_client: Client) -> None:
     """Tests the `GET /api/logbook/<timestamp>` endpoint."""
     for entry in cached_client.get_logbook_entries(
-        filter_entities="sun.red_sun",
+        filter_entities="sun.sun",
         start_timestamp=datetime(2020, 1, 1),
         end_timestamp=datetime.now(),
     ):
