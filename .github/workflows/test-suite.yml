@@ -44,11 +44,10 @@ jobs:
       - name: Pre Docker Setup
         run: |
           mkdir volumes/coverage
-          
       - name: Run Test Environment
         run: |
           docker compose up --exit-code-from tests
-        with:
+        env:
           HOMEASSISTANTAPI_TOKEN: ${{ secrets.HOMEASSISTANTAPI_TOKEN }}}
       - name: Upload Coverage Report
         uses: codecov/codecov-action@v2
