@@ -21,8 +21,6 @@ class Client(RawClient, RawAsyncClient):
 
     def __init__(self, *args: Any, use_async: bool = False, **kwargs: Any) -> None:
         if use_async:
-            logger.info("Initializing Client asyncsyncronously")
             RawAsyncClient.__init__(self, *args, **kwargs)
         else:
-            logger.info("Initializing Client syncronously")
             RawClient.__init__(self, *args, **kwargs)
