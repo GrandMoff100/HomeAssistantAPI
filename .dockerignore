@@ -1,0 +1,22 @@
+# Repository
+.github/
+.mypy_cache/
+.ruff_cache/
+.venv/
+docs/
+examples/
+scripts/
+.gitignore
+.pre-commit-config.yaml
+.readthedocs.yml
+CODE_OF_CONDUCT.md
+LICENSE
+
+# Python
+__pycache__/
+*.egg-info/
+*.egg/
+build/
+dist/
+*.pyc
+*.pyo

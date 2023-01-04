@@ -142,6 +142,8 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-# Pyre type checker
-.pyre/
-megalinter-reports/
+# Docker Outputs
+volumes/coverage/
+volumes/config/.HA_VERSION
+volumes/config/home-assistant*
+volumes/config/deps

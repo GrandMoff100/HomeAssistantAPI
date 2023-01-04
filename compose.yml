@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  server:
+    image: "homeassistant/home-assistant:stable"
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./volumes/config:/config
+  tests:
+    build:
+      context: .
+      args:
+        BUILD_FROM: "python:3.9"
+    image: homeassistant-tests:latest
+    volumes:
+      - type: bind
+        source: ./volumes/coverage
+        target: /coverage
+    depends_on:
+      - server
+    environment:
+      HOMEASSISTANTAPI_URL: http://server:8123/api
+      HOMEASSISTANTAPI_TOKEN: ${HOMEASSISTANTAPI_TOKEN}
+
+networks:
+  default:
+    name: homeassistantapi_default
