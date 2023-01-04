@@ -1,5 +1,3 @@
-# Gets renamed to configuration.yaml in the testing volume
-
 person:
 sun:
 api:
