@@ -173,6 +173,21 @@ files = [
 frozenlist = ">=1.1.0"
 
 [[package]]
+name = "aiosqlite"
+version = "0.18.0"
+description = "asyncio bridge to the standard sqlite3 module"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "aiosqlite-0.18.0-py3-none-any.whl", hash = "sha256:c3511b841e3a2c5614900ba1d179f366826857586f78abd75e7cbeb88e75a557"},
+    {file = "aiosqlite-0.18.0.tar.gz", hash = "sha256:faa843ef5fb08bafe9a9b3859012d3d9d6f77ce3637899de20606b7fc39aa213"},
+]
+
+[package.dependencies]
+typing_extensions = {version = ">=4.0", markers = "python_version < \"3.8\""}
+
+[[package]]
 name = "alabaster"
 version = "0.7.12"
 description = "A configurable sidebar-enabled Sphinx theme"
@@ -2112,4 +2127,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7,<4.0.0"
-content-hash = "90173ffc9c77c4d5cdf333927867dbd029c1fca1fa9a81eec8556d231c84e56f"
+content-hash = "93eedf92fb31848fb8919212e5b119e429020f5a84d203547b8ab98cde8e16d5"

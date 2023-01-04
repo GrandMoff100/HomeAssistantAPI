@@ -115,6 +115,7 @@ def process_json(response: ResponseType) -> Dict[str, Any]:
         ) from err
 
 
+@Processing.processor("text/plain")  # type: ignore[arg-type]
 @Processing.processor("application/octet-stream")  # type: ignore[arg-type]
 def process_text(response: ResponseType) -> str:
     """Returns the plaintext of the reponse."""
@@ -132,6 +133,7 @@ async def async_process_json(response: AsyncResponseType) -> Dict[str, Any]:
         ) from err
 
 
+@Processing.processor("text/plain")  # type: ignore[arg-type]
 @Processing.processor("application/octet-stream")  # type: ignore[arg-type]
 async def async_process_text(response: AsyncResponseType) -> str:
     """Returns the plaintext of the reponse."""

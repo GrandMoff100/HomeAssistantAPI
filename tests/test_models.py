@@ -9,7 +9,7 @@ from homeassistant_api.models.states import State
 
 
 def test_entity_get_entity(cached_client: Client) -> None:
-    person_test_suite = cached_client.get_entity(group_id="person", slug="test_suite")
+    person_test_suite = cached_client.get_entity(group_id="person", slug="test_user")
     assert person_test_suite is not None
     state = copy.copy(person_test_suite.state)
     person = person_test_suite.group
@@ -22,7 +22,7 @@ def test_entity_get_entity(cached_client: Client) -> None:
 async def test_async_entity_get_entity(async_cached_client: Client) -> None:
     person_test_suite = await async_cached_client.async_get_entity(
         group_id="person",
-        slug="test_suite",
+        slug="test_user",
     )
     assert person_test_suite is not None
     state = copy.copy(person_test_suite.state)
