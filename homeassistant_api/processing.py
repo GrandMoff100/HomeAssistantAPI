@@ -1,4 +1,4 @@
-"""Module for processing responses from homeassistant."""
+"""Module for processing API responses from homeassistant."""
 
 import inspect
 import json

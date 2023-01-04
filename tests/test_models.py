@@ -92,7 +92,7 @@ async def test_async_get_domains(async_cached_client: Client) -> None:
 
 
 def test_entity_get_history(cached_client: Client) -> None:
-    entity = cached_client.get_entity(group_id="sun", slug="red_sun")
+    entity = cached_client.get_entity(group_id="sun", slug="sun")
     assert entity is not None
     history = entity.get_history()
     assert history is not None
@@ -101,7 +101,7 @@ def test_entity_get_history(cached_client: Client) -> None:
 
 
 async def test_async_entity_get_history(async_cached_client: Client) -> None:
-    entity = await async_cached_client.async_get_entity(group_id="sun", slug="red_sun")
+    entity = await async_cached_client.async_get_entity(group_id="sun", slug="sun")
     assert entity is not None
     history = await entity.async_get_history()
     assert history is not None
