@@ -14,9 +14,7 @@ services:
         BUILD_FROM: "python:3.9"
     image: homeassistant-tests:latest
     volumes:
-      - type: bind
-        source: ./volumes/coverage
-        target: /coverage
+      - ./volumes/coverage:/app/coverage:rw
     depends_on:
       - server
     environment:
