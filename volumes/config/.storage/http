@@ -7,12 +7,12 @@
       "127.0.0.1"
     ],
     "use_x_forwarded_for": true,
+    "ip_ban_enabled": true,
+    "server_port": 8123,
+    "login_attempts_threshold": -1,
     "cors_allowed_origins": [
       "https://cast.home-assistant.io"
     ],
-    "server_port": 8123,
-    "login_attempts_threshold": -1,
-    "ip_ban_enabled": true,
     "ssl_profile": "modern"
   }
 }

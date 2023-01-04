@@ -22,6 +22,7 @@ services:
     environment:
       HOMEASSISTANTAPI_URL: http://server:8123/api
       HOMEASSISTANTAPI_TOKEN: ${HOMEASSISTANTAPI_TOKEN}
+      DELAY: 10
 
 networks:
   default:
