@@ -19,8 +19,9 @@ class Client(RawClient, RawAsyncClient):
     :param async_cache_session: A :py:class:`aiohttp_client_cache.CachedSession` object to use for caching requests. Optional.
     """  # pylint: disable=line-too-long
 
-    def __init__(self, *args: Any, use_async: bool = False, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, use_async: bool = False, verify_ssl: bool = True, **kwargs: Any) -> None:
         if use_async:
             RawAsyncClient.__init__(self, *args, **kwargs)
         else:
             RawClient.__init__(self, *args, **kwargs)
+        self.global_request_kwargs['verify'] = verify_ssl
