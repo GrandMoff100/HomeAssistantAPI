@@ -54,11 +54,15 @@ class RawAsyncClient(RawBaseClient):
             Literal[False],
             Literal[None],
         ] = None,  # Explicitly disable cache with async_cache_session=False
+        verify_ssl: bool = True,
         **kwargs,
     ):
         RawBaseClient.__init__(self, *args, **kwargs)
+        connector = None
+        if not verify_ssl:
+            connector=aiohttp.TCPConnector(verify_ssl=False)
         if async_cache_session is False:
-            self.async_cache_session = aiohttp.ClientSession()
+            self.async_cache_session = aiohttp.ClientSession(connector=connector)
         elif async_cache_session is None:
             self.async_cache_session = aiohttp_client_cache.CachedSession(
                 cache=aiohttp_client_cache.CacheBackend(

@@ -21,7 +21,6 @@ class Client(RawClient, RawAsyncClient):
 
     def __init__(self, *args: Any, use_async: bool = False, verify_ssl: bool = True, **kwargs: Any) -> None:
         if use_async:
-            RawAsyncClient.__init__(self, *args, **kwargs)
+            RawAsyncClient.__init__(self, *args, verify_ssl=verify_ssl, **kwargs)
         else:
-            RawClient.__init__(self, *args, **kwargs)
-        self.global_request_kwargs['verify'] = verify_ssl
+            RawClient.__init__(self, *args, verify_ssl=verify_ssl, **kwargs)
