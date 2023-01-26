@@ -69,9 +69,8 @@ Code Styling Guidelines
 In order to make sure that our code is easy to read, and navigate.
 As well as to stop stupid mistakes like typos, undefined variables, etc.
 We enforce code standards.
-Using the tools, :code:`flake8`, :code:`pylint`, :code:`mypy`, :code:`black`, :code:`isort`, we make make sure that our code quality is top notch.
-You can those tools manually your self, or you can run them all at once on your changes by running :code:`pre-commit run`.
-Your code will also be checked again when you open a PR on the original repository.
+Using the tools, :code:`ruff`, :code:`pytest`, and :code:`docker`, we make make sure that our code quality is top notch, and that are changes work everywhere.
+You can those tools manually yourself, but they also run automatically when you open a PR.
 
 Merging Your Contributions
 *****************************
