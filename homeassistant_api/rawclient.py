@@ -57,7 +57,7 @@ class RawClient(RawBaseClient):
         **kwargs,
     ):
         RawBaseClient.__init__(self, *args, **kwargs)
-        self.global_request_kwargs['verify'] = verify_ssl
+        self.global_request_kwargs["verify"] = verify_ssl
         if cache_session is False:
             self.cache_session = requests.Session()
         elif cache_session is None:

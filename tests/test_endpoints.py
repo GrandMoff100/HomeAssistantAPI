@@ -24,7 +24,10 @@ def test_get_config(cached_client: Client) -> None:
 
 async def test_async_get_config(async_cached_client: Client) -> None:
     """Tests the `GET /api/config` endpoint."""
-    assert (await async_cached_client.async_get_config()).get("state") in {"RUNNING", "NOT_RUNNING"}
+    assert (await async_cached_client.async_get_config()).get("state") in {
+        "RUNNING",
+        "NOT_RUNNING",
+    }
 
 
 def test_get_logbook_entries(cached_client: Client) -> None:

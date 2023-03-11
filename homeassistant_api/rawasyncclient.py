@@ -58,9 +58,7 @@ class RawAsyncClient(RawBaseClient):
         **kwargs,
     ):
         RawBaseClient.__init__(self, *args, **kwargs)
-        connector = None
-        if not verify_ssl:
-            connector=aiohttp.TCPConnector(verify_ssl=False)
+        connector = aiohttp.TCPConnector(verify_ssl=False) if not verify_ssl else None
         if async_cache_session is False:
             self.async_cache_session = aiohttp.ClientSession(connector=connector)
         elif async_cache_session is None:
@@ -69,6 +67,7 @@ class RawAsyncClient(RawBaseClient):
                     cache_name="default_async_cache",
                     expire_after=300,
                 ),
+                connector=connector,
             )
         else:
             self.async_cache_session = async_cache_session

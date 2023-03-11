@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 from typing import AsyncGenerator, Generator
 
@@ -6,8 +7,6 @@ import pytest
 import pytest_asyncio
 
 from homeassistant_api import Client
-
-import logging
 
 TIMEOUT = 300
 
@@ -22,6 +21,7 @@ def wait_for_server_fixture() -> None:
     logging.info("Waiting for server to be ready...")
     client.request(method="get", path="", timeout=TIMEOUT)
     logging.info("Server is ready.")
+
 
 @pytest.fixture(name="cached_client", scope="session")
 def setup_cached_client(wait_for_server) -> Generator[Client, None, None]:
