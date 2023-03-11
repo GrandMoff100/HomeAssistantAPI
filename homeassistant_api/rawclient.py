@@ -1,4 +1,5 @@
 """Module for all interaction with homeassistant."""
+from __future__ import annotations
 
 import json
 import logging
@@ -61,7 +62,7 @@ class RawClient(RawBaseClient):
         if cache_session is False:
             self.cache_session = requests.Session()
         elif cache_session is None:
-            self.cache_session = requests_cache.CachedSession(
+            self.cache_session = requests_cache.CachedSession(  # type: ignore[attr-defined]
                 cache_name="default_cache",
                 backend="memory",
                 expire_after=300,
@@ -69,22 +70,22 @@ class RawClient(RawBaseClient):
         else:
             self.cache_session = cache_session
 
-    def __enter__(self):
+    def __enter__(self) -> "RawClient":
         logger.debug("Entering cached requests session %r.", self.cache_session)
         self.cache_session.__enter__()
         self.check_api_running()
         self.check_api_config()
         return self
 
-    def __exit__(self, _, __, ___):
+    def __exit__(self, _, __, ___) -> None:
         logger.debug("Exiting requests session %r", self.cache_session)
         self.cache_session.close()
 
     def request(
         self,
-        path,
+        path: str,
         method="GET",
-        headers: Dict[str, str] = None,
+        headers: Dict[str, str] | None = None,
         decode_bytes: bool = True,
         **kwargs,
     ) -> Any:
@@ -204,7 +205,7 @@ class RawClient(RawBaseClient):
             group_id, entity_slug = state.entity_id.split(".")
             if group_id not in entities:
                 entities[group_id] = Group(
-                    group_id=cast(str, group_id),
+                    group_id=group_id,
                     _client=self,  # type: ignore[arg-type]
                 )
             entities[group_id]._add_entity(entity_slug, state)
@@ -212,9 +213,9 @@ class RawClient(RawBaseClient):
 
     def get_entity(
         self,
-        group_id: str = None,
-        slug: str = None,
-        entity_id: str = None,
+        group_id: str | None = None,
+        slug: str | None = None,
+        entity_id: str | None = None,
     ) -> Optional[Entity]:
         """Returns an :py:class:`Entity` model for an :code:`entity_id`"""
         if group_id is not None and slug is not None:
@@ -231,11 +232,11 @@ class RawClient(RawBaseClient):
             )
         split_group_id, split_slug = state.entity_id.split(".")
         group = Group(
-            group_id=cast(str, split_group_id),
+            group_id=split_group_id,
             _client=self,  # type: ignore[arg-type]
         )
-        group._add_entity(cast(str, split_slug), state)
-        return group.get_entity(cast(str, split_slug))
+        group._add_entity(split_slug, state)
+        return group.get_entity(split_slug)
 
     # Services and domain methods
     def get_domains(self) -> Dict[str, Domain]:
@@ -328,7 +329,7 @@ class RawClient(RawBaseClient):
             method="POST",
             json=event_data,
         )
-        return cast(dict, data).get("message")
+        return cast(dict[str, Any], data).get("message")
 
     def get_components(self) -> Tuple[str, ...]:
         """Returns a tuple of all registered components."""

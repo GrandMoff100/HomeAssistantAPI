@@ -1,4 +1,6 @@
 """Module for interacting with Home Assistant asyncronously."""
+from __future__ import annotations
+
 import asyncio
 import json
 import logging
@@ -62,8 +64,8 @@ class RawAsyncClient(RawBaseClient):
         if async_cache_session is False:
             self.async_cache_session = aiohttp.ClientSession(connector=connector)
         elif async_cache_session is None:
-            self.async_cache_session = aiohttp_client_cache.CachedSession(
-                cache=aiohttp_client_cache.CacheBackend(
+            self.async_cache_session = aiohttp_client_cache.CachedSession(  # type: ignore[attr-defined]
+                cache=aiohttp_client_cache.CacheBackend(  # type: ignore[attr-defined]
                     cache_name="default_async_cache",
                     expire_after=300,
                 ),
@@ -158,14 +160,14 @@ class RawAsyncClient(RawBaseClient):
         for states in data:
             yield History.parse_obj({"states": states})
 
-    async def async_get_rendered_template(self, template: str):
+    async def async_get_rendered_template(self, template: str) -> str:
         """Renders a given Jinja2 template string with Home Assistant context data."""
         try:
-            return await self.async_request(
+            return cast(str, await self.async_request(
                 "template",
                 json=dict(template=template),
                 method="POST",
-            )
+            ))
         except RequestError as err:
             raise BadTemplateError(
                 "Your template is invalid. "
@@ -211,9 +213,9 @@ class RawAsyncClient(RawBaseClient):
 
     async def async_get_entity(
         self,
-        group_id: str = None,
-        slug: str = None,
-        entity_id: str = None,
+        group_id: str | None = None,
+        slug: str | None = None,
+        entity_id: str | None = None,
     ) -> Optional[Entity]:
         """Returns a Entity model for an :code:`entity_id`"""
         if group_id is not None and slug is not None:
@@ -314,14 +316,14 @@ class RawAsyncClient(RawBaseClient):
                 return event
         return None
 
-    async def async_fire_event(self, event_type: str, **event_data) -> str:
+    async def async_fire_event(self, event_type: str, **event_data: Any) -> str:
         """Fires a given event_type within homeassistant. Must be an existing event_type."""
         data = await self.async_request(
             join("events", event_type),
             method="POST",
             json=event_data,
         )
-        return data.get("message", "No message provided")
+        return cast(str, data.get("message", "No message provided"))
 
     async def async_get_components(self) -> Tuple[str, ...]:
         """Returns a tuple of all registered components."""

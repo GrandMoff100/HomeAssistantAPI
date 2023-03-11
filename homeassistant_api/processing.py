@@ -62,7 +62,7 @@ class Processing:
         mimetype = self._response.headers.get(  # type: ignore [arg-type]
             "content-type",
             "text/plain",
-        )  # type: ignore[arg-type]
+        )
         for processor in self._processors.get(mimetype, ()):
             if not async_ ^ inspect.iscoroutinefunction(processor):
                 logger.debug("Using processor %r on %r", processor, self._response)
@@ -105,10 +105,10 @@ class Processing:
 
 # List of default processors
 @Processing.processor("application/json")  # type: ignore[arg-type]
-def process_json(response: ResponseType) -> Dict[str, Any]:
+def process_json(response: ResponseType) -> dict[str, Any]:
     """Returns the json dict content of the response."""
     try:
-        return response.json()
+        return cast(dict[str, Any], response.json())
     except (json.JSONDecodeError, simplejson.JSONDecodeError) as err:
         raise MalformedDataError(
             f"Home Assistant responded with non-json response: {repr(response.text)}"
@@ -116,17 +116,17 @@ def process_json(response: ResponseType) -> Dict[str, Any]:
 
 
 @Processing.processor("text/plain")  # type: ignore[arg-type]
-@Processing.processor("application/octet-stream")  # type: ignore[arg-type]
+@Processing.processor("application/octet-stream")
 def process_text(response: ResponseType) -> str:
     """Returns the plaintext of the reponse."""
     return response.text
 
 
 @Processing.processor("application/json")  # type: ignore[arg-type]
-async def async_process_json(response: AsyncResponseType) -> Dict[str, Any]:
+async def async_process_json(response: AsyncResponseType) -> dict[str, Any]:
     """Returns the json dict content of the response."""
     try:
-        return await response.json()
+        return cast(dict[str, Any], await response.json())
     except (json.JSONDecodeError, simplejson.JSONDecodeError) as err:
         raise MalformedDataError(
             f"Home Assistant responded with non-json response: {repr(await response.text())}"
@@ -134,7 +134,7 @@ async def async_process_json(response: AsyncResponseType) -> Dict[str, Any]:
 
 
 @Processing.processor("text/plain")  # type: ignore[arg-type]
-@Processing.processor("application/octet-stream")  # type: ignore[arg-type]
+@Processing.processor("application/octet-stream")
 async def async_process_text(response: AsyncResponseType) -> str:
     """Returns the plaintext of the reponse."""
     return await response.text()
