@@ -25,7 +25,9 @@
         "platform": "person",
         "supported_features": 0,
         "unique_id": "test_user",
-        "unit_of_measurement": null
+        "unit_of_measurement": null,
+        "translation_key": null,
+        "aliases": []
       }
     ]
   }
