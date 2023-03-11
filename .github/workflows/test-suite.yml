@@ -36,6 +36,7 @@ jobs:
   code_functionality:
     name: "Code Functionality"
     runs-on: ubuntu-latest
+    environment: "Test Suite"
     steps:
       - name: Checkout
         uses: actions/checkout@v3

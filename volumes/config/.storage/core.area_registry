@@ -7,17 +7,20 @@
       {
         "name": "Living Room",
         "id": "living_room",
-        "picture": null
+        "picture": null,
+        "aliases": []
       },
       {
         "name": "Kitchen",
         "id": "kitchen",
-        "picture": null
+        "picture": null,
+        "aliases": []
       },
       {
         "name": "Bedroom",
         "id": "bedroom",
-        "picture": null
+        "picture": null,
+        "aliases": []
       }
     ]
   }

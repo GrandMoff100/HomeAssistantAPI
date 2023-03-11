@@ -14,7 +14,7 @@ class History(BaseModel):
         ..., description="A tuple of previous states of an entity."
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         assert self.entity_id is not None
 

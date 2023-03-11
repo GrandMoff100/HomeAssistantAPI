@@ -1,7 +1,7 @@
 """Module for Entity and entity Group data models"""
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from pydantic import Field
 
@@ -43,7 +43,7 @@ class Group(BaseModel):
         """Returns Entity with the given name if it exists. Otherwise returns None"""
         return self.entities.get(slug)
 
-    def __getattr__(self, key: str):
+    def __getattr__(self, key: str) -> Any:
         if key in self.entities:
             return self.get_entity(key)
         return super().__getattribute__(key)

@@ -55,14 +55,14 @@ class InternalServerError(HomeassistantAPIError):
 class UnauthorizedError(HomeassistantAPIError):
     """Error raised when an invalid token in used to authenticate with homeassistant."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Invalid authentication token")
 
 
 class EndpointNotFoundError(HomeassistantAPIError):
     """Error raised when a request is made to a non existing endpoint."""
 
-    def __init__(self, path: str):
+    def __init__(self, path: str) -> None:
         super().__init__(f"Cannot make request to the endpoint {path!r}")
 
 

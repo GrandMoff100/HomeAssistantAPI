@@ -3,7 +3,7 @@
 import re
 from datetime import datetime
 from posixpath import join
-from typing import Dict, Iterable, Optional, Tuple, Union
+from typing import Dict, Iterable, Optional, Tuple, Union, Any
 
 from .models import Entity
 
@@ -13,7 +13,7 @@ class RawBaseClient:
 
     api_url: str
     token: str
-    global_request_kwargs: Dict[str, str]
+    global_request_kwargs: Dict[str, Any]
 
     def __init__(
         self,
