@@ -49,7 +49,7 @@ jobs:
         run: |
           docker compose up --build --exit-code-from tests
         env:
-          HOMEASSISTANTAPI_TOKEN: ${{ secrets.HOMEASSISTANTAPI_TOKEN }}
+          HOMEASSISTANTAPI_TOKEN: ${{ vars.HOMEASSISTANTAPI_TOKEN }}  # This is non-sensitive data
       - name: Post Docker Setup
         run: |
           sudo chown -R $USER volumes
