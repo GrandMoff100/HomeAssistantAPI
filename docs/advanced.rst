@@ -44,8 +44,11 @@ You can simply pass them to your client like so.
     client = Client(
         "<URL>",
         "<TOKEN>",
-        cache_session=CachedSession(cache=FileBackend(),
-        expire_after=timedelta(minutes=5)),
+        cache_session=CachedSession(
+            cache=FileBackend(
+                expire_after=timedelta(minutes=5)
+            )
+        ),
         use_async=True
     )
     async def main():
