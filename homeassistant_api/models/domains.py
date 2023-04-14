@@ -48,6 +48,7 @@ class Domain(BaseModel):
 
     def _add_service(self, service_id: str, **data) -> None:
         """Registers services into a domain to be used or accessed. Used internally."""
+        # raise ValueError(data)
         self.services.update(
             {
                 service_id: Service(
@@ -73,7 +74,7 @@ class ServiceField(BaseModel):
     """Model for service parameters/fields."""
 
     description: Optional[str] = None
-    example: Any
+    example: Any = None
     selector: Optional[Dict[str, Any]] = None
     name: Optional[str] = None
     required: Optional[bool] = None
@@ -87,7 +88,6 @@ class Service(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     fields: Optional[Dict[str, ServiceField]] = None
-    target: Optional[Dict[str, Dict[str, Any]]] = None
 
     def trigger(self, **service_data) -> Tuple[State, ...]:
         """Triggers the service associated with this object."""
