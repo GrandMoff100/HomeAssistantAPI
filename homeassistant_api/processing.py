@@ -59,10 +59,11 @@ class Processing:
         calls the processor with the response.
         """
 
-        mimetype = self._response.headers.get(  # type: ignore [arg-type]
+        mimetype_header = self._response.headers.get(  # type: ignore [arg-type]
             "content-type",
             "text/plain",
         )
+        mimetype = mimetype_header.split(";")[0]
         for processor in self._processors.get(mimetype, ()):
             if not async_ ^ inspect.iscoroutinefunction(processor):
                 logger.debug("Using processor %r on %r", processor, self._response)
