@@ -27,7 +27,7 @@ with Client(
     light.turn_on(entity_id="light.living_room_lamp")
 ```
 
-All the methods also support async!
+All the methods also support async! Just prefix the method with async_`.
 
 ## Documentation
 
