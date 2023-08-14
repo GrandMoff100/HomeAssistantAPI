@@ -3,12 +3,16 @@ on:
   push:
     paths:
       - "**.py"
+      - "pyproject.toml"
+      - "poetry.lock"
   pull_request:
     branches:
       - master
       - dev
     paths:
       - "**.py"
+      - "pyproject.toml"
+      - "poetry.lock"
   workflow_dispatch:
 
 jobs:
