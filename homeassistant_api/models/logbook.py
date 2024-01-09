@@ -1,16 +1,15 @@
 """Module for the Logbook Entry model."""
-from datetime import datetime
 from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, field_serializer
 
-from .base import BaseModel
+from .base import BaseModel, DatetimeIsoField
 
 
 class LogbookEntry(BaseModel):
     """Model representing entries in the Logbook."""
 
-    when: datetime = Field(..., description="When the entry was logged.")
+    when: DatetimeIsoField = Field(..., description="When the entry was logged.")
     name: str = Field(..., description="The name of the entry.")
     message: Optional[str] = Field(None, description="Optional message for the entry.")
     entity_id: Optional[str] = Field(None, description="Optional relevant entity_id.")

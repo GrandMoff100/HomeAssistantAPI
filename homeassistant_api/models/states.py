@@ -2,9 +2,9 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from pydantic import Field
+from pydantic import Field, field_serializer
 
-from .base import BaseModel
+from .base import BaseModel, DatetimeIsoField
 
 
 class Context(BaseModel):
@@ -26,11 +26,11 @@ class State(BaseModel):
     attributes: Dict[str, Any] = Field(
         {}, description="A dictionary of extra attributes of the state."
     )
-    last_changed: datetime = Field(
+    last_changed: DatetimeIsoField = Field(
         default_factory=datetime.utcnow,
         description="The last time the state was changed.",
     )
-    last_updated: Optional[datetime] = Field(
+    last_updated: Optional[DatetimeIsoField] = Field(
         default_factory=datetime.utcnow, description="The last time the state updated."
     )
     context: Optional[Context] = Field(
@@ -40,4 +40,4 @@ class State(BaseModel):
     @classmethod
     def from_json(cls, json: Dict[str, Any]) -> "State":
         """Constructs State model from json data"""
-        return cls.parse_obj(json)
+        return cls.model_validate(json)
