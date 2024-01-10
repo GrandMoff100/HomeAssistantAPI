@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from pydantic import Field, field_serializer
+from pydantic import Field
 
 from .base import BaseModel, DatetimeIsoField
 

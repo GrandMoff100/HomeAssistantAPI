@@ -1,7 +1,7 @@
 """Module for the Logbook Entry model."""
 from typing import Optional
 
-from pydantic import Field, field_serializer
+from pydantic import Field
 
 from .base import BaseModel, DatetimeIsoField
 
