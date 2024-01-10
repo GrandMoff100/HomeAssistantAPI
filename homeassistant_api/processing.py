@@ -92,7 +92,7 @@ class Processing:
         if status_code == 401:
             raise UnauthorizedError()
         if status_code == 404:
-            raise EndpointNotFoundError(self._response.url)
+            raise EndpointNotFoundError(self._response.url)  # type: ignore
         if status_code == 405:
             if isinstance(self._response, (Response, CachedResponse)):
                 method = self._response.request.method
