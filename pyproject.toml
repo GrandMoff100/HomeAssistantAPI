@@ -28,8 +28,8 @@ simplejson = "^3.17.6"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-sphinx-autodoc-typehints = "^1.17.0"
-sphinx-rtd-theme = "^1.0.0"
+sphinx-autodoc-typehints = "^1.25.2"
+sphinx-rtd-theme = "^2.0.0"
 autodoc-pydantic = "^2.0.1"
 
 [tool.poetry.group.styling]
