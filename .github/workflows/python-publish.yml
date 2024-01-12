@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     environment: "Python Package Deployment"
     steps:
@@ -21,8 +21,31 @@ jobs:
           python -m pip install --upgrade pip poetry
           poetry config virtualenvs.create false
           poetry install
-      - name: Build and publish
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: poetry publish --build -u "$TWINE_USERNAME" -p "$TWINE_PASSWORD"
+
+      - name: build release distributions
+        run: |
+          # NOTE: put your own distribution build steps here.
+          poetry build
+
+      - name: upload dists
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-dists
+          path: dist/
+
+  publish:
+    runs-on: ubuntu-latest
+    environment: "Python Package Deployment"
+    permissions:
+      id-token: write
+    needs:
+      - build
+    steps:
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v3
+        with:
+          name: release-dists
+          path: dist/
+
+      - name: Publish release distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
