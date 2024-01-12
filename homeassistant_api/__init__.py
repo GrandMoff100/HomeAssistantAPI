@@ -38,10 +38,10 @@ from .errors import (
 from .models import Domain, Entity, Event, Group, History, LogbookEntry, Service, State
 from .processing import Processing
 
-Domain.update_forward_refs(**locals())
-Entity.update_forward_refs(**locals())
-Event.update_forward_refs(**locals())
-Group.update_forward_refs(**locals())
-History.update_forward_refs(**locals())
-Service.update_forward_refs(**locals())
-State.update_forward_refs(**locals())
+Domain.model_rebuild()
+Entity.model_rebuild()
+Event.model_rebuild()
+Group.model_rebuild()
+History.model_rebuild()
+Service.model_rebuild()
+State.model_rebuild()
