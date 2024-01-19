@@ -58,8 +58,7 @@ jobs:
         run: |
           sudo chown -R $USER volumes
       - name: Upload Coverage Report
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           files: ./volumes/coverage/coverage.xml
-          fail_ci_if_error: true
           verbose: true
