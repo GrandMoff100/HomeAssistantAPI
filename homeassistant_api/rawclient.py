@@ -74,7 +74,6 @@ class RawClient(RawBaseClient):
         logger.debug("Entering cached requests session %r.", self.cache_session)
         self.cache_session.__enter__()
         self.check_api_running()
-        self.check_api_config()
         return self
 
     def __exit__(self, _, __, ___) -> None:
