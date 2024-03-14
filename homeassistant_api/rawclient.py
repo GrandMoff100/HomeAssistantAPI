@@ -186,13 +186,6 @@ class RawClient(RawBaseClient):
                 "Try debugging it in the developer tools page of homeassistant."
             ) from err
 
-    @staticmethod
-    def get_discovery_info() -> Dict[str, Any]:
-        """Returns a dictionary of discovery info such as internal_url and version"""
-        raise DeprecationWarning(
-            "This endpoint has been removed from homeassistant. This function is to be removed in future release."
-        )
-
     # API check methods
     def check_api_config(self) -> bool:
         """
