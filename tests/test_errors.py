@@ -102,16 +102,6 @@ async def test_async_invalid_template(async_cached_client: Client) -> None:
         await async_cached_client.async_get_rendered_template("{{ invalid_template lol")
 
 
-def test_discovery_info_deprecated(cached_client: Client) -> None:
-    with pytest.raises(DeprecationWarning):
-        cached_client.get_discovery_info()
-
-
-async def test_async_discovery_info_deprecated(async_cached_client: Client) -> None:
-    with pytest.raises(DeprecationWarning):
-        await async_cached_client.async_get_discovery_info()
-
-
 def test_prepare_entity_id(cached_client: Client) -> None:
     """Tests all cases for :py:meth:`Client.prepare_entity_id`."""
     assert cached_client.prepare_entity_id(group_id="person", slug="me") == "person.me"
