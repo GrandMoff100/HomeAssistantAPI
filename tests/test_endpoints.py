@@ -120,7 +120,7 @@ def test_get_entities(cached_client: Client) -> None:
 async def test_async_get_entities(async_cached_client: Client) -> None:
     """Tests the `GET /api/states` endpoint."""
     entities = await async_cached_client.async_get_entities()
-    assert any(group.group_id == "sun" for group in entities)
+    assert "sun" in entities
 
 
 def test_get_domains(cached_client: Client) -> None:
