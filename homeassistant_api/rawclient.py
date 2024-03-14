@@ -134,7 +134,7 @@ class RawClient(RawBaseClient):
     ) -> Generator[LogbookEntry, None, None]:
         """
         Returns a list of logbook entries from homeassistant.
-        :code:`GET /api/logbook/<timestamp>
+        :code:`GET /api/logbook/<timestamp>`
         """
         params, url = self.prepare_get_logbook_entry_params(*args, **kwargs)
         data = self.request(url, params=params)
