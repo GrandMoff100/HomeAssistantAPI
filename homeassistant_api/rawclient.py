@@ -116,14 +116,14 @@ class RawClient(RawBaseClient):
     def get_error_log(self) -> str:
         """
         Returns the server error log as a string.
-        `GET /api/error_log`
+        :code:`GET /api/error_log`
         """
         return cast(str, self.request("error_log"))
 
     def get_config(self) -> Dict[str, Any]:
         """
         Returns the yaml configuration of homeassistant.
-        `GET /api/config`
+        :code:`GET /api/config`
         """
         return cast(Dict[str, Any], self.request("config"))
 
@@ -134,7 +134,7 @@ class RawClient(RawBaseClient):
     ) -> Generator[LogbookEntry, None, None]:
         """
         Returns a list of logbook entries from homeassistant.
-        `GET /api/logbook/<timestamp>
+        :code:`GET /api/logbook/<timestamp>
         """
         params, url = self.prepare_get_logbook_entry_params(*args, **kwargs)
         data = self.request(url, params=params)
@@ -150,8 +150,8 @@ class RawClient(RawBaseClient):
         significant_changes_only: bool = False,
     ) -> Generator[History, None, None]:
         """
-        Yields entity state histories. See docs on the `History` model.
-        `GET /api/history/period/<timestamp>`
+        Yields entity state histories. See docs on the :py:class:`History` model.
+        :code:`GET /api/history/period/<timestamp>`
         """
         params, url = self.prepare_get_entity_histories_params(
             entities=entities,
@@ -170,7 +170,7 @@ class RawClient(RawBaseClient):
         """
         Renders a Jinja2 template with Home Assistant context data.
         See https://www.home-assistant.io/docs/configuration/templating.
-        `POST /api/template`
+        :code:`POST /api/template`
         """
         try:
             return cast(
@@ -198,7 +198,7 @@ class RawClient(RawBaseClient):
     def check_api_config(self) -> bool:
         """
         Asks Home Assistant to validate its configuration file.
-        `POST /api/config/core/check_config`
+        :code:`POST /api/config/core/check_config`
         """
         res = cast(
             Dict[str, Any], self.request("config/core/check_config", method="POST")
@@ -209,7 +209,7 @@ class RawClient(RawBaseClient):
     def check_api_running(self) -> bool:
         """
         Asks Home Assistant if it is running.
-        `GET /api/`
+        :code:`GET /api/`
         """
         res = self.request("")
         return cast(Dict[str, Any], res).get("message") == "API running."
@@ -218,7 +218,7 @@ class RawClient(RawBaseClient):
     def get_entities(self) -> Dict[str, Group]:
         """
         Fetches all entities from the api and returns them as a dictionary of :py:class:`Group`'s.
-        `GET /api/states`
+        :code:`GET /api/states`
         """
         entities: Dict[str, Group] = {}
         for state in self.get_states():
@@ -239,7 +239,7 @@ class RawClient(RawBaseClient):
     ) -> Optional[Entity]:
         """
         Returns an :py:class:`Entity` model for an :code:`entity_id`.
-        `GET /api/states/<entity_id>`
+        :code:`GET /api/states/<entity_id>`
         """
         if group_id is not None and slug is not None:
             state = self.get_state(group_id=group_id, slug=slug)
@@ -265,7 +265,7 @@ class RawClient(RawBaseClient):
     def get_domains(self) -> Dict[str, Domain]:
         """
         Fetches all :py:class:`Service` 's from the API.
-        `GET /api/services`
+        :code:`GET /api/services`
         """
         data = self.request("services")
         domains = map(
@@ -289,7 +289,7 @@ class RawClient(RawBaseClient):
     ) -> Tuple[State, ...]:
         """
         Tells Home Assistant to trigger a service, returns all states changed while in the process of being called.
-        `POST /api/services/<domain>/<service>`
+        :code:`POST /api/services/<domain>/<service>`
         """
         data = self.request(
             join("services", domain, service),
@@ -308,7 +308,7 @@ class RawClient(RawBaseClient):
     ) -> State:
         """
         Fetches the state of the entity specified.
-        `GET /api/states/<entity_id>`
+        :code:`GET /api/states/<entity_id>`
         """
         entity_id = self.prepare_entity_id(
             group_id=group_id,
@@ -325,7 +325,7 @@ class RawClient(RawBaseClient):
         """
         This method sets the representation of a device within Home Assistant and will not communicate with the actual device.
         To communicate with the device, use :py:meth:`Service.trigger` or :py:meth:`Service.async_trigger`.
-        `POST /api/states/<entity_id>`
+        :code:`POST /api/states/<entity_id>`
         """
         data = self.request(
             join("states", state.entity_id),
@@ -337,7 +337,7 @@ class RawClient(RawBaseClient):
     def get_states(self) -> Tuple[State, ...]:
         """
         Gets the states of all entities within homeassistant.
-        `GET /api/states`
+        :code:`GET /api/states`
         """
         data = self.request("states")
         states = map(State.from_json, cast(List[Dict[str, Any]], data))
@@ -347,7 +347,7 @@ class RawClient(RawBaseClient):
     def get_events(self) -> Tuple[Event, ...]:
         """
         Gets the Events that happen within homeassistant
-        `GET /api/events`
+        :code:`GET /api/events`
         """
         data = self.request("events")
         return tuple(
@@ -382,6 +382,6 @@ class RawClient(RawBaseClient):
     def get_components(self) -> Tuple[str, ...]:
         """
         Returns a tuple of all registered components.
-        `GET /api/components`
+        :code:`GET /api/components`
         """
         return tuple(self.request("components"))

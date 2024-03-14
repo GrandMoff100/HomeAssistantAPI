@@ -120,14 +120,14 @@ class RawAsyncClient(RawBaseClient):
     async def async_get_error_log(self) -> str:
         """
         Returns the server error log as a string.
-        `GET /api/error_log`
+        :code:`GET /api/error_log`
         """
         return cast(str, await self.async_request("error_log"))
 
     async def async_get_config(self) -> Dict[str, Any]:
         """
         Returns the yaml configuration of homeassistant.
-        `GET /api/config`
+        :code:`GET /api/config`
         """
         return cast(Dict[str, Any], await self.async_request("config"))
 
@@ -138,7 +138,7 @@ class RawAsyncClient(RawBaseClient):
     ) -> AsyncGenerator[LogbookEntry, None]:
         """
         Returns a list of logbook entries from homeassistant.
-        `GET /api/logbook/<timestamp>`
+        :code:`GET /api/logbook/<timestamp>`
         """
         params, url = self.prepare_get_logbook_entry_params(*args, **kwargs)
         data = await self.async_request(url, params=params)
@@ -155,7 +155,7 @@ class RawAsyncClient(RawBaseClient):
     ) -> AsyncGenerator[History, None]:
         """
         Returns a generator of entity state histories from homeassistant.
-        `GET /api/history/period/<timestamp>`
+        :code:`GET /api/history/period/<timestamp>`
         """
         params, url = self.prepare_get_entity_histories_params(
             entities=entities,
@@ -173,7 +173,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_get_rendered_template(self, template: str) -> str:
         """
         Renders a given Jinja2 template string with Home Assistant context data.
-        `POST /api/template`
+        :code:`POST /api/template`
         """
         try:
             return cast(str, await self.async_request(
@@ -198,7 +198,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_check_api_config(self) -> bool:
         """
         Asks Home Assistant to validate its configuration file and returns true/false.
-        `POST /api/config/core/check_config`
+        :code:`POST /api/config/core/check_config`
         """
         res = await self.async_request("config/core/check_config", method="POST")
         res = cast(Dict[Any, Any], res)
@@ -214,7 +214,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_check_api_running(self) -> bool:
         """
         Asks Home Assistant if its running.
-        `GET /api/`
+        :code:`GET /api/`
         """
         res = cast(Dict[Any, Any], await self.async_request(""))
         return res.get("message") == "API running."
@@ -223,7 +223,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_get_entities(self) -> Dict[str, Group]:
         """
         Fetches all entities from the api.
-        `GET /api/states`
+        :code:`GET /api/states`
         """
         entities: Dict[str, Group] = {}
         for state in await self.async_get_states():
@@ -241,7 +241,7 @@ class RawAsyncClient(RawBaseClient):
     ) -> Optional[Entity]:
         """
         Returns a Entity model for an :code:`entity_id`.
-        `GET /api/states/<entity_id>`
+        :code:`GET /api/states/<entity_id>`
         """
         if group_id is not None and slug is not None:
             state = await self.async_get_state(group_id=group_id, slug=slug)
@@ -264,7 +264,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_get_domains(self) -> Dict[str, Domain]:
         """
         Fetches all :py:class:`Service` 's from the API.
-        `GET /api/services`
+        :code:`GET /api/services`
         """
         data = await self.async_request("services")
         domains = map(
@@ -289,7 +289,7 @@ class RawAsyncClient(RawBaseClient):
     ) -> Tuple[State, ...]:
         """
         Tells Home Assistant to trigger a service, returns all states changed while in the process of being called.
-        `POST /api/services/<domain>/<service>`
+        :code:`POST /api/services/<domain>/<service>`
         """
         data = await self.async_request(
             f"services/{domain}/{service}",
@@ -308,7 +308,7 @@ class RawAsyncClient(RawBaseClient):
     ) -> State:
         """
         Fetches the state of the entity specified.
-        `GET /api/states/<entity_id>`
+        :code:`GET /api/states/<entity_id>`
         """
         target_entity_id = self.prepare_entity_id(
             group_id=group_id,
@@ -325,7 +325,7 @@ class RawAsyncClient(RawBaseClient):
         """
         This method sets the representation of a device within Home Assistant and will not communicate with the actual device.
         To communicate with the device, use :py:meth:`Service.trigger` or :py:meth:`Service.async_trigger`.
-        `POST /api/states/<entity_id>`
+        :code:`POST /api/states/<entity_id>`
         """
         data = await self.async_request(
             join("states", state.entity_id),
@@ -337,7 +337,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_get_states(self) -> Tuple[State, ...]:
         """
         Gets the states of all entities within homeassistant.
-        `GET /api/states`
+        :code:`GET /api/states`
         """
         data = await self.async_request("states")
         return tuple(map(State.from_json, cast(List[Dict[Any, Any]], data)))
@@ -346,7 +346,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_get_events(self) -> Tuple[Event, ...]:
         """
         Gets the Events that happen within homeassistant
-        `GET /api/events`
+        :code:`GET /api/events`
         """
         data = await self.async_request("events")
         return tuple(
@@ -369,7 +369,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_fire_event(self, event_type: str, **event_data: Any) -> str:
         """
         Fires a given event_type within homeassistant. Must be an existing event_type.
-        `POST /api/events/<event_type>`
+        :code:`POST /api/events/<event_type>`
         """
         data = await self.async_request(
             join("events", event_type),
@@ -381,7 +381,7 @@ class RawAsyncClient(RawBaseClient):
     async def async_get_components(self) -> Tuple[str, ...]:
         """
         Returns a tuple of all registered components.
-        `GET /api/components`
+        :code:`GET /api/components`
         """
         data = await self.async_request("components")
         return tuple(cast(List[str], data))
